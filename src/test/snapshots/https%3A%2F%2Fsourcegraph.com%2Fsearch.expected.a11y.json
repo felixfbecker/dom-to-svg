@@ -1,0 +1,820 @@
+{
+  "role": "WebArea",
+  "name": "Sourcegraph",
+  "children": [
+    {
+      "role": "generic",
+      "name": "",
+      "children": [
+        {
+          "role": "dialog",
+          "name": "",
+          "description": "This website uses cookies.",
+          "children": [
+            {
+              "role": "generic",
+              "name": "",
+              "children": [
+                {
+                  "role": "generic",
+                  "name": "",
+                  "children": [
+                    {
+                      "role": "img",
+                      "name": "logo"
+                    }
+                  ]
+                },
+                {
+                  "role": "generic",
+                  "name": "",
+                  "children": [
+                    {
+                      "role": "heading",
+                      "name": "This website uses cookies.",
+                      "level": 2,
+                      "children": [
+                        {
+                          "role": "text",
+                          "name": "This website uses cookies."
+                        }
+                      ]
+                    },
+                    {
+                      "role": "generic",
+                      "name": "",
+                      "children": [
+                        {
+                          "role": "text",
+                          "name": "We use cookies to offer you a better browsing experience, analyze site traffic, personalize content and serve targeted ads.  Learn about how we use cookies and how you can control them in our"
+                        },
+                        {
+                          "role": "link",
+                          "name": "Cookie Policy",
+                          "children": [
+                            {
+                              "role": "text",
+                              "name": "Cookie Policy"
+                            }
+                          ]
+                        },
+                        {
+                          "role": "text",
+                          "name": ". By using our site, you consent to our use of cookies. "
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "role": "generic",
+                  "name": "",
+                  "children": [
+                    {
+                      "role": "link",
+                      "name": "Necessary only",
+                      "children": [
+                        {
+                          "role": "text",
+                          "name": "Necessary only"
+                        }
+                      ]
+                    },
+                    {
+                      "role": "link",
+                      "name": "OK",
+                      "children": [
+                        {
+                          "role": "text",
+                          "name": "OK"
+                        }
+                      ]
+                    },
+                    {
+                      "role": "link",
+                      "name": "Show details",
+                      "children": [
+                        {
+                          "role": "text",
+                          "name": "Show details"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "children": [
+            {
+              "role": "generic",
+              "name": "",
+              "children": [
+                {
+                  "role": "generic",
+                  "name": "",
+                  "children": [
+                    {
+                      "role": "generic",
+                      "name": "",
+                      "children": [
+                        {
+                          "role": "generic",
+                          "name": "",
+                          "children": [
+                            {
+                              "role": "generic",
+                              "name": "",
+                              "children": [
+                                {
+                                  "role": "generic",
+                                  "name": "",
+                                  "children": [
+                                    {
+                                      "role": "text",
+                                      "name": "Sourcegraph 3.16 is now available! Check out the"
+                                    },
+                                    {
+                                      "role": "link",
+                                      "name": "3.16 release blog post",
+                                      "children": [
+                                        {
+                                          "role": "text",
+                                          "name": "3.16 release blog post"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "role": "text",
+                                      "name": "for more details."
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "role": "button",
+                              "name": "",
+                              "children": [
+                                {
+                                  "role": "SVGRoot",
+                                  "name": ""
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "role": "generic",
+                  "name": "",
+                  "children": [
+                    {
+                      "role": "generic",
+                      "name": ""
+                    },
+                    {
+                      "role": "list",
+                      "name": "",
+                      "children": [
+                        {
+                          "role": "listitem",
+                          "name": "",
+                          "level": 1,
+                          "children": [
+                            {
+                              "role": "link",
+                              "name": "Campaigns",
+                              "children": [
+                                {
+                                  "role": "SVGRoot",
+                                  "name": ""
+                                },
+                                {
+                                  "role": "generic",
+                                  "name": "",
+                                  "children": [
+                                    {
+                                      "role": "text",
+                                      "name": "Campaigns"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "role": "listitem",
+                          "name": "",
+                          "level": 1,
+                          "children": [
+                            {
+                              "role": "link",
+                              "name": "Extensions",
+                              "children": [
+                                {
+                                  "role": "text",
+                                  "name": "Extensions"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "role": "listitem",
+                          "name": "",
+                          "level": 1,
+                          "children": [
+                            {
+                              "role": "link",
+                              "name": "Sign in",
+                              "children": [
+                                {
+                                  "role": "text",
+                                  "name": "Sign in"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "role": "listitem",
+                          "name": "",
+                          "level": 1,
+                          "children": [
+                            {
+                              "role": "link",
+                              "name": "About",
+                              "children": [
+                                {
+                                  "role": "text",
+                                  "name": "About"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "role": "listitem",
+                          "name": "",
+                          "level": 1,
+                          "children": [
+                            {
+                              "role": "link",
+                              "name": "Help",
+                              "children": [
+                                {
+                                  "role": "text",
+                                  "name": "Help"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "role": "listitem",
+                          "name": "",
+                          "level": 1,
+                          "children": [
+                            {
+                              "role": "button",
+                              "name": "",
+                              "children": [
+                                {
+                                  "role": "SVGRoot",
+                                  "name": ""
+                                },
+                                {
+                                  "role": "SVGRoot",
+                                  "name": ""
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "role": "generic",
+                  "name": "",
+                  "children": [
+                    {
+                      "role": "generic",
+                      "name": "",
+                      "children": [
+                        {
+                          "role": "img",
+                          "name": ""
+                        },
+                        {
+                          "role": "generic",
+                          "name": "",
+                          "children": [
+                            {
+                              "role": "generic",
+                              "name": "",
+                              "children": [
+                                {
+                                  "role": "form",
+                                  "name": "",
+                                  "children": [
+                                    {
+                                      "role": "generic",
+                                      "name": "",
+                                      "children": [
+                                        {
+                                          "role": "generic",
+                                          "name": "",
+                                          "children": [
+                                            {
+                                              "role": "combobox",
+                                              "name": "Toggle search mode",
+                                              "haspopup": "menu",
+                                              "children": [
+                                                {
+                                                  "role": "SVGRoot",
+                                                  "name": ""
+                                                },
+                                                {
+                                                  "role": "generic",
+                                                  "name": ""
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "role": "generic",
+                                          "name": "",
+                                          "children": [
+                                            {
+                                              "role": "generic",
+                                              "name": "",
+                                              "children": [
+                                                {
+                                                  "role": "generic",
+                                                  "name": "",
+                                                  "children": [
+                                                    {
+                                                      "role": "generic",
+                                                      "name": "",
+                                                      "children": [
+                                                        {
+                                                          "role": "generic",
+                                                          "name": "",
+                                                          "children": [
+                                                            {
+                                                              "role": "generic",
+                                                              "name": "",
+                                                              "children": [
+                                                                {
+                                                                  "role": "generic",
+                                                                  "name": ""
+                                                                },
+                                                                {
+                                                                  "role": "generic",
+                                                                  "name": ""
+                                                                },
+                                                                {
+                                                                  "role": "generic",
+                                                                  "name": "",
+                                                                  "children": [
+                                                                    {
+                                                                      "role": "generic",
+                                                                      "name": "",
+                                                                      "children": [
+                                                                        {
+                                                                          "role": "generic",
+                                                                          "name": ""
+                                                                        }
+                                                                      ]
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            },
+                                                            {
+                                                              "role": "presentation",
+                                                              "name": "",
+                                                              "children": [
+                                                                {
+                                                                  "role": "generic",
+                                                                  "name": "",
+                                                                  "children": [
+                                                                    {
+                                                                      "role": "generic",
+                                                                      "name": "",
+                                                                      "children": [
+                                                                        {
+                                                                          "role": "generic",
+                                                                          "name": "",
+                                                                          "children": [
+                                                                            {
+                                                                              "role": "generic",
+                                                                              "name": ""
+                                                                            }
+                                                                          ]
+                                                                        }
+                                                                      ]
+                                                                    },
+                                                                    {
+                                                                      "role": "generic",
+                                                                      "name": ""
+                                                                    },
+                                                                    {
+                                                                      "role": "generic",
+                                                                      "name": ""
+                                                                    },
+                                                                    {
+                                                                      "role": "generic",
+                                                                      "name": "",
+                                                                      "children": [
+                                                                        {
+                                                                          "role": "generic",
+                                                                          "name": "",
+                                                                          "children": [
+                                                                            {
+                                                                              "role": "generic",
+                                                                              "name": "",
+                                                                              "children": [
+                                                                                {
+                                                                                  "role": "generic",
+                                                                                  "name": "",
+                                                                                  "children": [
+                                                                                    {
+                                                                                      "role": "text",
+                                                                                      "name": " "
+                                                                                    }
+                                                                                  ]
+                                                                                }
+                                                                              ]
+                                                                            }
+                                                                          ]
+                                                                        }
+                                                                      ]
+                                                                    },
+                                                                    {
+                                                                      "role": "generic",
+                                                                      "name": "",
+                                                                      "children": [
+                                                                        {
+                                                                          "role": "generic",
+                                                                          "name": "Show Fixes"
+                                                                        }
+                                                                      ]
+                                                                    },
+                                                                    {
+                                                                      "role": "generic",
+                                                                      "name": "",
+                                                                      "children": [
+                                                                        {
+                                                                          "role": "generic",
+                                                                          "name": ""
+                                                                        }
+                                                                      ]
+                                                                    }
+                                                                  ]
+                                                                },
+                                                                {
+                                                                  "role": "generic",
+                                                                  "name": "",
+                                                                  "children": [
+                                                                    {
+                                                                      "role": "generic",
+                                                                      "name": ""
+                                                                    }
+                                                                  ]
+                                                                },
+                                                                {
+                                                                  "role": "generic",
+                                                                  "name": ""
+                                                                },
+                                                                {
+                                                                  "role": "generic",
+                                                                  "name": "",
+                                                                  "children": [
+                                                                    {
+                                                                      "role": "generic",
+                                                                      "name": ""
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            },
+                                                            {
+                                                              "role": "generic",
+                                                              "name": ""
+                                                            },
+                                                            {
+                                                              "role": "textbox",
+                                                              "name": "Editor content;Press Alt+F1 for Accessibility Options.",
+                                                              "focused": true,
+                                                              "multiline": true,
+                                                              "autocomplete": "both",
+                                                              "children": [
+                                                                {
+                                                                  "role": "generic",
+                                                                  "name": ""
+                                                                }
+                                                              ]
+                                                            },
+                                                            {
+                                                              "role": "generic",
+                                                              "name": ""
+                                                            },
+                                                            {
+                                                              "role": "generic",
+                                                              "name": ""
+                                                            },
+                                                            {
+                                                              "role": "generic",
+                                                              "name": "",
+                                                              "children": [
+                                                                {
+                                                                  "role": "generic",
+                                                                  "name": ""
+                                                                },
+                                                                {
+                                                                  "role": "Canvas",
+                                                                  "name": ""
+                                                                },
+                                                                {
+                                                                  "role": "Canvas",
+                                                                  "name": ""
+                                                                },
+                                                                {
+                                                                  "role": "generic",
+                                                                  "name": "",
+                                                                  "children": [
+                                                                    {
+                                                                      "role": "generic",
+                                                                      "name": ""
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        },
+                                                        {
+                                                          "role": "generic",
+                                                          "name": "",
+                                                          "children": [
+                                                            {
+                                                              "role": "generic",
+                                                              "name": ""
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "role": "generic",
+                                              "name": "",
+                                              "children": [
+                                                {
+                                                  "role": "checkbox",
+                                                  "name": "Case sensitivity toggle",
+                                                  "checked": false,
+                                                  "children": [
+                                                    {
+                                                      "role": "SVGRoot",
+                                                      "name": ""
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "role": "checkbox",
+                                                  "name": "Regular expression toggle",
+                                                  "checked": false,
+                                                  "children": [
+                                                    {
+                                                      "role": "SVGRoot",
+                                                      "name": ""
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "role": "checkbox",
+                                                  "name": "Structural search toggle",
+                                                  "checked": false,
+                                                  "children": [
+                                                    {
+                                                      "role": "SVGRoot",
+                                                      "name": ""
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "role": "generic",
+                                          "name": "",
+                                          "children": [
+                                            {
+                                              "role": "button",
+                                              "name": "Search",
+                                              "children": [
+                                                {
+                                                  "role": "SVGRoot",
+                                                  "name": "",
+                                                  "children": [
+                                                    {
+                                                      "role": "generic",
+                                                      "name": ""
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "role": "generic",
+                                              "name": "",
+                                              "children": [
+                                                {
+                                                  "role": "generic",
+                                                  "name": "Quick help for search",
+                                                  "haspopup": "menu",
+                                                  "children": [
+                                                    {
+                                                      "role": "SVGRoot",
+                                                      "name": "",
+                                                      "children": [
+                                                        {
+                                                          "role": "generic",
+                                                          "name": ""
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "role": "generic",
+                                      "name": "",
+                                      "children": [
+                                        {
+                                          "role": "button",
+                                          "name": "Test code",
+                                          "description": "file:(test|spec)",
+                                          "children": [
+                                            {
+                                              "role": "generic",
+                                              "name": "",
+                                              "children": [
+                                                {
+                                                  "role": "text",
+                                                  "name": "Test code"
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "role": "button",
+                                          "name": "Non-test files",
+                                          "description": "-file:(test|spec)",
+                                          "children": [
+                                            {
+                                              "role": "generic",
+                                              "name": "",
+                                              "children": [
+                                                {
+                                                  "role": "text",
+                                                  "name": "Non-test files"
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "role": "button",
+                                          "name": "JSON files",
+                                          "description": "file:\\.json$",
+                                          "children": [
+                                            {
+                                              "role": "generic",
+                                              "name": "",
+                                              "children": [
+                                                {
+                                                  "role": "text",
+                                                  "name": "JSON files"
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "role": "button",
+                                          "name": "Text documents",
+                                          "description": "file:\\.(txt|md)$",
+                                          "children": [
+                                            {
+                                              "role": "generic",
+                                              "name": "",
+                                              "children": [
+                                                {
+                                                  "role": "text",
+                                                  "name": "Text documents"
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "role": "button",
+                                          "name": "Non-vendor code",
+                                          "description": "-file:vendor/ -file:node_modules/",
+                                          "children": [
+                                            {
+                                              "role": "generic",
+                                              "name": "",
+                                              "children": [
+                                                {
+                                                  "role": "text",
+                                                  "name": "Non-vendor code"
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "role": "button",
+                                          "name": "Vendored code",
+                                          "description": "file:(vendor|node_modules)/",
+                                          "children": [
+                                            {
+                                              "role": "generic",
+                                              "name": "",
+                                              "children": [
+                                                {
+                                                  "role": "text",
+                                                  "name": "Vendored code"
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "role": "generic",
+              "name": ""
+            }
+          ]
+        },
+        {
+          "role": "IframePresentational",
+          "name": "Blank"
+        },
+        {
+          "role": "generic",
+          "name": "",
+          "children": [
+            {
+              "role": "alert",
+              "name": ""
+            },
+            {
+              "role": "status",
+              "name": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

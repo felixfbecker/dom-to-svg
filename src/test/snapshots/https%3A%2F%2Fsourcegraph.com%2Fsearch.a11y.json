@@ -1,0 +1,323 @@
+{
+  "role": "WebArea",
+  "name": "",
+  "children": [
+    {
+      "role": "img",
+      "name": "logo"
+    },
+    {
+      "role": "heading",
+      "name": "This website uses cookies.",
+      "level": 2
+    },
+    {
+      "role": "text",
+      "name": "We use cookies to offer you a better browsing experience, analyze site traffic, personalize content"
+    },
+    {
+      "role": "text",
+      "name": "and serve targeted ads.  Learn about how we use cookies and how you can control them in our"
+    },
+    {
+      "role": "text",
+      "name": ". By using our site, you consent to our use of cookies. "
+    },
+    {
+      "role": "link",
+      "name": "Cookie Policy"
+    },
+    {
+      "role": "checkbox",
+      "name": "",
+      "checked": false
+    },
+    {
+      "role": "link",
+      "name": "Necessary only"
+    },
+    {
+      "role": "link",
+      "name": "OK"
+    },
+    {
+      "role": "link",
+      "name": "Show details"
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "checkbox",
+      "name": "",
+      "disabled": true,
+      "checked": false
+    },
+    {
+      "role": "checkbox",
+      "name": "",
+      "checked": false
+    },
+    {
+      "role": "checkbox",
+      "name": "",
+      "checked": false
+    },
+    {
+      "role": "checkbox",
+      "name": "",
+      "checked": false
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "text",
+      "name": "Sourcegraph 3.16 is now available! Check out the"
+    },
+    {
+      "role": "text",
+      "name": "for more details."
+    },
+    {
+      "role": "link",
+      "name": "3.16 release blog post"
+    },
+    {
+      "role": "button",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": "Campaigns"
+    },
+    {
+      "role": "link",
+      "name": "Extensions"
+    },
+    {
+      "role": "link",
+      "name": "Sign in"
+    },
+    {
+      "role": "link",
+      "name": "About"
+    },
+    {
+      "role": "link",
+      "name": "Help"
+    },
+    {
+      "role": "button",
+      "name": ""
+    },
+    {
+      "role": "combobox",
+      "name": "Toggle search mode",
+      "haspopup": "menu"
+    },
+    {
+      "role": "textbox",
+      "name": "Editor content;Press Alt+F1 for Accessibility Options.",
+      "multiline": true,
+      "autocomplete": "both"
+    },
+    {
+      "role": "checkbox",
+      "name": "Case sensitivity toggle",
+      "checked": false
+    },
+    {
+      "role": "checkbox",
+      "name": "Regular expression toggle",
+      "checked": false
+    },
+    {
+      "role": "checkbox",
+      "name": "Structural search toggle",
+      "checked": false
+    },
+    {
+      "role": "button",
+      "name": "Search"
+    },
+    {
+      "role": "button",
+      "name": "Test code"
+    },
+    {
+      "role": "button",
+      "name": "Non-test files"
+    },
+    {
+      "role": "button",
+      "name": "JSON files"
+    },
+    {
+      "role": "button",
+      "name": "Text documents"
+    },
+    {
+      "role": "button",
+      "name": "Non-vendor code"
+    },
+    {
+      "role": "button",
+      "name": "Vendored code"
+    }
+  ]
+}

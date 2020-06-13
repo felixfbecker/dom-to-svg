@@ -1,0 +1,12 @@
+{
+	"extends": "@sourcegraph/eslint-config",
+	"parserOptions": {
+		"project": "**/tsconfig.json"
+	},
+	"rules": {
+		"etc/throw-error": "off",
+		"etc/deprecation": "off",
+		"unicorn/import-index": "off",
+		"callback-return": "off"
+	}
+}

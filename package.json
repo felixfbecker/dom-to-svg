@@ -1,0 +1,44 @@
+{
+	"name": "dom-to-svg",
+	"version": "0.0.1",
+	"description": "Take SVG screenshots of DOM elements",
+	"main": "lib/index.js",
+	"files": [
+		"lib"
+	],
+	"scripts": {
+		"build": "tsc -p .",
+		"watch": "tsc -p . -w",
+		"eslint": "eslint 'src/**/*.ts'",
+		"get-fixture": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' ts-node src/test/get-fixture.ts",
+		"test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha --no-timeouts"
+	},
+	"mocha": {
+		"spec": "src/test/**/test.ts",
+		"require": "ts-node/register"
+	},
+	"author": "Felix Becker",
+	"license": "MIT",
+	"devDependencies": {
+		"@sourcegraph/eslint-config": "^0.19.2",
+		"@sourcegraph/prettierrc": "^3.0.3",
+		"@types/classnames": "^2.2.10",
+		"@types/express": "^4.17.6",
+		"@types/lodash": "^4.14.155",
+		"@types/mime-types": "^2.1.0",
+		"@types/mocha": "^7.0.2",
+		"@types/node": "^14.0.11",
+		"@types/prettier": "^2.0.1",
+		"@types/puppeteer": "^3.0.0",
+		"es-dev-server": "^1.54.1",
+		"eslint": "^7.2.0",
+		"express": "^4.17.1",
+		"mime-types": "^2.1.27",
+		"mocha": "^7.2.0",
+		"prettier": "^2.0.5",
+		"puppeteer": "^3.3.0",
+		"ts-node": "^8.10.2",
+		"typescript": "^3.9.5"
+	},
+	"dependencies": {}
+}
