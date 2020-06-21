@@ -86,7 +86,7 @@ export interface StackingLayers {
 }
 
 function createStackingLayer(parent: SVGElement, layerName: keyof StackingLayers): SVGGElement {
-	const layer = document.createElementNS(svgNamespace, 'g')
+	const layer = parent.ownerDocument.createElementNS(svgNamespace, 'g')
 	layer.dataset.stackingLayer = layerName
 	parent.append(layer)
 	return layer

@@ -4,6 +4,7 @@ import { handleTextNode } from './text'
 import { StackingLayers } from './stacking'
 
 export interface TraversalContext {
+	readonly svgDocument: XMLDocument
 	readonly currentSvgParent: SVGElement
 	readonly parentStackingLayer: SVGElement
 	readonly stackingLayers: StackingLayers

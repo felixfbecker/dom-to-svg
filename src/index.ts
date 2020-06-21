@@ -4,11 +4,16 @@ import { walkNode } from './traversal.js'
 import { createStackingLayers } from './stacking.js'
 import { createCounter } from './util.js'
 
-export function documentToSVG(document: Document): SVGSVGElement {
-	const svgElement = document.createElementNS(svgNamespace, 'svg')
+export * from './serialize.js'
+
+export function documentToSVG(document: Document): XMLDocument {
+	const svgDocument = document.implementation.createDocument(svgNamespace, 'svg', null) as XMLDocument
+
+	const svgElement = (svgDocument.documentElement as unknown) as SVGSVGElement
 	svgElement.setAttribute('xmlns', svgNamespace)
 
 	walkNode(document.documentElement, {
+		svgDocument,
 		currentSvgParent: svgElement,
 		stackingLayers: createStackingLayers(svgElement),
 		parentStackingLayer: svgElement,
@@ -21,7 +26,7 @@ export function documentToSVG(document: Document): SVGSVGElement {
 	svgElement.setAttribute('height', bounds.height.toString())
 	svgElement.setAttribute('viewBox', `${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`)
 
-	return svgElement
+	return svgDocument
 }
 
 export async function inlineResources(element: Element): Promise<void> {

@@ -29,7 +29,7 @@ describe('documentToSVG()', () => {
 			nodeResolve: true,
 			port: 8080,
 			middlewares: [
-				async ({ request, response }, next) => {
+				async ({ response }, next) => {
 					response.set('Access-Control-Allow-Origin', '*')
 					response.set('Cache-Control', 'no-store')
 					await next()
@@ -54,8 +54,8 @@ describe('documentToSVG()', () => {
 	const snapshotDirectory = path.resolve(__dirname, 'snapshots')
 	const sites = [
 		new URL('https://sourcegraph.com/search'),
-		new URL('https://google.com'),
-		new URL('https://news.ycombinator.com'),
+		// new URL('https://google.com'),
+		// new URL('https://news.ycombinator.com'),
 	]
 	for (const url of sites) {
 		const encodedName = encodeURIComponent(url.href)
@@ -106,7 +106,7 @@ describe('documentToSVG()', () => {
 			})
 			after('Closing SVG page', () => svgPage?.close())
 
-			it('produces expected SVG markup', async function () {
+			it('produces expected SVG markup', function () {
 				if (!snapshottedSVGMarkup) {
 					this.skip()
 				}

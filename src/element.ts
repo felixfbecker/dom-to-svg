@@ -18,10 +18,7 @@ import {
 	hasUniformBorderRadius,
 } from './css.js'
 
-export function handleElement(
-	element: Element,
-	{ currentSvgParent, parentStackingLayer, stackingLayers, labels, getUniqueId }: Readonly<TraversalContext>
-): void {
+export function handleElement(element: Element, context: Readonly<TraversalContext>): void {
 	const cleanupFunctions: (() => void)[] = []
 
 	try {
@@ -35,12 +32,12 @@ export function handleElement(
 		const parentStyles = element.parentElement && window.getComputedStyle(element.parentElement)
 
 		const svgContainer = isHTMLAnchorElement(element)
-			? createSvgAnchor(element)
-			: document.createElementNS(svgNamespace, 'g')
+			? createSvgAnchor(element, context)
+			: context.svgDocument.createElementNS(svgNamespace, 'g')
 
 		// Add IDs, classes, debug info
 		svgContainer.dataset.tag = element.tagName.toLowerCase()
-		const id = element.id || (element.classList[0] || element.tagName.toLowerCase()) + getUniqueId()
+		const id = element.id || (element.classList[0] || element.tagName.toLowerCase()) + context.getUniqueId()
 		svgContainer.id = id
 		const className = element.getAttribute('class')
 		if (className) {
@@ -49,20 +46,21 @@ export function handleElement(
 
 		// Which parent should the container itself be appended to?
 		const stackingLayer =
-			stackingLayers[
+			context.stackingLayers[
 				establishesStackingContext(styles, parentStyles)
 					? 'rootBackgroundAndBorders'
 					: determineStackingLayer(styles, parentStyles)
 			]
 		if (stackingLayer) {
-			currentSvgParent.setAttribute(
+			context.currentSvgParent.setAttribute(
 				'aria-owns',
-				[currentSvgParent.getAttribute('aria-owns'), svgContainer.id].filter(Boolean).join(' ')
+				[context.currentSvgParent.getAttribute('aria-owns'), svgContainer.id].filter(Boolean).join(' ')
 			)
 		}
 		// If the parent is within the same stacking layer, append to the parent.
 		// Otherwise append to the right stacking layer.
-		const elementToAppendTo = parentStackingLayer === stackingLayer ? currentSvgParent : stackingLayer
+		const elementToAppendTo =
+			context.parentStackingLayer === stackingLayer ? context.currentSvgParent : stackingLayer
 		svgContainer.dataset.zIndex = styles.zIndex // Used for sorting
 		elementToAppendTo.append(svgContainer)
 
@@ -74,25 +72,21 @@ export function handleElement(
 			ownStackingLayers = createStackingLayers(svgContainer)
 			backgroundContainer = ownStackingLayers.rootBackgroundAndBorders
 			childContext = {
+				...context,
 				currentSvgParent: svgContainer,
 				parentStackingLayer: stackingLayer,
-				stackingLayers,
-				labels,
-				getUniqueId,
 			}
 		} else {
 			backgroundContainer = svgContainer
 			childContext = {
+				...context,
 				currentSvgParent: svgContainer,
 				parentStackingLayer: stackingLayer,
-				stackingLayers,
-				labels,
-				getUniqueId,
 			}
 		}
 
 		// Accessibility
-		for (const [name, value] of getAccessibilityAttributes(element, { labels, getUniqueId })) {
+		for (const [name, value] of getAccessibilityAttributes(element, context)) {
 			svgContainer.setAttribute(name, value)
 		}
 
@@ -103,7 +97,7 @@ export function handleElement(
 				const span = element.ownerDocument.createElement('span')
 				copyCssStyles(pseudoElementStyles, span.style)
 				span.textContent = parseCssString(pseudoElementStyles.content)
-				const style = document.createElement('style')
+				const style = element.ownerDocument.createElement('style')
 				style.innerHTML = `#${id}${pseudoSelector} { display: none; }`
 				element.before(style)
 				cleanupFunctions.push(() => style.remove())
@@ -115,21 +109,20 @@ export function handleElement(
 		handlePseudoElement('::after', 'append')
 		// TODO handle ::marker etc
 
-		addBackgroundAndBorders(styles, bounds, backgroundContainer, window, getUniqueId)
+		addBackgroundAndBorders(styles, bounds, backgroundContainer, window, context)
 
 		// If element is overflow: hidden, create a clipping rectangle to hide any overflowing content of any descendants
 		let clipPath: SVGClipPathElement | undefined
 		if (styles.overflow !== 'visible') {
-			clipPath = document.createElementNS(svgNamespace, 'clipPath')
-			clipPath.id = 'clipPath' + getUniqueId()
-			clipPath.append(createBox(bounds))
+			clipPath = context.svgDocument.createElementNS(svgNamespace, 'clipPath')
+			clipPath.id = 'clipPath' + context.getUniqueId()
+			clipPath.append(createBox(bounds, context))
 			svgContainer.before(clipPath)
 			svgContainer.setAttribute('clip-path', `url(#${clipPath.id})`)
 		}
 
 		if (isHTMLImageElement(element)) {
-			const svgImage = document.createElementNS(svgNamespace, 'image')
-			// TODO inline resource as Base64 data URI
+			const svgImage = context.svgDocument.createElementNS(svgNamespace, 'image')
 			svgImage.setAttribute('href', element.src)
 			svgImage.setAttribute('x', bounds.x.toString())
 			svgImage.setAttribute('y', bounds.y.toString())
@@ -169,7 +162,7 @@ function addBackgroundAndBorders(
 	bounds: DOMRect,
 	backgroundAndBordersContainer: SVGElement,
 	window: Window,
-	getUniqueId: () => number
+	context: Pick<TraversalContext, 'getUniqueId' | 'svgDocument'>
 ): void {
 	if (isVisible(styles)) {
 		if (
@@ -177,11 +170,11 @@ function addBackgroundAndBorders(
 			bounds.height > 0 &&
 			(!isTransparent(styles.backgroundColor) || hasUniformBorder(styles) || styles.backgroundImage !== 'none')
 		) {
-			const box = createBackgroundAndBorderBox(bounds, styles)
+			const box = createBackgroundAndBorderBox(bounds, styles, context)
 			backgroundAndBordersContainer.append(box)
 			// TODO handle multiple backgrounds
 			if (styles.backgroundImage !== 'none') {
-				const image = document.createElementNS(svgNamespace, 'image')
+				const image = context.svgDocument.createElementNS(svgNamespace, 'image')
 				const [width, height = 'auto'] = styles.backgroundSize.split(' ')
 				image.setAttribute('x', bounds.x.toString())
 				image.setAttribute('y', bounds.y.toString())
@@ -201,9 +194,9 @@ function addBackgroundAndBorders(
 				if (styles.backgroundRepeat === 'no-repeat') {
 					backgroundAndBordersContainer.append(image)
 				} else {
-					const pattern = document.createElementNS(svgNamespace, 'pattern')
+					const pattern = context.svgDocument.createElementNS(svgNamespace, 'pattern')
 					pattern.setAttribute('patternUnits', 'userSpaceOnUse')
-					pattern.id = 'pattern' + getUniqueId()
+					pattern.id = 'pattern' + context.getUniqueId()
 					pattern.append(image)
 					box.before(pattern)
 					box.setAttribute('fill', `url(#${pattern.id})`)
@@ -213,7 +206,7 @@ function addBackgroundAndBorders(
 
 		if (!hasUniformBorder(styles)) {
 			// Draw lines for each border
-			for (const borderLine of createBorders(styles, bounds)) {
+			for (const borderLine of createBorders(styles, bounds, context)) {
 				backgroundAndBordersContainer.append(borderLine)
 			}
 		}
@@ -237,8 +230,8 @@ function getBackgroundSizeDimension(size: string, elementSize: number): number {
 	return elementSize
 }
 
-function createBox(bounds: DOMRectReadOnly): SVGRectElement {
-	const box = document.createElementNS(svgNamespace, 'rect')
+function createBox(bounds: DOMRectReadOnly, context: Pick<TraversalContext, 'svgDocument'>): SVGRectElement {
+	const box = context.svgDocument.createElementNS(svgNamespace, 'rect')
 
 	// TODO consider rotation
 	box.setAttribute('width', bounds.width.toString())
@@ -249,8 +242,12 @@ function createBox(bounds: DOMRectReadOnly): SVGRectElement {
 	return box
 }
 
-function createBackgroundAndBorderBox(bounds: DOMRectReadOnly, styles: CSSStyleDeclaration): SVGRectElement {
-	const background = createBox(bounds)
+function createBackgroundAndBorderBox(
+	bounds: DOMRectReadOnly,
+	styles: CSSStyleDeclaration,
+	context: Pick<TraversalContext, 'svgDocument'>
+): SVGRectElement {
+	const background = createBox(bounds, context)
 
 	// TODO handle background image and other properties
 	if (styles.backgroundColor) {
@@ -275,10 +272,14 @@ function createBackgroundAndBorderBox(bounds: DOMRectReadOnly, styles: CSSStyleD
 	return background
 }
 
-function* createBorders(styles: CSSStyleDeclaration, bounds: DOMRectReadOnly): Iterable<SVGLineElement> {
+function* createBorders(
+	styles: CSSStyleDeclaration,
+	bounds: DOMRectReadOnly,
+	context: Pick<TraversalContext, 'svgDocument'>
+): Iterable<SVGLineElement> {
 	for (const side of ['top', 'bottom', 'right', 'left'] as const) {
 		if (hasBorder(styles, side)) {
-			yield createBorder(styles, bounds, side)
+			yield createBorder(styles, bounds, side, context)
 		}
 	}
 }
@@ -293,8 +294,13 @@ function hasBorder(styles: CSSStyleDeclaration, side: Side): boolean {
 	)
 }
 
-function createBorder(styles: CSSStyleDeclaration, bounds: DOMRectReadOnly, side: Side): SVGLineElement {
-	const border = document.createElementNS(svgNamespace, 'line')
+function createBorder(
+	styles: CSSStyleDeclaration,
+	bounds: DOMRectReadOnly,
+	side: Side,
+	context: Pick<TraversalContext, 'svgDocument'>
+): SVGLineElement {
+	const border = context.svgDocument.createElementNS(svgNamespace, 'line')
 	border.setAttribute('stroke', styles.getPropertyValue(`border-${side}-color`))
 	border.setAttribute('stroke-width', styles.getPropertyValue(`border-${side}-width`))
 	if (side === 'top') {
@@ -321,8 +327,8 @@ function createBorder(styles: CSSStyleDeclaration, bounds: DOMRectReadOnly, side
 	return border
 }
 
-function createSvgAnchor(element: HTMLAnchorElement): SVGAElement {
-	const svgAnchor = document.createElementNS(svgNamespace, 'a')
+function createSvgAnchor(element: HTMLAnchorElement, context: Pick<TraversalContext, 'svgDocument'>): SVGAElement {
+	const svgAnchor = context.svgDocument.createElementNS(svgNamespace, 'a')
 	if (element.href && !element.href.startsWith('javascript:')) {
 		svgAnchor.setAttribute('href', element.href)
 	}
