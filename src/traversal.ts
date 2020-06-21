@@ -1,4 +1,4 @@
-import { isElement, isTextNode } from './common'
+import { isElement, isTextNode } from './dom'
 import { handleElement } from './element'
 import { handleTextNode } from './text'
 import { StackingLayers } from './stacking'

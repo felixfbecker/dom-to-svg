@@ -1,15 +1,4 @@
-import {
-	svgNamespace,
-	isTransparent,
-	hasUniformBorder,
-	hasUniformBorderRadius,
-	isHTMLAnchorElement,
-	isHTMLImageElement,
-	isVisible,
-	parseUrlReference,
-	parseCssString,
-	copyCssStyles,
-} from './common.js'
+import { svgNamespace, isHTMLAnchorElement, isHTMLImageElement } from './dom.js'
 import { getAccessibilityAttributes } from './accessibility.js'
 import { TraversalContext, walkNode } from './traversal'
 import {
@@ -19,6 +8,15 @@ import {
 	StackingLayers,
 	sortStackingLayerChildren,
 } from './stacking.js'
+import {
+	copyCssStyles,
+	parseCssString,
+	isVisible,
+	isTransparent,
+	hasUniformBorder,
+	parseUrlReference,
+	hasUniformBorderRadius,
+} from './css.js'
 
 export function handleElement(
 	element: Element,

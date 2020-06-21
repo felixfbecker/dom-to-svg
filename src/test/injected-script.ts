@@ -1,5 +1,5 @@
 import { documentToSVG, inlineResources } from '../index.js'
-import { svgNamespace } from '../common.js'
+import { svgNamespace } from '../dom.js'
 
 async function main(): Promise<void> {
 	const svgElement = documentToSVG(document)

@@ -1,4 +1,4 @@
-import { svgNamespace } from './common.js'
+import { svgNamespace } from './dom.js'
 import { TraversalContext } from './traversal.js'
 
 export function handleTextNode(textNode: Text, context: TraversalContext): void {

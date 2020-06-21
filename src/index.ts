@@ -1,7 +1,8 @@
-import { svgNamespace, createCounter, isSVGImageElement } from './common.js'
+import { svgNamespace, isSVGImageElement } from './dom.js'
 import { fetchAsDataURL } from './inline'
 import { walkNode } from './traversal.js'
 import { createStackingLayers } from './stacking.js'
+import { createCounter } from './util.js'
 
 export function documentToSVG(document: Document): SVGSVGElement {
 	const svgElement = document.createElementNS(svgNamespace, 'svg')

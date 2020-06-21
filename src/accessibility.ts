@@ -1,5 +1,5 @@
 import { TraversalContext } from './traversal'
-import { hasLabels, isHTMLElement } from './common'
+import { hasLabels, isHTMLElement } from './dom'
 
 const isStandaloneFooter = (element: Element): boolean =>
 	!element.closest(
