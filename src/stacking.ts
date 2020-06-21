@@ -30,16 +30,11 @@ const stackingContextEstablishingProperties = new Set<string>([
 	'zIndex',
 ])
 
-export function establishesStackingContext(node: Node): boolean {
-	if (!node.ownerDocument?.defaultView) {
-		throw new Error("Node's ownerDocument has no defaultView")
-	}
-	if (!isElement(node)) {
-		return false
-	}
+export function establishesStackingContext(
+	styles: CSSStyleDeclaration,
+	parentStyles: CSSStyleDeclaration | null
+): boolean {
 	// https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context
-	const styles = node.ownerDocument.defaultView.getComputedStyle(node)
-	const parentStyles = node.parentElement && node.ownerDocument.defaultView.getComputedStyle(node.parentElement)
 	return !!(
 		((styles.position === 'absolute' || styles.position === 'relative') && styles.zIndex !== 'auto') ||
 		styles.position === 'fixed' ||
@@ -125,33 +120,31 @@ export function createStackingLayers(container: SVGElement): StackingLayers {
 	}
 }
 
-export function determineStackingLayer(element: Element): keyof StackingLayers {
-	if (!element.ownerDocument.defaultView) {
-		throw new Error("Element's ownerDocument has no defaultView")
-	}
-
+export function determineStackingLayer(
+	styles: CSSStyleDeclaration,
+	parentStyles: CSSStyleDeclaration | null
+): keyof StackingLayers {
 	// https://www.w3.org/TR/CSS22/visuren.html#layers
 	// https://www.w3.org/TR/CSS22/zindex.html
 
 	// Note: the root element is not handled here, but in handleElement().
-	const styles = element.ownerDocument.defaultView.getComputedStyle(element)
 	const zIndex = styles.zIndex !== 'auto' ? parseInt(styles.zIndex, 10) : undefined
-	if (zIndex !== undefined && zIndex < 0 && establishesStackingContext(element)) {
+	if (zIndex !== undefined && zIndex < 0 && establishesStackingContext(styles, parentStyles)) {
 		return 'childStackingContextsWithNegativeStackLevels'
 	}
-	if (isInFlow(element, styles) && !isInline(styles) && !isPositioned(styles)) {
+	if (isInFlow(styles) && !isInline(styles) && !isPositioned(styles)) {
 		return 'inFlowNonInlineNonPositionedDescendants'
 	}
 	if (!isPositioned(styles) && styles.float !== 'none') {
 		return 'nonPositionedFloats'
 	}
-	if (isInFlow(element, styles) && isInline(styles) && !isPositioned(styles)) {
+	if (isInFlow(styles) && isInline(styles) && !isPositioned(styles)) {
 		return 'inFlowInlineLevelNonPositionedDescendants'
 	}
-	if (zIndex === 0 && (isPositioned(styles) || establishesStackingContext(element))) {
+	if (zIndex === 0 && (isPositioned(styles) || establishesStackingContext(styles, parentStyles))) {
 		return 'childStackingContextsWithStackLevelZeroAndPositionedDescendantsWithStackLevelZero'
 	}
-	if (zIndex !== undefined && zIndex > 0 && establishesStackingContext(element)) {
+	if (zIndex !== undefined && zIndex > 0 && establishesStackingContext(styles, parentStyles)) {
 		return 'childStackingContextsWithPositiveStackLevels'
 	}
 	throw new Error('Did not find appropiate stacking layer')

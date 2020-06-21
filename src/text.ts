@@ -22,6 +22,7 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 			textSpan.setAttribute('x', lineRectangle.x.toString())
 			textSpan.setAttribute('y', lineRectangle.bottom.toString())
 			textSpan.setAttribute('textLength', lineRectangle.width.toString())
+			textSpan.setAttribute('lengthAdjust', 'spacingAndGlyphs')
 			svgTextElement.append(textSpan)
 		}
 		try {
@@ -54,39 +55,45 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 		if (!textNode.ownerDocument.defaultView) {
 			throw new Error("Element's ownerDocument has no defaultView")
 		}
-		const {
-			color,
-			fontFamily,
-			fontSize,
-			fontSizeAdjust,
-			fontStretch,
-			fontStyle,
-			fontVariant,
-			fontWeight,
-			direction,
-			letterSpacing,
-			textDecoration,
-			unicodeBidi,
-			wordSpacing,
-			writingMode,
-		} = textNode.ownerDocument.defaultView.getComputedStyle(textNode.parentElement)
-		Object.assign(svgTextElement.style, {
-			fill: color,
-			fontFamily,
-			fontSize,
-			fontSizeAdjust,
-			fontStretch,
-			fontStyle,
-			fontVariant,
-			fontWeight,
-			direction,
-			letterSpacing,
-			textDecoration,
-			unicodeBidi,
-			wordSpacing,
-			writingMode,
-		})
+		assignTextStyles(textNode.ownerDocument.defaultView.getComputedStyle(textNode.parentElement), svgTextElement)
 	}
 
 	context.currentSvgParent.append(svgTextElement)
+}
+
+export function assignTextStyles(styles: CSSStyleDeclaration, svgElement: SVGElement): void {
+	const {
+		color,
+		fontFamily,
+		fontSize,
+		fontSizeAdjust,
+		fontStretch,
+		fontStyle,
+		fontVariant,
+		fontWeight,
+		direction,
+		letterSpacing,
+		textDecoration,
+		unicodeBidi,
+		wordSpacing,
+		writingMode,
+		userSelect,
+	} = styles
+	Object.assign(svgElement.style, {
+		fill: color,
+		fontFamily,
+		fontSize,
+		fontSizeAdjust,
+		fontStretch,
+		fontStyle,
+		fontVariant,
+		fontWeight,
+		direction,
+		letterSpacing,
+		textDecoration,
+		unicodeBidi,
+		wordSpacing,
+		writingMode,
+		userSelect,
+	})
 }

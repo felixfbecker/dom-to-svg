@@ -23,11 +23,8 @@ export const isInline = (styles: CSSStyleDeclaration): boolean =>
 
 export const isPositioned = (styles: CSSStyleDeclaration): boolean => styles.position !== 'static'
 
-export const isInFlow = (node: Element, styles: CSSStyleDeclaration): boolean =>
-	styles.float !== 'none' &&
-	styles.position !== 'absolute' &&
-	styles.position !== 'fixed' &&
-	node !== node.ownerDocument.documentElement
+export const isInFlow = (styles: CSSStyleDeclaration): boolean =>
+	styles.float !== 'none' && styles.position !== 'absolute' && styles.position !== 'fixed'
 
 export const isTransparent = (color: string): boolean => color === 'transparent' || color === 'rgba(0, 0, 0, 0)'
 
@@ -50,6 +47,38 @@ export const isVisible = (styles: CSSStyleDeclaration): boolean =>
 	styles.visibility !== 'hidden' &&
 	styles.opacity !== '0'
 
+export function parseCSSLength(length: string, containerLength: number): number | undefined {
+	if (length.endsWith('px')) {
+		return parseFloat(length)
+	}
+	if (length.endsWith('%')) {
+		return (parseFloat(length) / 100) * containerLength
+	}
+	return undefined
+}
+
+export function parseCssString(value: string): string {
+	const match = value.match(/^\s*(?:'(.*)'|"(.*)")\s*$/)
+	if (!match) {
+		throw new Error(`Invalid CSS string: ${value}`)
+	}
+	return (match[1] || match[2]).replace(/\\(.)/g, '$1')
+}
+
+export function parseUrlReference(reference: string): string {
+	const match = reference.match(/url\((?:'(.*)'|"(.*)"|(.*))\)/)
+	if (!match) {
+		throw new URIError('Invalid URL')
+	}
+	return (match[1] ?? match[2] ?? match[3]).replace(/\\(.)/g, '$1')
+}
+
+export function copyCssStyles(from: CSSStyleDeclaration, to: CSSStyleDeclaration): void {
+	for (const property of from) {
+		to.setProperty(property, to.getPropertyValue(property), to.getPropertyPriority(property))
+	}
+}
+
 export function* traverseDOM(node: Node, shouldEnter: (node: Node) => boolean = () => true): Iterable<Node> {
 	yield node
 	if (shouldEnter(node)) {
@@ -62,18 +91,4 @@ export function* traverseDOM(node: Node, shouldEnter: (node: Node) => boolean = 
 export const createCounter = (): (() => number) => {
 	let count = 0
 	return () => ++count
-}
-
-export async function fetchAsDataURL(url: URL): Promise<URL> {
-	const response = await fetch(url.href)
-	if (!response.ok) {
-		throw new Error(response.statusText)
-	}
-	const blob = await response.blob()
-	const reader = new FileReader()
-	await new Promise<void>(resolve => {
-		reader.addEventListener('load', () => resolve())
-		reader.readAsDataURL(blob)
-	})
-	return new URL(reader.result as string)
 }

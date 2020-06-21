@@ -1,4 +1,5 @@
-import { svgNamespace, createCounter, traverseDOM, isSVGImageElement, fetchAsDataURL } from './common.js'
+import { svgNamespace, createCounter, isSVGImageElement } from './common.js'
+import { fetchAsDataURL } from './inline'
 import { walkNode } from './traversal.js'
 import { createStackingLayers } from './stacking.js'
 
@@ -6,7 +7,7 @@ export function documentToSVG(document: Document): SVGSVGElement {
 	const svgElement = document.createElementNS(svgNamespace, 'svg')
 	svgElement.setAttribute('xmlns', svgNamespace)
 
-	walkNode(document.body, {
+	walkNode(document.documentElement, {
 		currentSvgParent: svgElement,
 		stackingLayers: createStackingLayers(svgElement),
 		parentStackingLayer: svgElement,
@@ -14,7 +15,7 @@ export function documentToSVG(document: Document): SVGSVGElement {
 		labels: new Map(),
 	})
 
-	const bounds = document.body.getBoundingClientRect()
+	const bounds = document.documentElement.getBoundingClientRect()
 	svgElement.setAttribute('width', bounds.width.toString())
 	svgElement.setAttribute('height', bounds.height.toString())
 	svgElement.setAttribute('viewBox', `${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`)
