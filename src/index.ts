@@ -7,12 +7,16 @@ import { createCounter } from './util.js'
 export * from './serialize.js'
 
 export function documentToSVG(document: Document): XMLDocument {
-	const svgDocument = document.implementation.createDocument(svgNamespace, 'svg', null) as XMLDocument
+	return elementToSVG(document.documentElement)
+}
+
+export function elementToSVG(element: Element): XMLDocument {
+	const svgDocument = element.ownerDocument.implementation.createDocument(svgNamespace, 'svg', null) as XMLDocument
 
 	const svgElement = (svgDocument.documentElement as unknown) as SVGSVGElement
 	svgElement.setAttribute('xmlns', svgNamespace)
 
-	walkNode(document.documentElement, {
+	walkNode(element, {
 		svgDocument,
 		currentSvgParent: svgElement,
 		stackingLayers: createStackingLayers(svgElement),
@@ -21,7 +25,7 @@ export function documentToSVG(document: Document): XMLDocument {
 		labels: new Map(),
 	})
 
-	const bounds = document.documentElement.getBoundingClientRect()
+	const bounds = element.getBoundingClientRect()
 	svgElement.setAttribute('width', bounds.width.toString())
 	svgElement.setAttribute('height', bounds.height.toString())
 	svgElement.setAttribute('viewBox', `${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`)
