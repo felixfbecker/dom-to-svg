@@ -3,6 +3,9 @@ import { isInFlow, isInline, isPositioned } from './css'
 
 declare global {
 	interface CSSStyleDeclaration {
+		// @font-face
+		src: string
+
 		mixBlendMode: string
 		maskBorder: string
 		isolation: string

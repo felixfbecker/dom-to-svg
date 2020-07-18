@@ -15,6 +15,8 @@ export const isHTMLImageElement = (element: Element): element is HTMLImageElemen
 	element.tagName === 'IMG' && isHTMLElement(element)
 export const isSVGImageElement = (element: Element): element is SVGImageElement =>
 	element.tagName === 'image' && isSVGElement(element)
+export const isSVGStyleElement = (element: Element): element is SVGStyleElement =>
+	element.tagName === 'style' && isSVGElement(element)
 export const hasLabels = (element: HTMLElement): element is HTMLElement & Pick<HTMLInputElement, 'labels'> =>
 	'labels' in element
 

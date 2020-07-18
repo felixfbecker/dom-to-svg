@@ -1,5 +1,5 @@
-export async function fetchAsDataURL(url: URL): Promise<URL> {
-	const response = await fetch(url.href)
+export async function fetchAsDataURL(url: string): Promise<URL> {
+	const response = await fetch(url)
 	if (!response.ok) {
 		throw new Error(response.statusText)
 	}
