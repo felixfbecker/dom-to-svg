@@ -7,11 +7,23 @@ import { isCSSFontFaceRule, parseFontFaceSourceUrls } from './css.js'
 
 export * from './serialize.js'
 
-export function documentToSVG(document: Document): XMLDocument {
-	return elementToSVG(document.documentElement)
+export interface BoundsOptions {
+	x: number
+	y: number
+	width: number
+	height: number
 }
 
-export function elementToSVG(element: Element): XMLDocument {
+export interface Options {
+	/** Relative to the document. */
+	clientBounds?: BoundsOptions
+}
+
+export function documentToSVG(document: Document, options?: Options): XMLDocument {
+	return elementToSVG(document.documentElement, options)
+}
+
+export function elementToSVG(element: Element, options?: Options): XMLDocument {
 	const svgDocument = element.ownerDocument.implementation.createDocument(svgNamespace, 'svg', null) as XMLDocument
 
 	const svgElement = (svgDocument.documentElement as unknown) as SVGSVGElement
@@ -37,10 +49,18 @@ export function elementToSVG(element: Element): XMLDocument {
 		labels: new Map(),
 	})
 
-	const bounds = element.getBoundingClientRect()
+	const bounds = options?.clientBounds ?? element.getBoundingClientRect()
 	svgElement.setAttribute('width', bounds.width.toString())
 	svgElement.setAttribute('height', bounds.height.toString())
-	svgElement.setAttribute('viewBox', `${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`)
+	svgElement.setAttribute(
+		'viewBox',
+		[
+			(element.ownerDocument.scrollingElement?.scrollTop ?? 0) + bounds.x,
+			(element.ownerDocument.scrollingElement?.scrollLeft ?? 0) + bounds.y,
+			bounds.width,
+			bounds.height,
+		].join(' ')
+	)
 
 	return svgDocument
 }
