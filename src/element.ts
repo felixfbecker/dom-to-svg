@@ -172,8 +172,8 @@ function addBackgroundAndBorders(
 		) {
 			const box = createBackgroundAndBorderBox(bounds, styles, context)
 			backgroundAndBordersContainer.append(box)
-			// TODO handle multiple backgrounds
-			if (styles.backgroundImage !== 'none') {
+			// TODO handle linear-gradient() and multiple (stacked) backgrounds
+			if (styles.backgroundImage !== 'none' && styles.backgroundImage.trim().startsWith('url(')) {
 				const image = context.svgDocument.createElementNS(svgNamespace, 'image')
 				const [width, height = 'auto'] = styles.backgroundSize.split(' ')
 				image.setAttribute('x', bounds.x.toString())

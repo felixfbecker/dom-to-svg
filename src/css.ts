@@ -77,7 +77,7 @@ export function parseCssString(value: string): string {
 export function parseUrlReference(reference: string): string {
 	const match = reference.match(/url\((?:'(.*)'|"(.*)"|(.*))\)/)
 	if (!match) {
-		throw new URIError('Invalid URL')
+		throw new URIError('Invalid URL ' + JSON.stringify(reference))
 	}
 	return (match[1] ?? match[2] ?? match[3]).replace(/\\(.)/g, '$1')
 }
@@ -85,7 +85,7 @@ export function parseUrlReference(reference: string): string {
 export function parseFormatSpecifier(format: string): string {
 	const match = format.match(/format\((?:'(.*)'|"(.*)"|(.*))\)/)
 	if (!match) {
-		throw new Error('Invalid format()')
+		throw new Error('Invalid format() ' + JSON.stringify(format))
 	}
 	return (match[1] ?? match[2] ?? match[3]).replace(/\\(.)/g, '$1')
 }
@@ -93,7 +93,7 @@ export function parseFormatSpecifier(format: string): string {
 export function parseLocalReference(format: string): string {
 	const match = format.match(/local\((?:'(.*)'|"(.*)"|(.*))\)/)
 	if (!match) {
-		throw new Error('Invalid local()')
+		throw new Error('Invalid local() ' + JSON.stringify(format))
 	}
 	return (match[1] ?? match[2] ?? match[3]).replace(/\\(.)/g, '$1')
 }
