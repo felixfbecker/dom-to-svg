@@ -7,6 +7,10 @@
 	"files": [
 		"lib"
 	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/felixfbecker/dom-to-svg"
+	},
 	"keywords": [
 		"svg",
 		"dom",
