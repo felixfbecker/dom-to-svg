@@ -1,4 +1,4 @@
-import { svgNamespace, isHTMLAnchorElement, isHTMLImageElement } from './dom.js'
+import { svgNamespace, isHTMLAnchorElement, isHTMLImageElement, isHTMLInputElement } from './dom.js'
 import { getAccessibilityAttributes } from './accessibility.js'
 import { TraversalContext, walkNode } from './traversal'
 import {
@@ -16,7 +16,9 @@ import {
 	hasUniformBorder,
 	parseUrlReference,
 	hasUniformBorderRadius,
+	parseCSSLength,
 } from './css.js'
+import { assignTextStyles } from './text.js'
 
 export function handleElement(element: Element, context: Readonly<TraversalContext>): void {
 	const cleanupFunctions: (() => void)[] = []
@@ -132,6 +134,24 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 				svgImage.setAttribute('aria-label', element.alt)
 			}
 			svgContainer.append(svgImage)
+		} else if (isHTMLInputElement(element)) {
+			// Handle button labels or input field content
+			if (element.value) {
+				const svgTextElement = context.svgDocument.createElementNS(svgNamespace, 'text')
+				svgTextElement.setAttribute('dominant-baseline', 'central')
+				svgTextElement.setAttribute('xml:space', 'preserve')
+				svgTextElement.setAttribute(
+					'x',
+					(bounds.x + (parseCSSLength(styles.paddingLeft, bounds.width) ?? 0)).toString()
+				)
+				const top = bounds.top + (parseCSSLength(styles.paddingTop, bounds.height) ?? 0)
+				const bottom = bounds.bottom + (parseCSSLength(styles.paddingBottom, bounds.height) ?? 0)
+				const middle = (top + bottom) / 2
+				svgTextElement.setAttribute('y', middle.toString())
+				svgTextElement.textContent = element.value
+				assignTextStyles(styles, svgTextElement)
+				stackingLayer.append(svgTextElement)
+			}
 		} else if (element.tagName === 'svg') {
 			// Embed SVG, don't traverse contents
 			// TODO walk contents to inline resources

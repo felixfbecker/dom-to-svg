@@ -13,6 +13,8 @@ export const isHTMLLabelElement = (element: Element): element is HTMLLabelElemen
 	element.tagName === 'LABEL' && isHTMLElement(element)
 export const isHTMLImageElement = (element: Element): element is HTMLImageElement =>
 	element.tagName === 'IMG' && isHTMLElement(element)
+export const isHTMLInputElement = (element: Element): element is HTMLInputElement =>
+	element.tagName === 'INPUT' && isHTMLElement(element)
 export const isSVGImageElement = (element: Element): element is SVGImageElement =>
 	element.tagName === 'image' && isSVGElement(element)
 export const isSVGStyleElement = (element: Element): element is SVGStyleElement =>
