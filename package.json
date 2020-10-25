@@ -7,6 +7,15 @@
 	"files": [
 		"lib"
 	],
+	"keywords": [
+		"svg",
+		"dom",
+		"screenshot",
+		"snapshot",
+		"document",
+		"element",
+		"image"
+	],
 	"scripts": {
 		"build": "tsc -p .",
 		"watch": "tsc -p . -w",
