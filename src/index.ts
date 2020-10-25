@@ -7,11 +7,19 @@ import { isCSSFontFaceRule, parseFontFaceSourceUrls } from './css.js'
 
 export * from './serialize.js'
 
-export function documentToSVG(document: Document): XMLDocument {
-	return elementToSVG(document.documentElement)
+export interface DomToSvgOptions {
+	/**
+	 * To visual area to contrain the SVG too.
+	 * Note this will not remove out-of-bounds elements from the SVG, just modify the `viewBox` accordingly.
+	 */
+	clientBounds?: DOMRectReadOnly
 }
 
-export function elementToSVG(element: Element): XMLDocument {
+export function documentToSVG(document: Document, options?: DomToSvgOptions): XMLDocument {
+	return elementToSVG(document.documentElement, options)
+}
+
+export function elementToSVG(element: Element, options?: DomToSvgOptions): XMLDocument {
 	const svgDocument = element.ownerDocument.implementation.createDocument(svgNamespace, 'svg', null) as XMLDocument
 
 	const svgElement = (svgDocument.documentElement as unknown) as SVGSVGElement
@@ -37,7 +45,7 @@ export function elementToSVG(element: Element): XMLDocument {
 		labels: new Map(),
 	})
 
-	const bounds = element.getBoundingClientRect()
+	const bounds = options?.clientBounds ?? element.getBoundingClientRect()
 	svgElement.setAttribute('width', bounds.width.toString())
 	svgElement.setAttribute('height', bounds.height.toString())
 	svgElement.setAttribute('viewBox', `${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`)
