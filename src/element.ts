@@ -126,10 +126,14 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 		if (isHTMLImageElement(element)) {
 			const svgImage = context.svgDocument.createElementNS(svgNamespace, 'image')
 			svgImage.setAttribute('href', element.src)
-			svgImage.setAttribute('x', bounds.x.toString())
-			svgImage.setAttribute('y', bounds.y.toString())
-			svgImage.setAttribute('width', bounds.width.toString())
-			svgImage.setAttribute('height', bounds.height.toString())
+			const paddingLeft = parseCSSLength(styles.paddingLeft, bounds.width) ?? 0
+			const paddingRight = parseCSSLength(styles.paddingRight, bounds.width) ?? 0
+			const paddingTop = parseCSSLength(styles.paddingTop, bounds.height) ?? 0
+			const paddingBottom = parseCSSLength(styles.paddingBottom, bounds.height) ?? 0
+			svgImage.setAttribute('x', (bounds.x + paddingLeft).toString())
+			svgImage.setAttribute('y', (bounds.y + paddingTop).toString())
+			svgImage.setAttribute('width', (bounds.width - paddingLeft - paddingRight).toString())
+			svgImage.setAttribute('height', (bounds.height - paddingTop - paddingBottom).toString())
 			if (element.alt) {
 				svgImage.setAttribute('aria-label', element.alt)
 			}
