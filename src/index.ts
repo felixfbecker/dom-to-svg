@@ -39,7 +39,13 @@ export function elementToSVG(element: Element, options?: DomToSvgOptions): XMLDo
 	// Copy @font-face rules
 	const styleElement = svgDocument.createElementNS(svgNamespace, 'style')
 	for (const styleSheet of element.ownerDocument.styleSheets) {
-		for (const rule of styleSheet.cssRules) {
+		let rules: CSSRuleList | undefined
+		try {
+			rules = styleSheet.rules
+		} catch (error) {
+			console.error('Could not access rules of styleSheet', styleSheet, error)
+		}
+		for (const rule of rules ?? []) {
 			if (isCSSFontFaceRule(rule)) {
 				styleElement.append(rule.cssText, '\n')
 			}
@@ -73,30 +79,34 @@ export async function inlineResources(element: Element): Promise<void> {
 		const dataURL = await fetchAsDataURL(element.href.baseVal)
 		element.setAttribute('href', dataURL.href)
 	} else if (isSVGStyleElement(element) && element.sheet) {
-		const sheet = element.sheet
-		for (const rule of element.sheet.cssRules) {
-			if (isCSSFontFaceRule(rule)) {
-				const sources = parseFontFaceSourceUrls(rule.style.src)
-				const resolvedSources = await Promise.all(
-					sources.map(async source => {
-						if (!('url' in source)) {
-							return source
-						}
-						const dataUrl = await fetchAsDataURL(source.url)
-						return { ...source, url: dataUrl }
-					})
-				)
-				rule.style.src = resolvedSources
-					.map(source => {
-						if ('local' in source) {
-							return source.local
-						}
-						return [`url(${source.url.href})`, source.format && `format(${source.format})`]
-							.filter(Boolean)
-							.join(' ')
-					})
-					.join(', ')
+		try {
+			const rules = element.sheet.cssRules
+			for (const rule of rules) {
+				if (isCSSFontFaceRule(rule)) {
+					const sources = parseFontFaceSourceUrls(rule.style.src)
+					const resolvedSources = await Promise.all(
+						sources.map(async source => {
+							if (!('url' in source)) {
+								return source
+							}
+							const dataUrl = await fetchAsDataURL(source.url)
+							return { ...source, url: dataUrl }
+						})
+					)
+					rule.style.src = resolvedSources
+						.map(source => {
+							if ('local' in source) {
+								return source.local
+							}
+							return [`url(${source.url.href})`, source.format && `format(${source.format})`]
+								.filter(Boolean)
+								.join(' ')
+						})
+						.join(', ')
+				}
 			}
+		} catch (error) {
+			console.error('Error inlining stylesheet', element.sheet, error)
 		}
 	}
 	await Promise.all([...element.children].map(inlineResources))
