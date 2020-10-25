@@ -7,12 +7,22 @@ import { isCSSFontFaceRule, parseFontFaceSourceUrls } from './css.js'
 
 export * from './serialize.js'
 
+/**
+ * Subset of DOMRectReadonly. Dimensions in px.
+ */
+export interface BoundsOptions {
+	readonly x: number
+	readonly y: number
+	readonly width: number
+	readonly height: number
+}
+
 export interface DomToSvgOptions {
 	/**
 	 * To visual area to contrain the SVG too.
 	 * Note this will not remove out-of-bounds elements from the SVG, just modify the `viewBox` accordingly.
 	 */
-	clientBounds?: DOMRectReadOnly
+	clientBounds?: BoundsOptions
 }
 
 export function documentToSVG(document: Document, options?: DomToSvgOptions): XMLDocument {
