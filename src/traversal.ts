@@ -9,6 +9,7 @@ export interface TraversalContext {
 	readonly parentStackingLayer: SVGElement
 	readonly stackingLayers: StackingLayers
 	readonly labels: Map<HTMLLabelElement, string>
+	readonly captureArea: DOMRectReadOnly
 	readonly getUniqueId: () => number
 }
 

@@ -19,6 +19,7 @@ import {
 	parseCSSLength,
 } from './css.js'
 import { assignTextStyles } from './text.js'
+import { doRectanglesIntersect } from './util.js'
 
 export function handleElement(element: Element, context: Readonly<TraversalContext>): void {
 	const cleanupFunctions: (() => void)[] = []
@@ -30,6 +31,10 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 		}
 
 		const bounds = element.getBoundingClientRect() // Includes borders
+		if (!doRectanglesIntersect(bounds, context.captureArea)) {
+			return
+		}
+
 		const styles = window.getComputedStyle(element)
 		const parentStyles = element.parentElement && window.getComputedStyle(element.parentElement)
 

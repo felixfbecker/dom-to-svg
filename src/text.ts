@@ -1,5 +1,6 @@
 import { svgNamespace } from './dom.js'
 import { TraversalContext } from './traversal.js'
+import { doRectanglesIntersect } from './util.js'
 
 export function handleTextNode(textNode: Text, context: TraversalContext): void {
 	const svgTextElement = context.svgDocument.createElementNS(svgNamespace, 'text')
@@ -15,10 +16,13 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 			if (lineRange.collapsed) {
 				return
 			}
+			const lineRectangle = lineRange.getClientRects()[0]
+			if (!doRectanglesIntersect(lineRectangle, context.captureArea)) {
+				return
+			}
 			const textSpan = context.svgDocument.createElementNS(svgNamespace, 'tspan')
 			textSpan.setAttribute('xml:space', 'preserve')
 			textSpan.textContent = lineRange.toString()
-			const lineRectangle = lineRange.getClientRects()[0]
 			textSpan.setAttribute('x', lineRectangle.x.toString())
 			textSpan.setAttribute('y', lineRectangle.bottom.toString())
 			textSpan.setAttribute('textLength', lineRectangle.width.toString())

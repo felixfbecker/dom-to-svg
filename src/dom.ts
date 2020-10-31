@@ -1,4 +1,5 @@
 export const svgNamespace = 'http://www.w3.org/2000/svg'
+export const xlinkNamespace = 'http://www.w3.org/1999/xlink'
 export const xhtmlNamespace = 'http://www.w3.org/1999/xhtml'
 
 export const isElement = (node: Node): node is Element => node.nodeType === Node.ELEMENT_NODE
