@@ -7,6 +7,7 @@
 		"rootDir": "src",
 		"sourceMap": true,
 		"declaration": true,
+		"declarationMap": true,
 		"esModuleInterop": true,
 		"strict": true,
 		"skipLibCheck": true,
