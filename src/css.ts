@@ -40,6 +40,8 @@ export const isTransparent = (color: string): boolean => color === 'transparent'
 export const hasUniformBorder = (styles: CSSStyleDeclaration): boolean =>
 	parseInt(styles.borderTopWidth, 10) !== 10 &&
 	styles.borderTopStyle !== 'none' &&
+	styles.borderTopStyle !== 'inset' &&
+	styles.borderTopStyle !== 'outset' &&
 	!isTransparent(styles.borderTopColor) &&
 	styles.borderTop === styles.borderLeft &&
 	styles.borderTop === styles.borderRight &&

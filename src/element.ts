@@ -329,8 +329,29 @@ function createBorder(
 	context: Pick<TraversalContext, 'svgDocument'>
 ): SVGLineElement {
 	const border = context.svgDocument.createElementNS(svgNamespace, 'line')
-	border.setAttribute('stroke', styles.getPropertyValue(`border-${side}-color`))
+	const color = styles.getPropertyValue(`border-${side}-color`)
+	border.setAttribute('stroke', color)
 	border.setAttribute('stroke-width', styles.getPropertyValue(`border-${side}-width`))
+
+	// Handle inset/outset borders
+	const borderStyle = styles.getPropertyValue(`border-${side}-style`)
+	if (
+		(borderStyle === 'inset' && (side === 'top' || side === 'left')) ||
+		(borderStyle === 'outset' && (side === 'right' || side === 'bottom'))
+	) {
+		const match = color.match(/rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)/)
+		if (!match) {
+			throw new Error(`Unexpected color: ${color}`)
+		}
+		const components = match.slice(1, 4).map(value => parseInt(value, 10) * 0.3)
+		if (match[4]) {
+			components.push(parseFloat(match[4]))
+		}
+		// Low-light border
+		// https://stackoverflow.com/questions/4147940/how-do-browsers-determine-which-exact-colors-to-use-for-border-inset-or-outset
+		border.setAttribute('stroke', `rgba(${components.join(', ')})`)
+	}
+
 	if (side === 'top') {
 		border.setAttribute('x1', bounds.left.toString())
 		border.setAttribute('x2', bounds.right.toString())
