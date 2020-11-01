@@ -67,25 +67,25 @@ export function establishesStackingContext(
 
 export interface StackingLayers {
 	/** 1. The background and borders of the element forming the stacking context. */
-	readonly rootBackgroundAndBorders: SVGElement
+	readonly rootBackgroundAndBorders: SVGGElement
 
 	/** 2. The child stacking contexts with negative stack levels (most negative first). */
-	readonly childStackingContextsWithNegativeStackLevels: SVGElement
+	readonly childStackingContextsWithNegativeStackLevels: SVGGElement
 
 	/** 3. The in-flow, non-inline-level, non-positioned descendants. */
-	readonly inFlowNonInlineNonPositionedDescendants: SVGElement
+	readonly inFlowNonInlineNonPositionedDescendants: SVGGElement
 
 	/** 4. The non-positioned floats. */
-	readonly nonPositionedFloats: SVGElement
+	readonly nonPositionedFloats: SVGGElement
 
 	/** 5. The in-flow, inline-level, non-positioned descendants, including inline tables and inline blocks. */
-	readonly inFlowInlineLevelNonPositionedDescendants: SVGElement
+	readonly inFlowInlineLevelNonPositionedDescendants: SVGGElement
 
 	/** 6. The child stacking contexts with stack level 0 and the positioned descendants with stack level 0. */
-	readonly childStackingContextsWithStackLevelZeroAndPositionedDescendantsWithStackLevelZero: SVGElement
+	readonly childStackingContextsWithStackLevelZeroAndPositionedDescendantsWithStackLevelZero: SVGGElement
 
 	/** 7. The child stacking contexts with positive stack levels (least positive first). */
-	readonly childStackingContextsWithPositiveStackLevels: SVGElement
+	readonly childStackingContextsWithPositiveStackLevels: SVGGElement
 }
 
 function createStackingLayer(parent: SVGElement, layerName: keyof StackingLayers): SVGGElement {
@@ -126,7 +126,7 @@ export function createStackingLayers(container: SVGElement): StackingLayers {
 export function determineStackingLayer(
 	styles: CSSStyleDeclaration,
 	parentStyles: CSSStyleDeclaration | null
-): keyof StackingLayers {
+): keyof StackingLayers | undefined {
 	// https://www.w3.org/TR/CSS22/visuren.html#layers
 	// https://www.w3.org/TR/CSS22/zindex.html
 
@@ -150,7 +150,7 @@ export function determineStackingLayer(
 	if (zIndex !== undefined && zIndex > 0 && establishesStackingContext(styles, parentStyles)) {
 		return 'childStackingContextsWithPositiveStackLevels'
 	}
-	throw new Error('Did not find appropiate stacking layer')
+	return undefined
 }
 
 export function sortChildrenByZIndex(parent: SVGElement): void {

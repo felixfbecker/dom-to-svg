@@ -6,7 +6,7 @@ import { StackingLayers } from './stacking'
 export interface TraversalContext {
 	readonly svgDocument: XMLDocument
 	readonly currentSvgParent: SVGElement
-	readonly parentStackingLayer: SVGElement
+	readonly parentStackingLayer: SVGGElement
 	readonly stackingLayers: StackingLayers
 	readonly labels: Map<HTMLLabelElement, string>
 	readonly captureArea: DOMRectReadOnly

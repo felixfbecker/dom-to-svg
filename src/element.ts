@@ -1,5 +1,5 @@
-import { svgNamespace, isHTMLAnchorElement, isHTMLImageElement, isHTMLInputElement } from './dom.js'
-import { getAccessibilityAttributes } from './accessibility.js'
+import { svgNamespace, isHTMLAnchorElement, isHTMLImageElement, isHTMLInputElement } from './dom'
+import { getAccessibilityAttributes } from './accessibility'
 import { TraversalContext, walkNode } from './traversal'
 import {
 	createStackingLayers,
@@ -7,7 +7,7 @@ import {
 	determineStackingLayer,
 	StackingLayers,
 	sortStackingLayerChildren,
-} from './stacking.js'
+} from './stacking'
 import {
 	copyCssStyles,
 	parseCssString,
@@ -17,9 +17,9 @@ import {
 	parseUrlReference,
 	hasUniformBorderRadius,
 	parseCSSLength,
-} from './css.js'
-import { assignTextStyles } from './text.js'
-import { doRectanglesIntersect } from './util.js'
+} from './css'
+import { assignTextStyles } from './text'
+import { doRectanglesIntersect } from './util'
 
 export function handleElement(element: Element, context: Readonly<TraversalContext>): void {
 	const cleanupFunctions: (() => void)[] = []
@@ -52,12 +52,10 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 		}
 
 		// Which parent should the container itself be appended to?
-		const stackingLayer =
-			context.stackingLayers[
-				establishesStackingContext(styles, parentStyles)
-					? 'rootBackgroundAndBorders'
-					: determineStackingLayer(styles, parentStyles)
-			]
+		const stackingLayerName = determineStackingLayer(styles, parentStyles)
+		const stackingLayer = stackingLayerName
+			? context.stackingLayers[stackingLayerName]
+			: context.parentStackingLayer
 		if (stackingLayer) {
 			context.currentSvgParent.setAttribute(
 				'aria-owns',
@@ -81,6 +79,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 			childContext = {
 				...context,
 				currentSvgParent: svgContainer,
+				stackingLayers: ownStackingLayers,
 				parentStackingLayer: stackingLayer,
 			}
 		} else {
@@ -143,7 +142,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 				svgImage.setAttribute('aria-label', element.alt)
 			}
 			svgContainer.append(svgImage)
-		} else if (isHTMLInputElement(element)) {
+		} else if (isHTMLInputElement(element) && bounds.width > 0 && bounds.height > 0) {
 			// Handle button labels or input field content
 			if (element.value) {
 				const svgTextElement = context.svgDocument.createElementNS(svgNamespace, 'text')
@@ -159,7 +158,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 				svgTextElement.setAttribute('y', middle.toString())
 				svgTextElement.textContent = element.value
 				assignTextStyles(styles, svgTextElement)
-				stackingLayer.append(svgTextElement)
+				childContext.stackingLayers.inFlowInlineLevelNonPositionedDescendants.append(svgTextElement)
 			}
 		} else if (element.tagName === 'svg') {
 			// Embed SVG, don't traverse contents
