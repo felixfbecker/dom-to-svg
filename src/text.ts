@@ -1,8 +1,16 @@
-import { svgNamespace } from './dom.js'
-import { TraversalContext } from './traversal.js'
-import { doRectanglesIntersect } from './util.js'
+import { svgNamespace } from './dom'
+import { TraversalContext } from './traversal'
+import { doRectanglesIntersect } from './util'
 
 export function handleTextNode(textNode: Text, context: TraversalContext): void {
+	if (!textNode.ownerDocument.defaultView) {
+		throw new Error("Element's ownerDocument has no defaultView")
+	}
+	const window = textNode.ownerDocument.defaultView
+	const parentElement = textNode.parentElement!
+	const styles = window.getComputedStyle(parentElement)
+	const { whiteSpace } = styles
+
 	const svgTextElement = context.svgDocument.createElementNS(svgNamespace, 'text')
 
 	// Make sure the y attribute is the bottom of the box, not the baseline
@@ -22,7 +30,27 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 			}
 			const textSpan = context.svgDocument.createElementNS(svgNamespace, 'tspan')
 			textSpan.setAttribute('xml:space', 'preserve')
-			textSpan.textContent = lineRange.toString()
+
+			let text = lineRange.toString()
+
+			if (whiteSpace !== 'pre' && whiteSpace !== 'pre-wrap') {
+				// Collapse whitespace within the text node
+				text = text.replace(/\s+/, ' ')
+
+				// Check if previous siblings had trailing whitespace.
+				// If so, trim beginning of the text content to collapse whitespace across nodes.
+				if (lineRange.startOffset === 0) {
+					for (let node: Node | null = textNode.previousSibling; node; node = node.previousSibling) {
+						if (node.textContent && /\s+$/.test(node.textContent)) {
+							text = text.trimStart()
+							break
+						} else if (node.textContent?.trim()) {
+							break
+						}
+					}
+				}
+			}
+			textSpan.textContent = text
 			textSpan.setAttribute('x', lineRectangle.x.toString())
 			textSpan.setAttribute('y', lineRectangle.bottom.toString())
 			textSpan.setAttribute('textLength', lineRectangle.width.toString())
@@ -53,14 +81,9 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 		}
 	}
 
-	if (textNode.parentElement) {
-		// Copy text styles
-		// https://css-tricks.com/svg-properties-and-css
-		if (!textNode.ownerDocument.defaultView) {
-			throw new Error("Element's ownerDocument has no defaultView")
-		}
-		assignTextStyles(textNode.ownerDocument.defaultView.getComputedStyle(textNode.parentElement), svgTextElement)
-	}
+	// Copy text styles
+	// https://css-tricks.com/svg-properties-and-css
+	assignTextStyles(styles, svgTextElement)
 
 	context.currentSvgParent.append(svgTextElement)
 }
