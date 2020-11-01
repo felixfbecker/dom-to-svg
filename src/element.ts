@@ -328,7 +328,9 @@ function createBorder(
 	side: Side,
 	context: Pick<TraversalContext, 'svgDocument'>
 ): SVGLineElement {
+	// TODO handle border-radius for non-uniform borders
 	const border = context.svgDocument.createElementNS(svgNamespace, 'line')
+	border.setAttribute('stroke-linecap', 'square')
 	const color = styles.getPropertyValue(`border-${side}-color`)
 	border.setAttribute('stroke', color)
 	border.setAttribute('stroke-width', styles.getPropertyValue(`border-${side}-width`))
