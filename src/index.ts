@@ -40,6 +40,20 @@ export function elementToSVG(element: Element, options?: DomToSvgOptions): XMLDo
 		}
 		for (const rule of rules ?? []) {
 			if (isCSSFontFaceRule(rule)) {
+				const styleSheetHref = rule.parentStyleSheet?.href
+				if (styleSheetHref) {
+					rule.style.src = parseFontFaceSourceUrls(rule.style.src)
+						.map(source =>
+							'url' in source ? { ...source, url: new URL(source.url, styleSheetHref) } : source
+						)
+						.map(source => {
+							if ('url' in source) {
+								return `url(${source.url.href})` + (source.format ? ` format(${source.format})` : '')
+							}
+							return `local(${source.local})`
+						})
+						.join(', ')
+				}
 				styleElement.append(rule.cssText, '\n')
 			}
 		}
