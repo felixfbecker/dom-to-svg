@@ -16,12 +16,11 @@ const svgDocument = elementToSVG(document.querySelector('#my-element'))
 // Inline external resources (fonts, images, etc) as data: URIs
 await inlineResources(svgDocument.documentElement)
 
-// Pretty-print SVG
-const formattedSvgDocument = formatXML(svgDocument)
-
 // Get SVG string
 const svgString = new XMLSerializer().serializeToString(formattedSvgDocument)
 ```
+
+The output can be used as-is as valid SVG or easily passed to other packages to pretty-print or compress.
 
 ## Features
 

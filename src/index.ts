@@ -1,11 +1,9 @@
-import { svgNamespace, isSVGImageElement, isSVGStyleElement, xlinkNamespace } from './dom.js'
+import { svgNamespace, isSVGImageElement, isSVGStyleElement, xlinkNamespace } from './dom'
 import { fetchAsDataURL as defaultFetchAsDataURL } from './inline'
-import { walkNode } from './traversal.js'
-import { createStackingLayers } from './stacking.js'
-import { createCounter } from './util.js'
-import { isCSSFontFaceRule, parseFontFaceSourceUrls } from './css.js'
-
-export * from './serialize.js'
+import { walkNode } from './traversal'
+import { createStackingLayers } from './stacking'
+import { createCounter } from './util'
+import { isCSSFontFaceRule, parseFontFaceSourceUrls } from './css'
 
 export interface DomToSvgOptions {
 	/**
