@@ -1,6 +1,6 @@
 {
 	"name": "dom-to-svg",
-	"version": "0.0.3",
+	"version": "0.1.0",
 	"description": "Take SVG screenshots of DOM elements",
 	"main": "lib/index.js",
 	"sideEffects": false,
