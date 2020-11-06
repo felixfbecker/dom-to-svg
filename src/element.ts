@@ -123,7 +123,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 			clipPath = context.svgDocument.createElementNS(svgNamespace, 'clipPath')
 			clipPath.id = 'clipPath' + context.getUniqueId()
 			clipPath.append(createBox(bounds, context))
-			svgContainer.before(clipPath)
+			svgContainer.append(clipPath)
 			svgContainer.setAttribute('clip-path', `url(#${clipPath.id})`)
 		}
 

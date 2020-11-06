@@ -158,7 +158,8 @@ export function sortChildrenByZIndex(parent: SVGElement): void {
 		const zIndexA = (a as SVGElement).dataset.zIndex
 		const zIndexB = (b as SVGElement).dataset.zIndex
 		if (!zIndexA || !zIndexB) {
-			throw new Error('Expected node to have data-z-index attribute')
+			// E.g. a <clipPath>
+			return 0
 		}
 		return parseInt(zIndexA, 10) - parseInt(zIndexB, 10)
 	})
