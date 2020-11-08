@@ -235,10 +235,7 @@ describe('documentToSVG()', () => {
 			it('produces SVG with the expected accessibility tree', async function () {
 				const snapshotPath = path.resolve(snapshotDirectory, encodedName + '.a11y.json')
 				const expectedAccessibilityTree = await readFileOrUndefined(snapshotPath)
-				const actualAccessibilityTree = await svgPage.accessibility.snapshot({
-					// This would exclude text nodes, which we want to capture.
-					interestingOnly: false,
-				})
+				const actualAccessibilityTree = await svgPage.accessibility.snapshot()
 				await writeFile(snapshotPath, JSON.stringify(actualAccessibilityTree, null, 2))
 				if (!expectedAccessibilityTree) {
 					this.skip()
