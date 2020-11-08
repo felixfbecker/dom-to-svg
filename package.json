@@ -92,7 +92,7 @@
 		"mocha": "^7.2.0",
 		"parcel-bundler": "^1.12.4",
 		"pixelmatch": "^5.2.0",
-		"pngjs": "^5.0.0",
+		"pngjs": "^6.0.0",
 		"prettier": "^2.1.2",
 		"puppeteer": "^5.4.1",
 		"rxjs": "^6.6.3",
