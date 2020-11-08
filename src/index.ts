@@ -2,7 +2,7 @@ import { svgNamespace, isSVGImageElement, isSVGStyleElement, xlinkNamespace } fr
 import { fetchAsDataURL as defaultFetchAsDataURL } from './inline'
 import { walkNode } from './traversal'
 import { createStackingLayers } from './stacking'
-import { createCounter, withTimeout } from './util'
+import { createIdGenerator, withTimeout } from './util'
 import { isCSSFontFaceRule, parseFontFaceSourceUrls } from './css'
 
 export interface DomToSvgOptions {
@@ -63,7 +63,7 @@ export function elementToSVG(element: Element, options?: DomToSvgOptions): XMLDo
 		currentSvgParent: svgElement,
 		stackingLayers: createStackingLayers(svgElement),
 		parentStackingLayer: svgElement,
-		getUniqueId: createCounter(),
+		getUniqueId: createIdGenerator(),
 		labels: new Map(),
 		captureArea: options?.captureArea ?? element.getBoundingClientRect(),
 	})

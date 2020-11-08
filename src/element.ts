@@ -44,7 +44,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 
 		// Add IDs, classes, debug info
 		svgContainer.dataset.tag = element.tagName.toLowerCase()
-		const id = element.id || (element.classList[0] || element.tagName.toLowerCase()) + context.getUniqueId()
+		const id = element.id || context.getUniqueId(element.classList[0] || element.tagName.toLowerCase())
 		svgContainer.id = id
 		const className = element.getAttribute('class')
 		if (className) {
@@ -121,7 +121,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 		let clipPath: SVGClipPathElement | undefined
 		if (styles.overflow !== 'visible') {
 			clipPath = context.svgDocument.createElementNS(svgNamespace, 'clipPath')
-			clipPath.id = 'clipPath' + context.getUniqueId()
+			clipPath.id = context.getUniqueId('clipPath')
 			clipPath.append(createBox(bounds, context))
 			svgContainer.append(clipPath)
 			svgContainer.setAttribute('clip-path', `url(#${clipPath.id})`)
@@ -224,7 +224,7 @@ function addBackgroundAndBorders(
 				} else {
 					const pattern = context.svgDocument.createElementNS(svgNamespace, 'pattern')
 					pattern.setAttribute('patternUnits', 'userSpaceOnUse')
-					pattern.id = 'pattern' + context.getUniqueId()
+					pattern.id = context.getUniqueId('pattern')
 					pattern.append(image)
 					box.before(pattern)
 					box.setAttribute('fill', `url(#${pattern.id})`)

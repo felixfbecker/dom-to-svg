@@ -3,3 +3,5 @@ lib/
 .DS_Store
 .cache/
 dist/
+src/test/snapshots/*.png
+src/test/snapshots/*.svg

@@ -1,6 +1,6 @@
 import puppeteer, { ResourceType } from 'puppeteer'
 import * as path from 'path'
-import { writeFile, readFile } from 'fs/promises'
+import { writeFile } from 'fs/promises'
 import { Server } from 'net'
 import { pathToFileURL } from 'url'
 import { Polly } from '@pollyjs/core'
@@ -31,11 +31,13 @@ const defaultViewport: puppeteer.Viewport = {
 	height: 800,
 }
 
+const root = path.resolve(__dirname, '..', '..')
+
 describe('documentToSVG()', () => {
 	let browser: puppeteer.Browser
 	let server: Server
 	before('Launch devserver', async () => {
-		const bundler = new ParcelBundler(__dirname + '/../../src/test/injected-script.ts', {
+		const bundler = new ParcelBundler(path.resolve(root, 'src/test/injected-script.ts'), {
 			hmr: false,
 		})
 		server = await bundler.serve(8080)
@@ -45,7 +47,13 @@ describe('documentToSVG()', () => {
 			headless: true,
 			defaultViewport,
 			devtools: true,
-			args: ['--window-size=1920,1080', '--lang=en-US', '--disable-web-security'],
+			args: [
+				'--window-size=1920,1080',
+				'--lang=en-US',
+				'--disable-web-security',
+				'--font-render-hinting=none',
+				'--enable-font-antialiasing',
+			],
 			timeout: 0,
 			// slowMo: 100,
 		})
@@ -54,7 +62,7 @@ describe('documentToSVG()', () => {
 	after('Close browser', () => browser?.close())
 	after('Close devserver', done => server?.close(done))
 
-	const snapshotDirectory = path.resolve(__dirname, '../../src/test/snapshots')
+	const snapshotDirectory = path.resolve(root, 'src/test/snapshots')
 	const sites = [
 		new URL('https://sourcegraph.com/search'),
 		new URL('https://www.google.com?hl=en'),
@@ -123,13 +131,16 @@ describe('documentToSVG()', () => {
 					persister: FSPersister,
 					persisterOptions: {
 						fs: {
-							recordingsDir: path.resolve(__dirname, '../../src/test/recordings'),
+							recordingsDir: path.resolve(root, 'src/test/recordings'),
 						},
 					},
 				})
 				polly.server.get('http://localhost:8080/*').passthrough()
 				polly.server.get('data:*').passthrough()
 				polly.server.any('https://sentry.io/*').intercept((request, response) => {
+					response.sendStatus(204)
+				})
+				polly.server.any('https://www.googletagmanager.com/*').intercept((request, response) => {
 					response.sendStatus(204)
 				})
 				polly.server.any('https://sourcegraph.com/.api/graphql?logEvent').intercept((request, response) => {
@@ -141,13 +152,34 @@ describe('documentToSVG()', () => {
 				await page.goto(url.href)
 				await page.waitForTimeout(1000)
 				await page.mouse.click(0, 0)
+				// Override system font to Arial to make screenshots deterministic cross-platform
+				await page.addStyleTag({
+					content: `
+						@font-face {
+							font-family: system-ui;
+							font-style: normal;
+							font-weight: 300;
+							src: local('Arial');
+						}
+						@font-face {
+							font-family: -apple-system;
+							font-style: normal;
+							font-weight: 300;
+							src: local('Arial');
+						}
+						@font-face {
+							font-family: BlinkMacSystemFont;
+							font-style: normal;
+							font-weight: 300;
+							src: local('Arial');
+						}
+					`,
+				})
 			})
 
 			after('Stop Polly', () => polly?.stop())
 			after('Close page', () => page?.close())
 
-			let snapshottedSVGMarkup: string | undefined
-			let generatedSVGMarkupFormatted: string
 			let svgPage: puppeteer.Page
 			before('Produce SVG', async () => {
 				const svgDeferred = createDeferred<string>()
@@ -162,32 +194,22 @@ describe('documentToSVG()', () => {
 					delay(60000).then(() => Promise.reject(new Error('Timeout generating SVG'))),
 				])
 				console.log('Formatting SVG')
-				generatedSVGMarkupFormatted = formatXML(generatedSVGMarkup)
-				snapshottedSVGMarkup = await readFileOrUndefined(svgFilePath)
+				const generatedSVGMarkupFormatted = formatXML(generatedSVGMarkup)
 				await writeFile(svgFilePath, generatedSVGMarkupFormatted)
 				svgPage = await browser.newPage()
 				await svgPage.goto(pathToFileURL(svgFilePath).href)
 			})
 			after('Close SVG page', () => svgPage?.close())
 
-			it('produces expected SVG markup', function () {
-				if (!snapshottedSVGMarkup) {
-					this.skip()
-				}
-				assert.strictEqual(
-					generatedSVGMarkupFormatted,
-					snapshottedSVGMarkup,
-					'Expected SVG markup to be the same as snapshot'
-				)
-			})
-
 			it('produces SVG that is visually the same', async () => {
 				console.log('Bringing page to front')
 				await page.bringToFront()
 				console.log('Snapshotting the original page')
 				const expectedScreenshot = await page.screenshot({ encoding: 'binary', type: 'png', fullPage: true })
+				await writeFile(path.resolve(snapshotDirectory, `${encodedName}.expected.png`), expectedScreenshot)
 				console.log('Snapshotting the SVG')
 				const actualScreenshot = await svgPage.screenshot({ encoding: 'binary', type: 'png', fullPage: true })
+				await writeFile(path.resolve(snapshotDirectory, `${encodedName}.actual.png`), actualScreenshot)
 				console.log('Snapshotted, comparing PNGs')
 
 				const expectedPNG = PNG.sync.read(expectedScreenshot)
@@ -200,9 +222,12 @@ describe('documentToSVG()', () => {
 				})
 				const differenceRatio = differentPixels / (width * height)
 
+				const diffPngBuffer = PNG.sync.write(diffPNG)
+				await writeFile(path.resolve(snapshotDirectory, `${encodedName}.diff.png`), diffPngBuffer)
+
 				if (process.env.TERM_PROGRAM === 'iTerm.app') {
 					const nameBase64 = Buffer.from(encodedName + '.diff.png').toString('base64')
-					const diffBase64 = PNG.sync.write(diffPNG).toString('base64')
+					const diffBase64 = diffPngBuffer.toString('base64')
 					console.log(`\u001B]1337;File=name=${nameBase64};inline=1;width=1080px:${diffBase64}\u0007`)
 				}
 
@@ -215,10 +240,7 @@ describe('documentToSVG()', () => {
 			it('produces SVG with the expected accessibility tree', async function () {
 				const snapshotPath = path.resolve(snapshotDirectory, encodedName + '.a11y.json')
 				const expectedAccessibilityTree = await readFileOrUndefined(snapshotPath)
-				const actualAccessibilityTree = await svgPage.accessibility.snapshot({
-					// This would exclude text nodes, which we want to capture.
-					interestingOnly: false,
-				})
+				const actualAccessibilityTree = await svgPage.accessibility.snapshot()
 				await writeFile(snapshotPath, JSON.stringify(actualAccessibilityTree, null, 2))
 				if (!expectedAccessibilityTree) {
 					this.skip()

@@ -1,0 +1,31 @@
+name: Test
+
+on: [push]
+
+env:
+  FORCE_COLOR: 3
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: ['14.x']
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+      - run: npm run prettier
+      - run: npm run build
+      - run: npm test
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: snapshots
+          path: src/test/snapshots
