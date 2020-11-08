@@ -47,7 +47,13 @@ describe('documentToSVG()', () => {
 			headless: true,
 			defaultViewport,
 			devtools: true,
-			args: ['--window-size=1920,1080', '--lang=en-US', '--disable-web-security', '--font-render-hinting=none'],
+			args: [
+				'--window-size=1920,1080',
+				'--lang=en-US',
+				'--disable-web-security',
+				'--font-render-hinting=none',
+				'--enable-font-antialiasing',
+			],
 			timeout: 0,
 			// slowMo: 100,
 		})
