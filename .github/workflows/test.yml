@@ -6,7 +6,7 @@ env:
   FORCE_COLOR: 3
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     strategy:
