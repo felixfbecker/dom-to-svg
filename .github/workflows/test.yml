@@ -24,6 +24,7 @@ jobs:
       - run: npm run build
       - run: npm test
       - name: Upload artifacts
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: snapshots
