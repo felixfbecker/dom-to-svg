@@ -134,6 +134,9 @@ describe('documentToSVG()', () => {
 				polly.server.any('https://sentry.io/*').intercept((request, response) => {
 					response.sendStatus(204)
 				})
+				polly.server.any('https://www.googletagmanager.com/*').intercept((request, response) => {
+					response.sendStatus(204)
+				})
 				polly.server.any('https://sourcegraph.com/.api/graphql?logEvent').intercept((request, response) => {
 					response.status(200).type('application/json').send('{}')
 				})
