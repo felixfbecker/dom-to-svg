@@ -19,7 +19,7 @@ const svgDocument = elementToSVG(document.querySelector('#my-element'))
 await inlineResources(svgDocument.documentElement)
 
 // Get SVG string
-const svgString = new XMLSerializer().serializeToString(formattedSvgDocument)
+const svgString = new XMLSerializer().serializeToString(svgDocument)
 ```
 
 The output can be used as-is as valid SVG or easily passed to other packages to pretty-print or compress.
