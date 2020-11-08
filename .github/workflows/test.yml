@@ -23,3 +23,8 @@ jobs:
       - run: npm run prettier
       - run: npm run build
       - run: npm test
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: snapshots
+          path: src/test/snapshots
