@@ -180,8 +180,6 @@ describe('documentToSVG()', () => {
 			after('Stop Polly', () => polly?.stop())
 			after('Close page', () => page?.close())
 
-			let snapshottedSVGMarkup: string | undefined
-			let generatedSVGMarkupFormatted: string
 			let svgPage: puppeteer.Page
 			before('Produce SVG', async () => {
 				const svgDeferred = createDeferred<string>()
@@ -196,38 +194,22 @@ describe('documentToSVG()', () => {
 					delay(60000).then(() => Promise.reject(new Error('Timeout generating SVG'))),
 				])
 				console.log('Formatting SVG')
-				generatedSVGMarkupFormatted = formatXML(generatedSVGMarkup)
-				snapshottedSVGMarkup = await readFileOrUndefined(svgFilePath)
+				const generatedSVGMarkupFormatted = formatXML(generatedSVGMarkup)
 				await writeFile(svgFilePath, generatedSVGMarkupFormatted)
 				svgPage = await browser.newPage()
 				await svgPage.goto(pathToFileURL(svgFilePath).href)
 			})
 			after('Close SVG page', () => svgPage?.close())
 
-			it('produces expected SVG markup', function () {
-				if (!snapshottedSVGMarkup) {
-					this.skip()
-				}
-				assert.strictEqual(
-					generatedSVGMarkupFormatted,
-					snapshottedSVGMarkup,
-					'Expected SVG markup to be the same as snapshot'
-				)
-			})
-
 			it('produces SVG that is visually the same', async () => {
 				console.log('Bringing page to front')
 				await page.bringToFront()
 				console.log('Snapshotting the original page')
 				const expectedScreenshot = await page.screenshot({ encoding: 'binary', type: 'png', fullPage: true })
-				await mkdir(path.resolve(root, 'src/test/screenshots'), { recursive: true })
-				await writeFile(
-					path.resolve(root, `src/test/screenshots/${encodedName}.expected.png`),
-					expectedScreenshot
-				)
+				await writeFile(path.resolve(snapshotDirectory, `${encodedName}.expected.png`), expectedScreenshot)
 				console.log('Snapshotting the SVG')
 				const actualScreenshot = await svgPage.screenshot({ encoding: 'binary', type: 'png', fullPage: true })
-				await writeFile(path.resolve(root, `src/test/screenshots/${encodedName}.actual.png`), actualScreenshot)
+				await writeFile(path.resolve(snapshotDirectory, `${encodedName}.actual.png`), actualScreenshot)
 				console.log('Snapshotted, comparing PNGs')
 
 				const expectedPNG = PNG.sync.read(expectedScreenshot)
@@ -241,7 +223,7 @@ describe('documentToSVG()', () => {
 				const differenceRatio = differentPixels / (width * height)
 
 				const diffPngBuffer = PNG.sync.write(diffPNG)
-				await writeFile(path.resolve(root, `src/test/screenshots/${encodedName}.diff.png`), diffPngBuffer)
+				await writeFile(path.resolve(snapshotDirectory, `${encodedName}.diff.png`), diffPngBuffer)
 
 				if (process.env.TERM_PROGRAM === 'iTerm.app') {
 					const nameBase64 = Buffer.from(encodedName + '.diff.png').toString('base64')
