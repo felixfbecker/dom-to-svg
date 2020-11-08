@@ -1,19 +1,29 @@
-import puppeteer from 'puppeteer'
+import puppeteer, { ResourceType } from 'puppeteer'
 import * as path from 'path'
 import { writeFile, readFile } from 'fs/promises'
-import { createConfig, startServer } from 'es-dev-server'
 import { Server } from 'net'
 import { pathToFileURL } from 'url'
 import { Polly } from '@pollyjs/core'
-import PuppeteerAdapter from '@pollyjs/adapter-puppeteer'
+import { PuppeteerAdapter } from './PuppeteerAdapter'
 import { createDeferred, readFileOrUndefined } from './util'
 import FSPersister from '@pollyjs/persister-fs'
 import { assert } from 'chai'
 import { PNG } from 'pngjs'
 import pixelmatch from 'pixelmatch'
+import ParcelBundler from 'parcel-bundler'
+import * as util from 'util'
+import delay from 'delay'
+import formatXML from 'xml-formatter'
+
+// Reduce log verbosity
+util.inspect.defaultOptions.depth = 0
+util.inspect.defaultOptions.maxStringLength = 80
+
+Polly.register(PuppeteerAdapter as any)
 
 declare global {
-	function svgCallback(svg: string): void
+	function resolveSVG(svg: string): void
+	function rejectSVG(error: unknown): void
 }
 
 const defaultViewport: puppeteer.Viewport = {
@@ -25,37 +35,30 @@ describe('documentToSVG()', () => {
 	let browser: puppeteer.Browser
 	let server: Server
 	before('Launch devserver', async () => {
-		const config = createConfig({
-			nodeResolve: true,
-			port: 8080,
-			middlewares: [
-				async ({ response }, next) => {
-					response.set('Access-Control-Allow-Origin', '*')
-					response.set('Cache-Control', 'no-store')
-					await next()
-				},
-			],
+		const bundler = new ParcelBundler(__dirname + '/../../src/test/injected-script.ts', {
+			hmr: false,
 		})
-		;({ server } = await startServer(config))
+		server = await bundler.serve(8080)
 	})
 	before('Launch browser', async () => {
 		browser = await puppeteer.launch({
-			headless: false,
+			headless: true,
 			defaultViewport,
 			devtools: true,
-			args: ['--window-size=1920,1080'],
+			args: ['--window-size=1920,1080', '--lang=en-US', '--disable-web-security'],
 			timeout: 0,
+			// slowMo: 100,
 		})
 	})
 
 	after('Close browser', () => browser?.close())
 	after('Close devserver', done => server?.close(done))
 
-	const snapshotDirectory = path.resolve(__dirname, 'snapshots')
+	const snapshotDirectory = path.resolve(__dirname, '../../src/test/snapshots')
 	const sites = [
 		new URL('https://sourcegraph.com/search'),
-		// new URL('https://google.com'),
-		// new URL('https://news.ycombinator.com'),
+		new URL('https://www.google.com?hl=en'),
+		new URL('https://news.ycombinator.com'),
 	]
 	for (const url of sites) {
 		const encodedName = encodeURIComponent(url.href)
@@ -63,59 +66,129 @@ describe('documentToSVG()', () => {
 		describe(url.href, () => {
 			let polly: Polly
 			let page: puppeteer.Page
-			before(async () => {
+			before('Open tab and setup Polly', async () => {
 				page = await browser.newPage()
 				await page.setRequestInterception(true)
 				await page.setBypassCSP(true)
+				// Prevent Google cookie consent prompt
+				if (url.hostname.endsWith('google.com')) {
+					await page.setCookie({ name: 'CONSENT', value: 'YES+DE.de+V14+BX', domain: '.google.com' })
+				}
+				await page.setExtraHTTPHeaders({
+					'Accept-Language': 'en-US',
+					DNT: '1',
+				})
+				page.on('console', message => {
+					console.log('🖥  ' + (message.type() !== 'log' ? message.type().toUpperCase() : ''), message.text())
+				})
+
+				const requestResourceTypes: ResourceType[] = [
+					'xhr',
+					'fetch',
+					'document',
+					'script',
+					'stylesheet',
+					'image',
+					'font',
+					'other',
+				]
 				polly = new Polly(url.href, {
-					// recordIfMissing: false,
+					mode: 'replay',
+					recordIfMissing: false,
 					recordFailedRequests: true,
-					adapters: [PuppeteerAdapter],
+					flushRequestsOnStop: false,
+					logging: false,
+					adapters: [PuppeteerAdapter as any],
 					adapterOptions: {
-						puppeteer: { page },
+						puppeteer: {
+							page,
+							requestResourceTypes,
+						},
+					},
+					// Very lenient, but pages often have very complex URL parameters and this usually works fine.
+					matchRequestsBy: {
+						method: true,
+						body: false,
+						url: {
+							username: false,
+							password: false,
+							hostname: true,
+							pathname: true,
+							query: false,
+							hash: false,
+						},
+						order: false,
+						headers: false,
 					},
 					persister: FSPersister,
 					persisterOptions: {
 						fs: {
-							recordingsDir: path.resolve(__dirname, 'recordings'),
+							recordingsDir: path.resolve(__dirname, '../../src/test/recordings'),
 						},
 					},
 				})
 				polly.server.get('http://localhost:8080/*').passthrough()
-				polly.replay()
+				polly.server.get('data:*').passthrough()
+				polly.server.any('https://sentry.io/*').intercept((request, response) => {
+					response.sendStatus(204)
+				})
+				polly.server.any('https://sourcegraph.com/.api/graphql?logEvent').intercept((request, response) => {
+					response.status(200).type('application/json').send('{}')
+				})
+			})
+
+			before('Go to page', async () => {
 				await page.goto(url.href)
-				await page.waitFor(1000)
+				await page.waitForTimeout(1000)
 				await page.mouse.click(0, 0)
 			})
-			after('Closing page', () => page?.close())
+
 			after('Stop Polly', () => polly?.stop())
+			after('Close page', () => page?.close())
 
 			let snapshottedSVGMarkup: string | undefined
-			let generatedSVGMarkup: string
+			let generatedSVGMarkupFormatted: string
 			let svgPage: puppeteer.Page
 			before('Produce SVG', async () => {
 				const svgDeferred = createDeferred<string>()
-				await page.exposeFunction('svgCallback', svgDeferred.resolve)
-				const injectedScriptUrl = 'http://localhost:8080/lib/test/injected-script.js'
-				await page.addScriptTag({ type: 'module', url: injectedScriptUrl })
-				generatedSVGMarkup = await svgDeferred.promise
+				await page.exposeFunction('resolveSVG', svgDeferred.resolve)
+				await page.exposeFunction('rejectSVG', svgDeferred.reject)
+				const injectedScriptUrl = 'http://localhost:8080/injected-script.js'
+				await page.addScriptTag({ url: injectedScriptUrl })
+				const generatedSVGMarkup = await Promise.race([
+					svgDeferred.promise.catch(({ message, ...error }) =>
+						Promise.reject(Object.assign(new Error(message), error))
+					),
+					delay(60000).then(() => Promise.reject(new Error('Timeout generating SVG'))),
+				])
+				console.log('Formatting SVG')
+				generatedSVGMarkupFormatted = formatXML(generatedSVGMarkup)
 				snapshottedSVGMarkup = await readFileOrUndefined(svgFilePath)
-				await writeFile(svgFilePath, generatedSVGMarkup)
+				await writeFile(svgFilePath, generatedSVGMarkupFormatted)
 				svgPage = await browser.newPage()
 				await svgPage.goto(pathToFileURL(svgFilePath).href)
 			})
-			after('Closing SVG page', () => svgPage?.close())
+			after('Close SVG page', () => svgPage?.close())
 
 			it('produces expected SVG markup', function () {
 				if (!snapshottedSVGMarkup) {
 					this.skip()
 				}
-				assert.equal(generatedSVGMarkup, snapshottedSVGMarkup)
+				assert.strictEqual(
+					generatedSVGMarkupFormatted,
+					snapshottedSVGMarkup,
+					'Expected SVG markup to be the same as snapshot'
+				)
 			})
 
 			it('produces SVG that is visually the same', async () => {
+				console.log('Bringing page to front')
+				await page.bringToFront()
+				console.log('Snapshotting the original page')
 				const expectedScreenshot = await page.screenshot({ encoding: 'binary', type: 'png', fullPage: true })
+				console.log('Snapshotting the SVG')
 				const actualScreenshot = await svgPage.screenshot({ encoding: 'binary', type: 'png', fullPage: true })
+				console.log('Snapshotted, comparing PNGs')
 
 				const expectedPNG = PNG.sync.read(expectedScreenshot)
 				const actualPNG = PNG.sync.read(actualScreenshot)
@@ -135,6 +208,7 @@ describe('documentToSVG()', () => {
 
 				console.log('Difference', (differenceRatio * 100).toFixed(2) + '%')
 
+				// TODO lower threshold as output becomes more accurate.
 				assert.isBelow(differenceRatio, 0.1)
 			})
 
@@ -142,13 +216,18 @@ describe('documentToSVG()', () => {
 				const snapshotPath = path.resolve(snapshotDirectory, encodedName + '.a11y.json')
 				const expectedAccessibilityTree = await readFileOrUndefined(snapshotPath)
 				const actualAccessibilityTree = await svgPage.accessibility.snapshot({
+					// This would exclude text nodes, which we want to capture.
 					interestingOnly: false,
 				})
 				await writeFile(snapshotPath, JSON.stringify(actualAccessibilityTree, null, 2))
 				if (!expectedAccessibilityTree) {
 					this.skip()
 				}
-				assert.deepStrictEqual(actualAccessibilityTree, JSON.parse(expectedAccessibilityTree))
+				assert.deepStrictEqual(
+					actualAccessibilityTree,
+					JSON.parse(expectedAccessibilityTree),
+					'Expected accessibility tree to be the same as snapshot'
+				)
 			})
 		})
 	}

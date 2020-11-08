@@ -2,7 +2,7 @@ import { svgNamespace, isSVGImageElement, isSVGStyleElement, xlinkNamespace } fr
 import { fetchAsDataURL as defaultFetchAsDataURL } from './inline'
 import { walkNode } from './traversal'
 import { createStackingLayers } from './stacking'
-import { createCounter } from './util'
+import { createCounter, withTimeout } from './util'
 import { isCSSFontFaceRule, parseFontFaceSourceUrls } from './css'
 
 export interface DomToSvgOptions {
@@ -87,7 +87,9 @@ export interface InlineResourcesOptions {
 export async function inlineResources(element: Element, options: InlineResourcesOptions = {}): Promise<void> {
 	const { fetchAsDataURL = defaultFetchAsDataURL } = options
 	if (isSVGImageElement(element)) {
-		const dataURL = await fetchAsDataURL(element.href.baseVal)
+		const dataURL = await withTimeout(5000, `Timeout fetching ${element.href.baseVal}`, () =>
+			fetchAsDataURL(element.href.baseVal)
+		)
 		element.dataset.src = element.href.baseVal
 		element.setAttribute('href', dataURL.href)
 	} else if (isSVGStyleElement(element) && element.sheet) {
@@ -101,7 +103,9 @@ export async function inlineResources(element: Element, options: InlineResources
 							if (!('url' in source)) {
 								return source
 							}
-							const dataUrl = await fetchAsDataURL(source.url)
+							const dataUrl = await withTimeout(5000, `Timeout fetching ${source.url}`, () =>
+								fetchAsDataURL(source.url)
+							)
 							return { ...source, url: dataUrl }
 						})
 					)

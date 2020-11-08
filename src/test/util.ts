@@ -32,10 +32,10 @@ export function forwardBrowserLogs(page: Page): void {
 export async function readFileOrUndefined(filePath: string): Promise<string | undefined> {
 	try {
 		return await readFile(filePath, 'utf-8')
-	} catch (err) {
-		if (err.code === 'ENOENT') {
+	} catch (error) {
+		if (error.code === 'ENOENT') {
 			return undefined
 		}
-		throw err
+		throw error
 	}
 }

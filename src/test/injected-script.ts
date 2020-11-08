@@ -1,13 +1,15 @@
+/* eslint-disable no-restricted-globals */
 import { documentToSVG, inlineResources } from '../index'
-import formatXML from 'xml-formatter'
 
 async function main(): Promise<void> {
-	// eslint-disable-next-line no-restricted-globals
+	console.log('Converting DOM to SVG')
 	const svgDocument = documentToSVG(document)
+	console.log('Inlining resources')
 	await inlineResources(svgDocument.documentElement)
+	console.log('Serializing SVG')
 	const svgString = new XMLSerializer().serializeToString(svgDocument)
-	const formattedSvgString = formatXML(svgString)
-	svgCallback(formattedSvgString)
+	console.log('Calling callback')
+	resolveSVG(svgString)
 }
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-main()
+
+main().catch(({ message, name, stack }) => rejectSVG({ message, name, stack }))

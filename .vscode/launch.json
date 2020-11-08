@@ -1,0 +1,14 @@
+{
+	"configurations": [
+		{
+			"type": "node",
+			"name": "Launch Mocha",
+			"request": "launch",
+			"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+			"cwd": "${workspaceFolder}",
+			"console": "integratedTerminal",
+			"runtimeExecutable": "/Users/felix/.local/share/powershell/Modules/nvm/2.4.0/vs/v14.14.0/bin/node",
+			"args": ["--no-timeouts", "${workspaceFolder}/lib/test/test.js"],
+		},
+	],
+}

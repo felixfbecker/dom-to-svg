@@ -24,7 +24,7 @@ export async function fetchAsDataURL(url: string, options: FetchAsDataURLOptions
 	const blob = await response.blob()
 	const reader = new FileReader()
 	await new Promise<void>((resolve, reject) => {
-		reader.addEventListener('error', () => reject(new Error('Error loading image')))
+		reader.addEventListener('error', () => reject(new Error('Error loading resource with FileLoader')))
 		reader.addEventListener('load', () => resolve())
 		reader.readAsDataURL(blob)
 	})

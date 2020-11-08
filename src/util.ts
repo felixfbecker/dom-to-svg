@@ -16,3 +16,10 @@ export const doRectanglesIntersect = (a: DOMRectReadOnly, b: DOMRectReadOnly): b
 		// A is right of B
 		a.left > b.right
 	)
+
+export function withTimeout<T>(timeout: number, message: string, func: () => Promise<T>): Promise<T> {
+	return Promise.race([
+		func(),
+		new Promise<never>((resolve, reject) => setTimeout(() => reject(new Error(message)), timeout)),
+	])
+}
