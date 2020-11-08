@@ -1,7 +1,5 @@
 import { Page } from 'puppeteer'
-import { writeFile, readFile } from 'fs/promises'
-import assert from 'assert'
-import * as path from 'path'
+import { readFile } from 'fs/promises'
 
 export const createDeferred = <T>(): {
 	promise: Promise<T>

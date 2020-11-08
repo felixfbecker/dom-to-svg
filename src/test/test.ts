@@ -1,6 +1,6 @@
 import puppeteer, { ResourceType } from 'puppeteer'
 import * as path from 'path'
-import { writeFile, readFile, mkdir } from 'fs/promises'
+import { writeFile, mkdir } from 'fs/promises'
 import { Server } from 'net'
 import { pathToFileURL } from 'url'
 import { Polly } from '@pollyjs/core'
