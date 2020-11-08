@@ -33,15 +33,33 @@
 		"eslint": "eslint 'src/**/*.ts'",
 		"prettier": "prettier --check '**/*.{yml,ts,json}'",
 		"get-fixture": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' ts-node src/test/get-fixture.ts",
-		"test": "mocha --require source-map-support/register lib/test/test.js"
+		"test": "mocha --require source-map-support/register lib/test/test.js",
+		"semantic-release": "semantic-release"
 	},
 	"mocha": {
 		"timeout": 120000,
 		"exit": true
 	},
+	"commitlint": {
+		"extends": [
+			"@commitlint/config-conventional"
+		]
+	},
+	"release": {
+		"branches": [
+			"main"
+		]
+	},
+	"husky": {
+		"hooks": {
+			"commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+		}
+	},
 	"author": "Felix Becker",
 	"license": "MIT",
 	"devDependencies": {
+		"@commitlint/cli": "^11.0.0",
+		"@commitlint/config-conventional": "^11.0.0",
 		"@pollyjs/adapter-puppeteer": "^5.0.0",
 		"@pollyjs/core": "^5.0.0",
 		"@pollyjs/persister-fs": "^5.0.0",
@@ -70,6 +88,7 @@
 		"delay": "^4.4.0",
 		"eslint": "^7.13.0",
 		"express": "^4.17.1",
+		"husky": "^4.3.0",
 		"iconv-lite": "^0.6.2",
 		"lodash": "^4.17.20",
 		"mime-types": "^2.1.27",
@@ -80,6 +99,7 @@
 		"prettier": "^2.1.2",
 		"puppeteer": "^5.4.1",
 		"rxjs": "^6.6.3",
+		"semantic-release": "^17.2.2",
 		"source-map-support": "^0.5.19",
 		"ts-node": "^8.10.2",
 		"typescript": "^4.0.3",
