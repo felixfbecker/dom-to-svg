@@ -3,7 +3,7 @@ export const createIdGenerator = (): ((prefix: string) => string) => {
 	return prefix => {
 		const count = nextCounts.get(prefix) ?? 1
 		nextCounts.set(prefix, count + 1)
-		return prefix + count
+		return `${prefix}${count}`
 	}
 }
 

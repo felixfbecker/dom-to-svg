@@ -60,8 +60,7 @@ export function establishesStackingContext(
 		styles.contain === 'paint' ||
 		styles.contain === 'strict' ||
 		styles.contain === 'content' ||
-		(styles.willChange &&
-			styles.willChange.split(',').some(property => stackingContextEstablishingProperties.has(property.trim())))
+		styles.willChange.split(',').some(property => stackingContextEstablishingProperties.has(property.trim()))
 	)
 }
 

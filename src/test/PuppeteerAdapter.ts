@@ -88,7 +88,7 @@ export class PuppeteerAdapter extends PollyAdapter {
 	}
 
 	constructor(polly: Polly) {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		super(polly)
 		this.page = this.options.page
@@ -110,7 +110,7 @@ export class PuppeteerAdapter extends PollyAdapter {
 					// eslint-disable-next-line @typescript-eslint/no-floating-promises
 					request.continue()
 				} else {
-					// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 					// @ts-ignore
 					this.handleRequest({
 						headers,

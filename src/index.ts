@@ -64,7 +64,7 @@ export function elementToSVG(element: Element, options?: DomToSvgOptions): XMLDo
 		stackingLayers: createStackingLayers(svgElement),
 		parentStackingLayer: svgElement,
 		getUniqueId: createIdGenerator(),
-		labels: new Map(),
+		labels: new Map<HTMLLabelElement, string>(),
 		captureArea: options?.captureArea ?? element.getBoundingClientRect(),
 	})
 
