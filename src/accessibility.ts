@@ -195,7 +195,7 @@ export function getAccessibilityAttributes(
 				.map(label => {
 					let labelId = label.id || labels.get(label)
 					if (!labelId) {
-						labelId = 'label' + getUniqueId()
+						labelId = getUniqueId('label')
 						labels.set(label, labelId)
 					}
 					return labelId

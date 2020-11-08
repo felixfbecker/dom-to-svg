@@ -1,6 +1,10 @@
-export const createCounter = (): (() => number) => {
-	let count = 0
-	return () => ++count
+export const createIdGenerator = (): ((prefix: string) => string) => {
+	const nextCounts = new Map<string, number>()
+	return prefix => {
+		const count = nextCounts.get(prefix) ?? 1
+		nextCounts.set(prefix, count + 1)
+		return prefix + count
+	}
 }
 
 export const isDefined = <T>(value: T): value is NonNullable<T> => value !== null && value !== undefined

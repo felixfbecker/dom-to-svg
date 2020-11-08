@@ -10,7 +10,7 @@ export interface TraversalContext {
 	readonly stackingLayers: StackingLayers
 	readonly labels: Map<HTMLLabelElement, string>
 	readonly captureArea: DOMRectReadOnly
-	readonly getUniqueId: () => number
+	readonly getUniqueId: (prefix: string) => string
 }
 
 export function walkNode(node: Node, context: TraversalContext): void {

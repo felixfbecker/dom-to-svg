@@ -1,7 +1,9 @@
 {
 	"typescript.tsdk": "node_modules/typescript/lib",
-	"eslint.enable": true,
 	"search.exclude": {
 		"lib": true,
+		"*.har": true,
+		"**/snapshots/**": true,
+		"**/recordings/**": true,
 	},
 }
