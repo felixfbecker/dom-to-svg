@@ -1,5 +1,7 @@
 # DOM to SVG
 
+![CI status](https://github.com/felixfbecker/dom-to-svg/workflows/test/badge.svg?branch=main)
+
 Library to convert a given HTML DOM node into an accessible SVG "screenshot".
 
 ## Usage
