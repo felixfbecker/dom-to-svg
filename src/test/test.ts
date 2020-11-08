@@ -1,6 +1,6 @@
 import puppeteer, { ResourceType } from 'puppeteer'
 import * as path from 'path'
-import { writeFile, readFile } from 'fs/promises'
+import { writeFile, readFile, mkdir } from 'fs/promises'
 import { Server } from 'net'
 import { pathToFileURL } from 'url'
 import { Polly } from '@pollyjs/core'
@@ -31,11 +31,13 @@ const defaultViewport: puppeteer.Viewport = {
 	height: 800,
 }
 
+const root = path.resolve(__dirname, '..', '..')
+
 describe('documentToSVG()', () => {
 	let browser: puppeteer.Browser
 	let server: Server
 	before('Launch devserver', async () => {
-		const bundler = new ParcelBundler(__dirname + '/../../src/test/injected-script.ts', {
+		const bundler = new ParcelBundler(path.resolve(root, 'src/test/injected-script.ts'), {
 			hmr: false,
 		})
 		server = await bundler.serve(8080)
@@ -54,7 +56,7 @@ describe('documentToSVG()', () => {
 	after('Close browser', () => browser?.close())
 	after('Close devserver', done => server?.close(done))
 
-	const snapshotDirectory = path.resolve(__dirname, '../../src/test/snapshots')
+	const snapshotDirectory = path.resolve(root, 'src/test/snapshots')
 	const sites = [
 		new URL('https://sourcegraph.com/search'),
 		new URL('https://www.google.com?hl=en'),
@@ -123,7 +125,7 @@ describe('documentToSVG()', () => {
 					persister: FSPersister,
 					persisterOptions: {
 						fs: {
-							recordingsDir: path.resolve(__dirname, '../../src/test/recordings'),
+							recordingsDir: path.resolve(root, 'src/test/recordings'),
 						},
 					},
 				})
@@ -186,8 +188,14 @@ describe('documentToSVG()', () => {
 				await page.bringToFront()
 				console.log('Snapshotting the original page')
 				const expectedScreenshot = await page.screenshot({ encoding: 'binary', type: 'png', fullPage: true })
+				await mkdir(path.resolve(root, 'src/test/screenshots'), { recursive: true })
+				await writeFile(
+					path.resolve(root, `src/test/screenshots/${encodedName}.expected.png`),
+					expectedScreenshot
+				)
 				console.log('Snapshotting the SVG')
 				const actualScreenshot = await svgPage.screenshot({ encoding: 'binary', type: 'png', fullPage: true })
+				await writeFile(path.resolve(root, `src/test/screenshots/${encodedName}.actual.png`), actualScreenshot)
 				console.log('Snapshotted, comparing PNGs')
 
 				const expectedPNG = PNG.sync.read(expectedScreenshot)
@@ -200,9 +208,12 @@ describe('documentToSVG()', () => {
 				})
 				const differenceRatio = differentPixels / (width * height)
 
+				const diffPngBuffer = PNG.sync.write(diffPNG)
+				await writeFile(path.resolve(root, `src/test/screenshots/${encodedName}.diff.png`), diffPngBuffer)
+
 				if (process.env.TERM_PROGRAM === 'iTerm.app') {
 					const nameBase64 = Buffer.from(encodedName + '.diff.png').toString('base64')
-					const diffBase64 = PNG.sync.write(diffPNG).toString('base64')
+					const diffBase64 = diffPngBuffer.toString('base64')
 					console.log(`\u001B]1337;File=name=${nameBase64};inline=1;width=1080px:${diffBase64}\u0007`)
 				}
 

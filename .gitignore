@@ -3,3 +3,4 @@ lib/
 .DS_Store
 .cache/
 dist/
+src/test/screenshots

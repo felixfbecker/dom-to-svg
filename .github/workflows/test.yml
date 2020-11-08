@@ -28,4 +28,6 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: snapshots
-          path: src/test/snapshots
+          path: |
+            src/test/snapshots
+            src/test/screenshots
