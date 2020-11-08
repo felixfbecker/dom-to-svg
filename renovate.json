@@ -1,5 +1,6 @@
 {
-  "extends": [
-    "config:base"
-  ]
+	"extends": ["config:base"],
+	"semanticCommits": true,
+	"rangeStrategy": "bump",
+	"prCreation": "not-pending"
 }
