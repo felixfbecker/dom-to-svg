@@ -152,6 +152,29 @@ describe('documentToSVG()', () => {
 				await page.goto(url.href)
 				await page.waitForTimeout(1000)
 				await page.mouse.click(0, 0)
+				// Override system font to Arial to make screenshots deterministic cross-platform
+				await page.addStyleTag({
+					content: `
+						@font-face {
+							font-family: system-ui;
+							font-style: normal;
+							font-weight: 300;
+							src: local('Arial');
+						}
+						@font-face {
+							font-family: -apple-system;
+							font-style: normal;
+							font-weight: 300;
+							src: local('Arial');
+						}
+						@font-face {
+							font-family: BlinkMacSystemFont;
+							font-style: normal;
+							font-weight: 300;
+							src: local('Arial');
+						}
+					`,
+				})
 			})
 
 			after('Stop Polly', () => polly?.stop())
