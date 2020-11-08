@@ -234,7 +234,7 @@ describe('documentToSVG()', () => {
 				console.log('Difference', (differenceRatio * 100).toFixed(2) + '%')
 
 				// TODO lower threshold as output becomes more accurate.
-				assert.isBelow(differenceRatio, 0.1)
+				assert.isBelow(differenceRatio, 0.01)
 			})
 
 			it('produces SVG with the expected accessibility tree', async function () {
