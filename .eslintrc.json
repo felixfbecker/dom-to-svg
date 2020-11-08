@@ -1,7 +1,7 @@
 {
 	"extends": "@sourcegraph/eslint-config",
 	"parserOptions": {
-		"project": "**/tsconfig.json"
+		"project": "tsconfig.json"
 	},
 	"rules": {
 		"no-restricted-globals": ["error", "document", "window"],

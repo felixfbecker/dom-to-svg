@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 import puppeteer from 'puppeteer'
 import { writeFile } from 'fs/promises'
 import * as path from 'path'

@@ -16,6 +16,7 @@ jobs:
           node-version: '14.x'
       - run: npm ci
       - run: npm run prettier
+      - run: npm run eslint
       - run: npm run build
       - run: npm test
       - name: Upload artifacts
