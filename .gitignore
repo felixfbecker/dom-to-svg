@@ -4,4 +4,4 @@ lib/
 .cache/
 dist/
 src/test/snapshots/*.png
-# src/test/snapshots/*.svg
+src/test/snapshots/*.svg
