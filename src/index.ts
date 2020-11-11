@@ -3,7 +3,8 @@ import { fetchAsDataURL as defaultFetchAsDataURL } from './inline'
 import { walkNode } from './traversal'
 import { createStackingLayers } from './stacking'
 import { createIdGenerator, withTimeout } from './util'
-import { isCSSFontFaceRule, parseFontFaceSourceUrls } from './css'
+import { isCSSFontFaceRule } from './css'
+import cssValueParser from 'postcss-value-parser'
 
 export interface DomToSvgOptions {
 	/**
@@ -36,24 +37,28 @@ export function elementToSVG(element: Element, options?: DomToSvgOptions): XMLDo
 		} catch (error) {
 			console.error('Could not access rules of styleSheet', styleSheet, error)
 		}
+		// Make font URLs absolute (need to be resolved relative to the stylesheet)
 		for (const rule of rules ?? []) {
-			if (isCSSFontFaceRule(rule)) {
-				const styleSheetHref = rule.parentStyleSheet?.href
-				if (styleSheetHref) {
-					rule.style.src = parseFontFaceSourceUrls(rule.style.src)
-						.map(source =>
-							'url' in source ? { ...source, url: new URL(source.url, styleSheetHref) } : source
-						)
-						.map(source => {
-							if ('url' in source) {
-								return `url(${source.url.href})` + (source.format ? ` format(${source.format})` : '')
-							}
-							return `local(${source.local})`
-						})
-						.join(', ')
-				}
-				styleElement.append(rule.cssText, '\n')
+			if (!isCSSFontFaceRule(rule)) {
+				continue
 			}
+			const styleSheetHref = rule.parentStyleSheet?.href
+			if (styleSheetHref) {
+				const parsedSourceValue = cssValueParser(rule.style.src)
+				parsedSourceValue.walk(node => {
+					if (node.type === 'function' && node.value === 'url' && node.nodes[0]) {
+						const urlArgumentNode = node.nodes[0]
+						if (urlArgumentNode.type === 'string' || urlArgumentNode.type === 'word') {
+							urlArgumentNode.value = new URL(
+								urlArgumentNode.value.replace(/\\(.)/g, '$1'),
+								styleSheetHref
+							).href
+						}
+					}
+				})
+				rule.style.src = cssValueParser.stringify(parsedSourceValue.nodes)
+			}
+			styleElement.append(rule.cssText, '\n')
 		}
 	}
 	svgElement.append(styleElement)
@@ -97,28 +102,26 @@ export async function inlineResources(element: Element, options: InlineResources
 			const rules = element.sheet.cssRules
 			for (const rule of rules) {
 				if (isCSSFontFaceRule(rule)) {
-					const sources = parseFontFaceSourceUrls(rule.style.src)
-					const resolvedSources = await Promise.all(
-						sources.map(async source => {
-							if (!('url' in source)) {
-								return source
+					const parsedSourceValue = cssValueParser(rule.style.src)
+					const promises: Promise<void>[] = []
+					parsedSourceValue.walk(node => {
+						if (node.type === 'function' && node.value === 'url' && node.nodes[0]) {
+							const urlArgumentNode = node.nodes[0]
+							if (urlArgumentNode.type === 'string') {
+								const url = new URL(urlArgumentNode.value.replace(/\\(.)/g, '$1'))
+								promises.push(
+									(async () => {
+										const dataUrl = await withTimeout(5000, `Timeout fetching ${url.href}`, () =>
+											fetchAsDataURL(url.href)
+										)
+										urlArgumentNode.value = dataUrl.href
+									})()
+								)
 							}
-							const dataUrl = await withTimeout(5000, `Timeout fetching ${source.url}`, () =>
-								fetchAsDataURL(source.url)
-							)
-							return { ...source, url: dataUrl }
-						})
-					)
-					rule.style.src = resolvedSources
-						.map(source => {
-							if ('local' in source) {
-								return source.local
-							}
-							return [`url(${source.url.href})`, source.format && `format(${source.format})`]
-								.filter(Boolean)
-								.join(' ')
-						})
-						.join(', ')
+						}
+					})
+					await Promise.all(promises)
+					rule.style.src = cssValueParser.stringify(parsedSourceValue.nodes)
 				}
 			}
 		} catch (error) {

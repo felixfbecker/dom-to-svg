@@ -1,32 +1,5 @@
-import { isDefined } from './util'
-
 export const isCSSFontFaceRule = (rule: CSSRule): rule is CSSFontFaceRule => rule.type === CSSRule.FONT_FACE_RULE
 
-export function parseFontFaceSourceUrls(source: string): ({ url: string; format?: string } | { local: string })[] {
-	const fonts = source.split(/,\s*/)
-	return fonts
-		.map(font => {
-			const tokens: { url?: string; format?: string; local?: string } = {}
-			for (const token of font.trim().split(/\s+/)) {
-				if (token.startsWith('local(')) {
-					tokens.local = parseLocalReference(token)
-				}
-				if (token.startsWith('url(')) {
-					tokens.url = parseUrlReference(token)
-				}
-				if (token.startsWith('format(')) {
-					tokens.format = parseFormatSpecifier(token)
-				}
-			}
-			if (tokens.url) {
-				return { url: tokens.url, format: tokens.format }
-			}
-			if (tokens.local) {
-				return { local: tokens.local }
-			}
-		})
-		.filter(isDefined)
-}
 export const isInline = (styles: CSSStyleDeclaration): boolean =>
 	styles.displayOutside === 'inline' || styles.display.startsWith('inline-')
 
