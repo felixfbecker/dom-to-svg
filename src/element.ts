@@ -31,9 +31,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 		}
 
 		const bounds = element.getBoundingClientRect() // Includes borders
-		if (!doRectanglesIntersect(bounds, context.captureArea)) {
-			return
-		}
+		const rectanglesIntersect = doRectanglesIntersect(bounds, context.captureArea)
 
 		const styles = window.getComputedStyle(element)
 		const parentStyles = element.parentElement && window.getComputedStyle(element.parentElement)
@@ -115,7 +113,9 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 		handlePseudoElement('::after', 'append')
 		// TODO handle ::marker etc
 
-		addBackgroundAndBorders(styles, bounds, backgroundContainer, window, context)
+		if (rectanglesIntersect) {
+			addBackgroundAndBorders(styles, bounds, backgroundContainer, window, context)
+		}
 
 		// If element is overflow: hidden, create a clipping rectangle to hide any overflowing content of any descendants
 		let clipPath: SVGClipPathElement | undefined
@@ -127,7 +127,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 			svgContainer.setAttribute('clip-path', `url(#${clipPath.id})`)
 		}
 
-		if (isHTMLImageElement(element)) {
+		if (rectanglesIntersect && isHTMLImageElement(element)) {
 			const svgImage = context.svgDocument.createElementNS(svgNamespace, 'image')
 			svgImage.setAttribute('href', element.src)
 			const paddingLeft = parseCSSLength(styles.paddingLeft, bounds.width) ?? 0
@@ -142,7 +142,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 				svgImage.setAttribute('aria-label', element.alt)
 			}
 			svgContainer.append(svgImage)
-		} else if (isHTMLInputElement(element) && bounds.width > 0 && bounds.height > 0) {
+		} else if (rectanglesIntersect && isHTMLInputElement(element) && bounds.width > 0 && bounds.height > 0) {
 			// Handle button labels or input field content
 			if (element.value) {
 				const svgTextElement = context.svgDocument.createElementNS(svgNamespace, 'text')
@@ -160,7 +160,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 				assignTextStyles(styles, svgTextElement)
 				childContext.stackingLayers.inFlowInlineLevelNonPositionedDescendants.append(svgTextElement)
 			}
-		} else if (element.tagName === 'svg') {
+		} else if (rectanglesIntersect && element.tagName === 'svg') {
 			// Embed SVG, don't traverse contents
 			// TODO walk contents to inline resources
 			const clonedSvg = element.cloneNode(true) as SVGSVGElement
@@ -171,6 +171,8 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 			clonedSvg.style.color = styles.color // handle fill or stroke referencing currentColor keyword
 			elementToAppendTo.append(clonedSvg)
 		} else if (element.tagName !== 'IFRAME') {
+			// Walk children even if rectangles don't intersect,
+			// because children can overflow the parent's bounds as long as overflow: visible (default).
 			for (const child of element.childNodes) {
 				walkNode(child, childContext)
 			}

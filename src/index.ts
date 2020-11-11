@@ -107,7 +107,7 @@ export async function inlineResources(element: Element, options: InlineResources
 					parsedSourceValue.walk(node => {
 						if (node.type === 'function' && node.value === 'url' && node.nodes[0]) {
 							const urlArgumentNode = node.nodes[0]
-							if (urlArgumentNode.type === 'string') {
+							if (urlArgumentNode.type === 'string' || urlArgumentNode.type === 'word') {
 								const url = new URL(urlArgumentNode.value.replace(/\\(.)/g, '$1'))
 								promises.push(
 									(async () => {
