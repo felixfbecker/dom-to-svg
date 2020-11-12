@@ -4,9 +4,6 @@
 	"description": "Take SVG screenshots of DOM elements",
 	"main": "lib/index.js",
 	"sideEffects": false,
-	"engines": {
-		"node": "^v14.15.0"
-	},
 	"files": [
 		"lib"
 	],
