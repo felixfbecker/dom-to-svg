@@ -4,6 +4,7 @@
 	"description": "Take SVG screenshots of DOM elements",
 	"main": "lib/index.js",
 	"sideEffects": false,
+	"type": "module",
 	"files": [
 		"lib"
 	],
@@ -30,7 +31,7 @@
 		"eslint": "eslint 'src/**/*.ts'",
 		"prettier": "prettier --check '**/*.{yml,ts,json}'",
 		"get-fixture": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' ts-node src/test/get-fixture.ts",
-		"test": "mocha --require source-map-support/register lib/test/test.js",
+		"test": "mocha src/test/test.ts",
 		"semantic-release": "semantic-release"
 	},
 	"mocha": {
@@ -39,7 +40,8 @@
 		"enableSourceMaps": true,
 		"watchFiles": [
 			"lib/**/*.js"
-		]
+		],
+		"loader": "ts-node/esm"
 	},
 	"commitlint": {
 		"extends": [

@@ -4,9 +4,9 @@
 		"project": "tsconfig.json"
 	},
 	"rules": {
+		"import/extensions": ["error", "ignorePackages"],
 		"no-restricted-globals": ["error", "document", "window", "location"],
 		"etc/throw-error": "off",
-		"etc/deprecation": "off",
 		"unicorn/import-index": "off",
 		"callback-return": "off"
 	}

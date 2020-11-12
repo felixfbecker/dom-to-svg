@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-import { documentToSVG, inlineResources } from '../index'
+import { documentToSVG, inlineResources } from '../index.js'
 
 async function main(): Promise<void> {
 	console.log('Converting DOM to SVG')
