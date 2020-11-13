@@ -3,7 +3,7 @@ import { fetchAsDataURL as defaultFetchAsDataURL } from './inline'
 import { walkNode } from './traversal'
 import { createStackingLayers } from './stacking'
 import { createIdGenerator, withTimeout } from './util'
-import { isCSSFontFaceRule } from './css'
+import { isCSSFontFaceRule, unescapeStringValue } from './css'
 import cssValueParser from 'postcss-value-parser'
 
 export interface DomToSvgOptions {
@@ -50,7 +50,7 @@ export function elementToSVG(element: Element, options?: DomToSvgOptions): XMLDo
 						const urlArgumentNode = node.nodes[0]
 						if (urlArgumentNode.type === 'string' || urlArgumentNode.type === 'word') {
 							urlArgumentNode.value = new URL(
-								urlArgumentNode.value.replace(/\\(.)/g, '$1'),
+								unescapeStringValue(urlArgumentNode.value),
 								styleSheetHref
 							).href
 						}
@@ -108,7 +108,7 @@ export async function inlineResources(element: Element, options: InlineResources
 						if (node.type === 'function' && node.value === 'url' && node.nodes[0]) {
 							const urlArgumentNode = node.nodes[0]
 							if (urlArgumentNode.type === 'string' || urlArgumentNode.type === 'word') {
-								const url = new URL(urlArgumentNode.value.replace(/\\(.)/g, '$1'))
+								const url = new URL(unescapeStringValue(urlArgumentNode.value))
 								promises.push(
 									(async () => {
 										const dataUrl = await withTimeout(5000, `Timeout fetching ${url.href}`, () =>

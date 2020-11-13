@@ -10,16 +10,17 @@ import {
 } from './stacking'
 import {
 	copyCssStyles,
-	parseCssString,
 	isVisible,
 	isTransparent,
 	hasUniformBorder,
 	parseUrlReference,
 	hasUniformBorderRadius,
 	parseCSSLength,
+	unescapeStringValue,
 } from './css'
 import { assignTextStyles } from './text'
-import { doRectanglesIntersect } from './util'
+import { doRectanglesIntersect, isTaggedUnionMember } from './util'
+import cssValueParser from 'postcss-value-parser'
 
 export function handleElement(element: Element, context: Readonly<TraversalContext>): void {
 	const cleanupFunctions: (() => void)[] = []
@@ -96,18 +97,22 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 
 		const handlePseudoElement = (pseudoSelector: '::before' | '::after', position: 'prepend' | 'append'): void => {
 			const pseudoElementStyles = window.getComputedStyle(element, pseudoSelector)
-			if (pseudoElementStyles.content !== 'none') {
-				// Pseudo elements are inline by default (like a span)
-				const span = element.ownerDocument.createElement('span')
-				copyCssStyles(pseudoElementStyles, span.style)
-				span.textContent = parseCssString(pseudoElementStyles.content)
-				const style = element.ownerDocument.createElement('style')
-				style.innerHTML = `#${id}${pseudoSelector} { display: none; }`
-				element.before(style)
-				cleanupFunctions.push(() => style.remove())
-				element[position](span)
-				cleanupFunctions.push(() => span.remove())
+			const content = cssValueParser(pseudoElementStyles.content).nodes.find(
+				isTaggedUnionMember('type', 'string' as const)
+			)
+			if (!content) {
+				return
 			}
+			// Pseudo elements are inline by default (like a span)
+			const span = element.ownerDocument.createElement('span')
+			copyCssStyles(pseudoElementStyles, span.style)
+			span.textContent = unescapeStringValue(content.value)
+			const style = element.ownerDocument.createElement('style')
+			style.innerHTML = `#${id}${pseudoSelector} { display: none; }`
+			element.before(style)
+			cleanupFunctions.push(() => style.remove())
+			element[position](span)
+			cleanupFunctions.push(() => span.remove())
 		}
 		handlePseudoElement('::before', 'prepend')
 		handlePseudoElement('::after', 'append')

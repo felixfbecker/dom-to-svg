@@ -41,36 +41,19 @@ export function parseCSSLength(length: string, containerLength: number): number 
 	return undefined
 }
 
-export function parseCssString(value: string): string {
-	const match = value.match(/^\s*(?:'(.*)'|"(.*)")\s*$/)
-	if (!match) {
-		throw new Error(`Invalid CSS string: ${value}`)
-	}
-	return (match[1] || match[2]).replace(/\\(.)/g, '$1')
-}
+export const unescapeStringValue = (value: string): string =>
+	value
+		// Replace hex escape sequences
+		.replace(/\\([\da-f]{1,2})/gi, (substring, codePoint) => String.fromCodePoint(parseInt(codePoint, 16)))
+		// Replace all other escapes (quotes, backslash, etc)
+		.replace(/\\(.)/g, '$1')
 
 export function parseUrlReference(reference: string): string {
 	const match = reference.match(/url\((?:'(.*)'|"(.*)"|(.*))\)/)
 	if (!match) {
 		throw new URIError('Invalid URL ' + JSON.stringify(reference))
 	}
-	return (match[1] ?? match[2] ?? match[3]).replace(/\\(.)/g, '$1')
-}
-
-export function parseFormatSpecifier(format: string): string {
-	const match = format.match(/format\((?:'(.*)'|"(.*)"|(.*))\)/)
-	if (!match) {
-		throw new Error('Invalid format() ' + JSON.stringify(format))
-	}
-	return (match[1] ?? match[2] ?? match[3]).replace(/\\(.)/g, '$1')
-}
-
-export function parseLocalReference(format: string): string {
-	const match = format.match(/local\((?:'(.*)'|"(.*)"|(.*))\)/)
-	if (!match) {
-		throw new Error('Invalid local() ' + JSON.stringify(format))
-	}
-	return (match[1] ?? match[2] ?? match[3]).replace(/\\(.)/g, '$1')
+	return unescapeStringValue(match[1] ?? match[2] ?? match[3])
 }
 
 export function copyCssStyles(from: CSSStyleDeclaration, to: CSSStyleDeclaration): void {

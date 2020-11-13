@@ -27,3 +27,13 @@ export function withTimeout<T>(timeout: number, message: string, func: () => Pro
 		new Promise<never>((resolve, reject) => setTimeout(() => reject(new Error(message)), timeout)),
 	])
 }
+
+/**
+ * Type guard to check if an object is a specific member of a tagged union type.
+ *
+ * @param key The key to check
+ * @param value The value the key has to be.
+ */
+export const isTaggedUnionMember = <T extends object, K extends keyof T, V extends T[K]>(key: K, value: V) => (
+	object: T
+): object is T & Record<K, V> => object[key] === value
