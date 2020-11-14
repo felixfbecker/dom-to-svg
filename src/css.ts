@@ -48,14 +48,6 @@ export const unescapeStringValue = (value: string): string =>
 		// Replace all other escapes (quotes, backslash, etc)
 		.replace(/\\(.)/g, '$1')
 
-export function parseUrlReference(reference: string): string {
-	const match = reference.match(/url\((?:'(.*)'|"(.*)"|(.*))\)/)
-	if (!match) {
-		throw new URIError('Invalid URL ' + JSON.stringify(reference))
-	}
-	return unescapeStringValue(match[1] ?? match[2] ?? match[3])
-}
-
 export function copyCssStyles(from: CSSStyleDeclaration, to: CSSStyleDeclaration): void {
 	for (const property of from) {
 		to.setProperty(property, to.getPropertyValue(property), to.getPropertyPriority(property))

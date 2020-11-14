@@ -101,6 +101,7 @@
 		"xml-formatter": "^2.4.0"
 	},
 	"dependencies": {
+		"gradient-parser": "^0.1.5",
 		"postcss-value-parser": "^4.1.0",
 		"type-is": "^1.6.18"
 	}

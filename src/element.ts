@@ -13,7 +13,6 @@ import {
 	isVisible,
 	isTransparent,
 	hasUniformBorder,
-	parseUrlReference,
 	hasUniformBorderRadius,
 	parseCSSLength,
 	unescapeStringValue,
@@ -21,6 +20,7 @@ import {
 import { assignTextStyles } from './text'
 import { doRectanglesIntersect, isTaggedUnionMember } from './util'
 import cssValueParser from 'postcss-value-parser'
+import { convertLinearGradient } from './gradients'
 
 export function handleElement(element: Element, context: Readonly<TraversalContext>): void {
 	const cleanupFunctions: (() => void)[] = []
@@ -208,33 +208,49 @@ function addBackgroundAndBorders(
 			const box = createBackgroundAndBorderBox(bounds, styles, context)
 			backgroundAndBordersContainer.append(box)
 			// TODO handle linear-gradient() and multiple (stacked) backgrounds
-			if (styles.backgroundImage !== 'none' && styles.backgroundImage.trim().startsWith('url(')) {
-				const image = context.svgDocument.createElementNS(svgNamespace, 'image')
-				const [width, height = 'auto'] = styles.backgroundSize.split(' ')
-				image.setAttribute('x', bounds.x.toString())
-				image.setAttribute('y', bounds.y.toString())
-				image.setAttribute('width', getBackgroundSizeDimension(width, bounds.width).toString())
-				image.setAttribute('height', getBackgroundSizeDimension(height, bounds.height).toString())
-				if (width !== 'auto' && height !== 'auto') {
-					image.setAttribute('preserveAspectRatio', 'none')
-				} else if (styles.backgroundSize === 'contain') {
-					image.setAttribute('preserveAspectRatio', 'xMidYMid meet')
-				} else if (styles.backgroundSize === 'cover') {
-					image.setAttribute('preserveAspectRatio', 'xMidYMid slice')
-				}
-				// Technically not correct, because relative URLs should be resolved relative to the stylesheet,
-				// not the page. But we have no means to know what stylesheet the style came from.
-				const url = new URL(parseUrlReference(styles.backgroundImage), window.location.href)
-				image.setAttribute('href', url.href)
-				if (styles.backgroundRepeat === 'no-repeat') {
-					backgroundAndBordersContainer.append(image)
-				} else {
-					const pattern = context.svgDocument.createElementNS(svgNamespace, 'pattern')
-					pattern.setAttribute('patternUnits', 'userSpaceOnUse')
-					pattern.id = context.getUniqueId('pattern')
-					pattern.append(image)
-					box.before(pattern)
-					box.setAttribute('fill', `url(#${pattern.id})`)
+			if (styles.backgroundImage !== 'none') {
+				const backgrounds = cssValueParser(styles.backgroundImage).nodes.reverse()
+				for (const backgroundNode of backgrounds) {
+					if (backgroundNode.type !== 'function') {
+						continue
+					}
+					if (backgroundNode.value === 'url' && backgroundNode.nodes[0]) {
+						const urlArgument = backgroundNode.nodes[0]
+						const image = context.svgDocument.createElementNS(svgNamespace, 'image')
+						const [width, height = 'auto'] = styles.backgroundSize.split(' ')
+						image.setAttribute('x', bounds.x.toString())
+						image.setAttribute('y', bounds.y.toString())
+						image.setAttribute('width', (parseCSSLength(width, bounds.width) ?? width).toString())
+						image.setAttribute('height', (parseCSSLength(height, bounds.height) ?? height).toString())
+						if (width !== 'auto' && height !== 'auto') {
+							image.setAttribute('preserveAspectRatio', 'none')
+						} else if (styles.backgroundSize === 'contain') {
+							image.setAttribute('preserveAspectRatio', 'xMidYMid meet')
+						} else if (styles.backgroundSize === 'cover') {
+							image.setAttribute('preserveAspectRatio', 'xMidYMid slice')
+						}
+						// Technically not correct, because relative URLs should be resolved relative to the stylesheet,
+						// not the page. But we have no means to know what stylesheet the style came from
+						// (unless we iterate through all rules in all style sheets and find the matching one).
+						const url = new URL(unescapeStringValue(urlArgument.value), window.location.href)
+						image.setAttribute('href', url.href)
+						if (styles.backgroundRepeat === 'no-repeat') {
+							backgroundAndBordersContainer.append(image)
+						} else {
+							const pattern = context.svgDocument.createElementNS(svgNamespace, 'pattern')
+							pattern.setAttribute('patternUnits', 'userSpaceOnUse')
+							pattern.id = context.getUniqueId('pattern')
+							pattern.append(image)
+							box.before(pattern)
+							box.setAttribute('fill', `url(#${pattern.id})`)
+						}
+					} else if (/^(-webkit-)?linear-gradient$/.test(backgroundNode.value)) {
+						const linearGradientString = cssValueParser.stringify(backgroundNode)
+						const svgLinearGradient = convertLinearGradient(linearGradientString, context)
+						svgLinearGradient.id = context.getUniqueId('linear-gradient-')
+						box.before(svgLinearGradient)
+						box.setAttribute('fill', `url(#${svgLinearGradient.id})`)
+					}
 				}
 			}
 		}
@@ -246,23 +262,6 @@ function addBackgroundAndBorders(
 			}
 		}
 	}
-}
-
-function getBackgroundSizeDimension(size: string, elementSize: number): number {
-	if (size === 'auto') {
-		// Let preserveAspectRatio handle scaling
-		return elementSize
-	}
-	if (size.endsWith('px')) {
-		return parseFloat(size)
-	}
-	if (size.endsWith('%')) {
-		// TODO this needs to account for padding (except if background-origin is set)
-		return (parseFloat(size) / 100) * elementSize
-	}
-	// Fallback
-	console.warn('Unknown background-size value', size)
-	return elementSize
 }
 
 function createBox(bounds: DOMRectReadOnly, context: Pick<TraversalContext, 'svgDocument'>): SVGRectElement {
