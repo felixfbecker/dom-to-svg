@@ -1,4 +1,4 @@
-import { svgNamespace, isHTMLAnchorElement, isHTMLImageElement, isHTMLInputElement } from './dom'
+import { svgNamespace, isHTMLAnchorElement, isHTMLImageElement, isHTMLInputElement, isHTMLElement } from './dom'
 import { getAccessibilityAttributes } from './accessibility'
 import { TraversalContext, walkNode } from './traversal'
 import {
@@ -49,6 +49,13 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 		const className = element.getAttribute('class')
 		if (className) {
 			svgContainer.setAttribute('class', className)
+		}
+
+		// Title
+		if (isHTMLElement(element) && element.title) {
+			const svgTitle = context.svgDocument.createElementNS(svgNamespace, 'title')
+			svgTitle.textContent = element.title
+			svgContainer.prepend(svgTitle)
 		}
 
 		// Which parent should the container itself be appended to?
