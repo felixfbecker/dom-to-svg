@@ -207,7 +207,6 @@ function addBackgroundAndBorders(
 		) {
 			const box = createBackgroundAndBorderBox(bounds, styles, context)
 			backgroundAndBordersContainer.append(box)
-			// TODO handle linear-gradient() and multiple (stacked) backgrounds
 			if (styles.backgroundImage !== 'none') {
 				const backgrounds = cssValueParser(styles.backgroundImage).nodes.reverse()
 				const xBackgroundPositions = styles.backgroundPositionX.split(' ')
