@@ -37,9 +37,10 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 		const styles = window.getComputedStyle(element)
 		const parentStyles = element.parentElement && window.getComputedStyle(element.parentElement)
 
-		const svgContainer = isHTMLAnchorElement(element)
-			? createSvgAnchor(element, context)
-			: context.svgDocument.createElementNS(svgNamespace, 'g')
+		const svgContainer =
+			isHTMLAnchorElement(element) && context.keepLinks
+				? createSvgAnchor(element, context)
+				: context.svgDocument.createElementNS(svgNamespace, 'g')
 
 		// Add IDs, classes, debug info
 		svgContainer.dataset.tag = element.tagName.toLowerCase()

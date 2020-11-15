@@ -12,6 +12,13 @@ export interface DomToSvgOptions {
 	 * Elements that do not intersect the capture area are not included in the SVG.
 	 */
 	captureArea?: DOMRectReadOnly
+
+	/**
+	 * Whether to include `<a>` tags in the SVG so links are still interactive.
+	 *
+	 * @default true
+	 */
+	keepLinks?: boolean
 }
 
 export function documentToSVG(document: Document, options?: DomToSvgOptions): XMLDocument {
@@ -71,6 +78,7 @@ export function elementToSVG(element: Element, options?: DomToSvgOptions): XMLDo
 		getUniqueId: createIdGenerator(),
 		labels: new Map<HTMLLabelElement, string>(),
 		captureArea: options?.captureArea ?? element.getBoundingClientRect(),
+		keepLinks: options?.keepLinks !== false,
 	})
 
 	const bounds = options?.captureArea ?? element.getBoundingClientRect()
