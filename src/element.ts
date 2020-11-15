@@ -210,19 +210,25 @@ function addBackgroundAndBorders(
 			// TODO handle linear-gradient() and multiple (stacked) backgrounds
 			if (styles.backgroundImage !== 'none') {
 				const backgrounds = cssValueParser(styles.backgroundImage).nodes.reverse()
-				for (const backgroundNode of backgrounds) {
+				const xBackgroundPositions = styles.backgroundPositionX.split(' ')
+				const yBackgroundPositions = styles.backgroundPositionY.split(' ')
+				const backgroundRepeats = styles.backgroundRepeat.split(/\s*,\s*/g)
+				for (const [index, backgroundNode] of backgrounds.entries()) {
 					if (backgroundNode.type !== 'function') {
 						continue
 					}
+					const backgroundPositionX = parseCSSLength(xBackgroundPositions[index], bounds.width) ?? 0
+					const backgroundPositionY = parseCSSLength(yBackgroundPositions[index], bounds.height) ?? 0
+					const backgroundRepeat = backgroundRepeats[index]
 					if (backgroundNode.value === 'url' && backgroundNode.nodes[0]) {
 						const urlArgument = backgroundNode.nodes[0]
 						const image = context.svgDocument.createElementNS(svgNamespace, 'image')
-						const [width, height = 'auto'] = styles.backgroundSize.split(' ')
-						image.setAttribute('x', bounds.x.toString())
-						image.setAttribute('y', bounds.y.toString())
-						image.setAttribute('width', (parseCSSLength(width, bounds.width) ?? width).toString())
-						image.setAttribute('height', (parseCSSLength(height, bounds.height) ?? height).toString())
-						if (width !== 'auto' && height !== 'auto') {
+						const [cssWidth, cssHeight = 'auto'] = styles.backgroundSize.split(' ')
+						const backgroundWidth = parseCSSLength(cssWidth, bounds.width) ?? bounds.width
+						const backgroundHeight = parseCSSLength(cssHeight, bounds.height) ?? bounds.height
+						image.setAttribute('width', backgroundWidth.toString())
+						image.setAttribute('height', backgroundHeight.toString())
+						if (cssWidth !== 'auto' && cssHeight !== 'auto') {
 							image.setAttribute('preserveAspectRatio', 'none')
 						} else if (styles.backgroundSize === 'contain') {
 							image.setAttribute('preserveAspectRatio', 'xMidYMid meet')
@@ -234,20 +240,56 @@ function addBackgroundAndBorders(
 						// (unless we iterate through all rules in all style sheets and find the matching one).
 						const url = new URL(unescapeStringValue(urlArgument.value), window.location.href)
 						image.setAttribute('href', url.href)
-						if (styles.backgroundRepeat === 'no-repeat') {
+
+						if (
+							backgroundRepeat === 'no-repeat' ||
+							(backgroundPositionX === 0 &&
+								backgroundPositionY === 0 &&
+								backgroundWidth === bounds.width &&
+								backgroundHeight === bounds.height)
+						) {
+							image.setAttribute('x', bounds.x.toString())
+							image.setAttribute('y', bounds.y.toString())
 							backgroundAndBordersContainer.append(image)
 						} else {
+							image.setAttribute('x', '0')
+							image.setAttribute('y', '0')
 							const pattern = context.svgDocument.createElementNS(svgNamespace, 'pattern')
 							pattern.setAttribute('patternUnits', 'userSpaceOnUse')
+							pattern.setAttribute('patternContentUnits', 'userSpaceOnUse')
+							pattern.setAttribute('x', (bounds.x + backgroundPositionX).toString())
+							pattern.setAttribute('y', (bounds.y + backgroundPositionY).toString())
+							pattern.setAttribute(
+								'width',
+								(backgroundRepeat === 'repeat' || backgroundRepeat === 'repeat-x'
+									? backgroundWidth
+									: // If background shouldn't repeat on this axis, make the tile as big as the element so the repetition is cut off.
+									  backgroundWidth + bounds.x + backgroundPositionX
+								).toString()
+							)
+							pattern.setAttribute(
+								'height',
+								(backgroundRepeat === 'repeat' || backgroundRepeat === 'repeat-y'
+									? backgroundHeight
+									: // If background shouldn't repeat on this axis, make the tile as big as the element so the repetition is cut off.
+									  backgroundHeight + bounds.y + backgroundPositionY
+								).toString()
+							)
 							pattern.id = context.getUniqueId('pattern')
 							pattern.append(image)
 							box.before(pattern)
 							box.setAttribute('fill', `url(#${pattern.id})`)
 						}
 					} else if (/^(-webkit-)?linear-gradient$/.test(backgroundNode.value)) {
-						const linearGradientString = cssValueParser.stringify(backgroundNode)
-						const svgLinearGradient = convertLinearGradient(linearGradientString, context)
-						svgLinearGradient.id = context.getUniqueId('linear-gradient-')
+						const linearGradientCss = cssValueParser.stringify(backgroundNode)
+						const svgLinearGradient = convertLinearGradient(linearGradientCss, context)
+						if (backgroundPositionX !== 0 || backgroundPositionY !== 0) {
+							svgLinearGradient.setAttribute(
+								'gradientTransform',
+								`translate(${backgroundPositionX}, ${backgroundPositionY})`
+							)
+						}
+						svgLinearGradient.id = context.getUniqueId('linear-gradient')
 						box.before(svgLinearGradient)
 						box.setAttribute('fill', `url(#${svgLinearGradient.id})`)
 					}

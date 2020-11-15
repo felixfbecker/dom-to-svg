@@ -36,7 +36,10 @@
 	"mocha": {
 		"timeout": 120000,
 		"exit": true,
-		"enableSourceMaps": true
+		"enableSourceMaps": true,
+		"watchFiles": [
+			"lib/**/*.js"
+		]
 	},
 	"commitlint": {
 		"extends": [
