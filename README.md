@@ -7,6 +7,11 @@
 
 Library to convert a given HTML DOM node into an accessible SVG "screenshot".
 
+## Demo 📸
+
+Try out the [SVG Screenshots Chrome extension](https://chrome.google.com/webstore/detail/svg-screenshot/nfakpcpmhhilkdpphcjgnokknpbpdllg) which uses this library to allow you to take SVG screenshots of any webpage.
+You can find the source code at [github.com/felixfbecker/svg-screenshots](https://github.com/felixfbecker/svg-screenshots).
+
 ## Usage
 
 ```js
