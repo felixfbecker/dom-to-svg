@@ -1,19 +1,40 @@
-import { isSVGGraphicsElement, isSVGSVGElement, isSVGTextContentElement, svgNamespace } from './dom'
+import {
+	isElement,
+	isSVGElement,
+	isSVGGraphicsElement,
+	isSVGSVGElement,
+	isSVGTextContentElement,
+	isTextNode,
+	svgNamespace,
+} from './dom'
 import { TraversalContext } from './traversal'
 import { assert, diagonale } from './util'
 import { parseCSSLength } from './css'
 import { copyTextStyles } from './text'
 
-const ignoredElements = new Set(['script', 'style', 'foreignElement'])
-
 /**
  * Recursively clone an `<svg>` element, inlining it into the output SVG document with the necessary transforms.
  */
+export function handleSvgNode(node: Node, context: TraversalContext): void {
+	if (isElement(node)) {
+		if (!isSVGElement(node)) {
+			return
+		}
+		handleSvgElement(node, context)
+	} else if (isTextNode(node)) {
+		const clonedTextNode = node.cloneNode(true) as Text
+		context.currentSvgParent.append(clonedTextNode)
+	}
+}
+
+const ignoredElements = new Set(['script', 'style', 'foreignElement'])
+
 export function handleSvgElement(element: SVGElement, context: TraversalContext): void {
 	if (ignoredElements.has(element.tagName)) {
 		return
 	}
-	let elementToAppend: SVGElement | undefined
+
+	let elementToAppend: SVGElement
 	if (isSVGSVGElement(element)) {
 		elementToAppend = context.svgDocument.createElementNS(svgNamespace, 'g')
 		elementToAppend.classList.add('svg-content')
@@ -49,11 +70,9 @@ export function handleSvgElement(element: SVGElement, context: TraversalContext)
 		}
 	}
 
-	if (elementToAppend) {
-		context.currentSvgParent.append(elementToAppend)
-		for (const child of element.children) {
-			handleSvgElement(child as SVGElement, { ...context, currentSvgParent: elementToAppend })
-		}
+	context.currentSvgParent.append(elementToAppend)
+	for (const child of element.childNodes) {
+		handleSvgNode(child, { ...context, currentSvgParent: elementToAppend })
 	}
 }
 

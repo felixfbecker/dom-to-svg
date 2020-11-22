@@ -28,7 +28,7 @@ import { copyTextStyles } from './text'
 import { doRectanglesIntersect, isTaggedUnionMember } from './util'
 import cssValueParser from 'postcss-value-parser'
 import { convertLinearGradient } from './gradients'
-import { handleSvgElement } from './svg'
+import { handleSvgNode } from './svg'
 
 export function handleElement(element: Element, context: Readonly<TraversalContext>): void {
 	const cleanupFunctions: (() => void)[] = []
@@ -187,7 +187,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 				childContext.stackingLayers.inFlowInlineLevelNonPositionedDescendants.append(svgTextElement)
 			}
 		} else if (rectanglesIntersect && isSVGSVGElement(element) && isVisible(styles)) {
-			handleSvgElement(element, childContext)
+			handleSvgNode(element, childContext)
 		} else {
 			// Walk children even if rectangles don't intersect,
 			// because children can overflow the parent's bounds as long as overflow: visible (default).
