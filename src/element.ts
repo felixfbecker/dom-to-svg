@@ -1,4 +1,11 @@
-import { svgNamespace, isHTMLAnchorElement, isHTMLImageElement, isHTMLInputElement, isHTMLElement } from './dom'
+import {
+	svgNamespace,
+	isHTMLAnchorElement,
+	isHTMLImageElement,
+	isHTMLInputElement,
+	isHTMLElement,
+	isSVGSVGElement,
+} from './dom'
 import { getAccessibilityAttributes } from './accessibility'
 import { TraversalContext, walkNode } from './traversal'
 import {
@@ -17,10 +24,11 @@ import {
 	parseCSSLength,
 	unescapeStringValue,
 } from './css'
-import { assignTextStyles } from './text'
+import { copyTextStyles } from './text'
 import { doRectanglesIntersect, isTaggedUnionMember } from './util'
 import cssValueParser from 'postcss-value-parser'
 import { convertLinearGradient } from './gradients'
+import { handleSvgElement } from './svg'
 
 export function handleElement(element: Element, context: Readonly<TraversalContext>): void {
 	const cleanupFunctions: (() => void)[] = []
@@ -32,13 +40,13 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 		}
 
 		const bounds = element.getBoundingClientRect() // Includes borders
-		const rectanglesIntersect = doRectanglesIntersect(bounds, context.captureArea)
+		const rectanglesIntersect = doRectanglesIntersect(bounds, context.options.captureArea)
 
 		const styles = window.getComputedStyle(element)
 		const parentStyles = element.parentElement && window.getComputedStyle(element.parentElement)
 
 		const svgContainer =
-			isHTMLAnchorElement(element) && context.keepLinks
+			isHTMLAnchorElement(element) && context.options.keepLinks
 				? createSvgAnchor(element, context)
 				: context.svgDocument.createElementNS(svgNamespace, 'g')
 
@@ -164,6 +172,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 			// Handle button labels or input field content
 			if (element.value) {
 				const svgTextElement = context.svgDocument.createElementNS(svgNamespace, 'text')
+				copyTextStyles(styles, svgTextElement)
 				svgTextElement.setAttribute('dominant-baseline', 'central')
 				svgTextElement.setAttribute('xml:space', 'preserve')
 				svgTextElement.setAttribute(
@@ -175,20 +184,11 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 				const middle = (top + bottom) / 2
 				svgTextElement.setAttribute('y', middle.toString())
 				svgTextElement.textContent = element.value
-				assignTextStyles(styles, svgTextElement)
 				childContext.stackingLayers.inFlowInlineLevelNonPositionedDescendants.append(svgTextElement)
 			}
-		} else if (rectanglesIntersect && element.tagName === 'svg') {
-			// Embed SVG, don't traverse contents
-			// TODO walk contents to inline resources
-			const clonedSvg = element.cloneNode(true) as SVGSVGElement
-			clonedSvg.setAttribute('x', bounds.x.toString())
-			clonedSvg.setAttribute('y', bounds.y.toString())
-			clonedSvg.setAttribute('width', bounds.width.toString())
-			clonedSvg.setAttribute('height', bounds.height.toString())
-			clonedSvg.style.color = styles.color // handle fill or stroke referencing currentColor keyword
-			elementToAppendTo.append(clonedSvg)
-		} else if (element.tagName !== 'IFRAME') {
+		} else if (rectanglesIntersect && isSVGSVGElement(element) && isVisible(styles)) {
+			handleSvgElement(element, childContext)
+		} else {
 			// Walk children even if rectangles don't intersect,
 			// because children can overflow the parent's bounds as long as overflow: visible (default).
 			for (const child of element.childNodes) {

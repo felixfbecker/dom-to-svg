@@ -13,6 +13,10 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 
 	const svgTextElement = context.svgDocument.createElementNS(svgNamespace, 'text')
 
+	// Copy text styles
+	// https://css-tricks.com/svg-properties-and-css
+	copyTextStyles(styles, svgTextElement)
+
 	// Make sure the y attribute is the bottom of the box, not the baseline
 	svgTextElement.setAttribute('dominant-baseline', 'text-after-edge')
 
@@ -25,7 +29,7 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 				return
 			}
 			const lineRectangle = lineRange.getClientRects()[0]
-			if (!doRectanglesIntersect(lineRectangle, context.captureArea)) {
+			if (!doRectanglesIntersect(lineRectangle, context.options.captureArea)) {
 				return
 			}
 			const textSpan = context.svgDocument.createElementNS(svgNamespace, 'tspan')
@@ -81,46 +85,37 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 		}
 	}
 
-	// Copy text styles
-	// https://css-tricks.com/svg-properties-and-css
-	assignTextStyles(styles, svgTextElement)
-
 	context.currentSvgParent.append(svgTextElement)
 }
 
-export function assignTextStyles(styles: CSSStyleDeclaration, svgElement: SVGElement): void {
-	const {
-		color,
-		fontFamily,
-		fontSize,
-		fontSizeAdjust,
-		fontStretch,
-		fontStyle,
-		fontVariant,
-		fontWeight,
-		direction,
-		letterSpacing,
-		textDecoration,
-		unicodeBidi,
-		wordSpacing,
-		writingMode,
-		userSelect,
-	} = styles
-	Object.assign(svgElement.style, {
-		fill: color,
-		fontFamily,
-		fontSize,
-		fontSizeAdjust,
-		fontStretch,
-		fontStyle,
-		fontVariant,
-		fontWeight,
-		direction,
-		letterSpacing,
-		textDecoration,
-		unicodeBidi,
-		wordSpacing,
-		writingMode,
-		userSelect,
-	})
+export const textAttributes = new Set([
+	'color',
+	'dominant-baseline',
+	'font-family',
+	'font-size',
+	'font-size-adjust',
+	'font-stretch',
+	'font-style',
+	'font-variant',
+	'font-weight',
+	'direction',
+	'letter-spacing',
+	'text-decoration',
+	'text-anchor',
+	'text-decoration',
+	'text-rendering',
+	'unicode-bidi',
+	'word-spacing',
+	'writing-mode',
+	'user-select',
+] as const)
+export function copyTextStyles(styles: CSSStyleDeclaration, svgElement: SVGElement): void {
+	for (const textProperty of textAttributes) {
+		const value = styles.getPropertyValue(textProperty)
+		if (value) {
+			svgElement.setAttribute(textProperty, value)
+		}
+	}
+	// tspan uses fill, CSS uses color
+	svgElement.setAttribute('fill', styles.color)
 }

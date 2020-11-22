@@ -1,25 +1,12 @@
 import { svgNamespace, isSVGImageElement, isSVGStyleElement, xlinkNamespace } from './dom'
 import { fetchAsDataURL as defaultFetchAsDataURL } from './inline'
-import { walkNode } from './traversal'
+import { DomToSvgOptions, walkNode } from './traversal'
 import { createStackingLayers } from './stacking'
 import { createIdGenerator, withTimeout } from './util'
 import { isCSSFontFaceRule, unescapeStringValue } from './css'
 import cssValueParser from 'postcss-value-parser'
 
-export interface DomToSvgOptions {
-	/**
-	 * To visual area to contrain the SVG too.
-	 * Elements that do not intersect the capture area are not included in the SVG.
-	 */
-	captureArea?: DOMRectReadOnly
-
-	/**
-	 * Whether to include `<a>` tags in the SVG so links are still interactive.
-	 *
-	 * @default true
-	 */
-	keepLinks?: boolean
-}
+export { DomToSvgOptions }
 
 export function documentToSVG(document: Document, options?: DomToSvgOptions): XMLDocument {
 	return elementToSVG(document.documentElement, options)
@@ -77,8 +64,10 @@ export function elementToSVG(element: Element, options?: DomToSvgOptions): XMLDo
 		parentStackingLayer: svgElement,
 		getUniqueId: createIdGenerator(),
 		labels: new Map<HTMLLabelElement, string>(),
-		captureArea: options?.captureArea ?? element.getBoundingClientRect(),
-		keepLinks: options?.keepLinks !== false,
+		options: {
+			captureArea: options?.captureArea ?? element.getBoundingClientRect(),
+			keepLinks: options?.keepLinks !== false,
+		},
 	})
 
 	const bounds = options?.captureArea ?? element.getBoundingClientRect()

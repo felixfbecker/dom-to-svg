@@ -21,6 +21,13 @@ export const doRectanglesIntersect = (a: DOMRectReadOnly, b: DOMRectReadOnly): b
 		a.left > b.right
 	)
 
+/**
+ * Calculates the length of the diagonale of a given rectangle.
+ */
+export function diagonale(box: DOMRectReadOnly): number {
+	return Math.sqrt(box.width ** 2 + box.height ** 2)
+}
+
 export function withTimeout<T>(timeout: number, message: string, func: () => Promise<T>): Promise<T> {
 	return Promise.race([
 		func(),
@@ -37,3 +44,9 @@ export function withTimeout<T>(timeout: number, message: string, func: () => Pro
 export const isTaggedUnionMember = <T extends object, K extends keyof T, V extends T[K]>(key: K, value: V) => (
 	object: T
 ): object is T & Record<K, V> => object[key] === value
+
+export function assert(condition: any, message: string): asserts condition {
+	if (!condition) {
+		throw new Error(message)
+	}
+}
