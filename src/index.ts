@@ -77,4 +77,4 @@ export function elementToSVG(element: Element, options?: DomToSvgOptions): XMLDo
 	return svgDocument
 }
 
-export { fetchAsDataURL, inlineResources } from './inline'
+export { inlineResources } from './inline'

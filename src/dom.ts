@@ -13,7 +13,7 @@ export const isSVGElement = (element: Element): element is SVGElement => element
 export const isSVGSVGElement = (element: Element): element is SVGSVGElement =>
 	isSVGElement(element) && element.tagName === 'svg'
 export const isSVGGraphicsElement = (element: Element): element is SVGGraphicsElement =>
-	isSVGElement(element) && 'getScreenCTM' in element
+	isSVGElement(element) && 'getCTM' in element && 'getScreenCTM' in element
 export const isSVGGroupElement = (element: Element): element is SVGGElement =>
 	isSVGElement(element) && element.tagName === 'g'
 export const isSVGTextContentElement = (element: Element): element is SVGTextContentElement =>

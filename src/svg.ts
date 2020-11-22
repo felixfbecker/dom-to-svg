@@ -15,7 +15,7 @@ import { copyTextStyles } from './text'
 /**
  * Recursively clone an `<svg>` element, inlining it into the output SVG document with the necessary transforms.
  */
-export function handleSvgNode(node: Node, context: TraversalContext): void {
+export function handleSvgNode(node: Node, context: Pick<TraversalContext, 'svgDocument' | 'currentSvgParent'>): void {
 	if (isElement(node)) {
 		if (!isSVGElement(node)) {
 			return
@@ -29,7 +29,10 @@ export function handleSvgNode(node: Node, context: TraversalContext): void {
 
 const ignoredElements = new Set(['script', 'style', 'foreignElement'])
 
-export function handleSvgElement(element: SVGElement, context: TraversalContext): void {
+export function handleSvgElement(
+	element: SVGElement,
+	context: Pick<TraversalContext, 'svgDocument' | 'currentSvgParent'>
+): void {
 	if (ignoredElements.has(element.tagName)) {
 		return
 	}
@@ -37,20 +40,31 @@ export function handleSvgElement(element: SVGElement, context: TraversalContext)
 	let elementToAppend: SVGElement
 	if (isSVGSVGElement(element)) {
 		elementToAppend = context.svgDocument.createElementNS(svgNamespace, 'g')
-		elementToAppend.classList.add('svg-content')
-		elementToAppend.classList.add(...element.classList)
+		elementToAppend.classList.add('svg-content', ...element.classList)
 		elementToAppend.dataset.viewBox = element.getAttribute('viewBox')!
 		elementToAppend.dataset.width = element.getAttribute('width')!
 		elementToAppend.dataset.height = element.getAttribute('height')!
 
 		// Apply a transform that simulates the scaling defined by the viewBox, width, height and preserveAspectRatio
-		const transformMatrix = DOMMatrixReadOnly.fromMatrix(element.getScreenCTM()!)
+		const transformMatrix = DOMMatrixReadOnly.fromMatrix(
+			// Is the <svg> element inside another <svg> tag (as is the case when called from inlineResources())?
+			// Then transform relative to that, otherwise transform relative to the client viewport.
+			element.ownerSVGElement ? element.getCTM()! : element.getScreenCTM()!
+		)
 		elementToAppend.setAttribute('transform', DOMMatrix.fromMatrix(transformMatrix).toString())
 	} else {
 		// Clone element
 		elementToAppend = element.cloneNode(false) as SVGElement
 
-		// Prevent ID conflicts
+		// Remove event handlers
+		for (const attribute of elementToAppend.attributes) {
+			if (attribute.localName.startsWith('on')) {
+				elementToAppend.attributes.removeNamedItemNS(attribute.namespaceURI, attribute.localName)
+			} else if (attribute.localName === 'href' && attribute.value.startsWith('javascript:')) {
+				elementToAppend.attributes.removeNamedItemNS(attribute.namespaceURI, attribute.localName)
+			}
+		}
+
 		if (element.id) {
 			elementToAppend.id = element.id
 		}
@@ -128,12 +142,12 @@ const defaults: Record<typeof graphicalPresentationAttributes[number], string> =
 	'alignment-baseline': 'auto',
 	'baseline-shift': '0px',
 	'clip-path': 'none',
-	'clip-rule': 'non-zero',
+	'clip-rule': 'nonzero',
 	'color-interpolation-filters': 'linearrgb',
 	'color-interpolation': 'srgb',
 	'color-rendering': 'auto',
 	'fill-opacity': '1',
-	'fill-rule': 'non-zero',
+	'fill-rule': 'nonzero',
 	'flood-color': 'rgb(0, 0, 0)',
 	'flood-opacity': '1',
 	'image-rendering': 'auto',
@@ -154,7 +168,7 @@ const defaults: Record<typeof graphicalPresentationAttributes[number], string> =
 	'stroke-width': '1px',
 	'vector-effect': 'none',
 	color: '',
-	cursor: 'default',
+	cursor: 'auto',
 	direction: 'ltr',
 	fill: '',
 	filter: 'none',
