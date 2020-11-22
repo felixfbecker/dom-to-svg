@@ -1,8 +1,7 @@
-import { svgNamespace, isSVGImageElement, isSVGStyleElement, xlinkNamespace } from './dom'
-import { fetchAsDataURL as defaultFetchAsDataURL } from './inline'
+import { svgNamespace, xlinkNamespace } from './dom'
 import { DomToSvgOptions, walkNode } from './traversal'
 import { createStackingLayers } from './stacking'
-import { createIdGenerator, withTimeout } from './util'
+import { createIdGenerator } from './util'
 import { isCSSFontFaceRule, unescapeStringValue } from './css'
 import cssValueParser from 'postcss-value-parser'
 
@@ -78,54 +77,4 @@ export function elementToSVG(element: Element, options?: DomToSvgOptions): XMLDo
 	return svgDocument
 }
 
-declare global {
-	interface SVGStyleElement extends LinkStyle {}
-}
-
-export interface InlineResourcesOptions {
-	fetchAsDataURL?: (url: string) => Promise<URL>
-}
-
-export async function inlineResources(element: Element, options: InlineResourcesOptions = {}): Promise<void> {
-	const { fetchAsDataURL = defaultFetchAsDataURL } = options
-	if (isSVGImageElement(element)) {
-		const dataURL = await withTimeout(5000, `Timeout fetching ${element.href.baseVal}`, () =>
-			fetchAsDataURL(element.href.baseVal)
-		)
-		element.dataset.src = element.href.baseVal
-		element.setAttribute('href', dataURL.href)
-	} else if (isSVGStyleElement(element) && element.sheet) {
-		try {
-			const rules = element.sheet.cssRules
-			for (const rule of rules) {
-				if (isCSSFontFaceRule(rule)) {
-					const parsedSourceValue = cssValueParser(rule.style.src)
-					const promises: Promise<void>[] = []
-					parsedSourceValue.walk(node => {
-						if (node.type === 'function' && node.value === 'url' && node.nodes[0]) {
-							const urlArgumentNode = node.nodes[0]
-							if (urlArgumentNode.type === 'string' || urlArgumentNode.type === 'word') {
-								const url = new URL(unescapeStringValue(urlArgumentNode.value))
-								promises.push(
-									(async () => {
-										const dataUrl = await withTimeout(5000, `Timeout fetching ${url.href}`, () =>
-											fetchAsDataURL(url.href)
-										)
-										urlArgumentNode.value = dataUrl.href
-									})()
-								)
-							}
-						}
-					})
-					await Promise.all(promises)
-					rule.style.src = cssValueParser.stringify(parsedSourceValue.nodes)
-				}
-			}
-		} catch (error) {
-			console.error('Error inlining stylesheet', element.sheet, error)
-		}
-	}
-	await Promise.all([...element.children].map(element => inlineResources(element, options)))
-}
-
-export { fetchAsDataURL } from './inline'
+export { fetchAsDataURL, inlineResources } from './inline'
