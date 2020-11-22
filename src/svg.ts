@@ -41,9 +41,9 @@ export function handleSvgElement(
 	if (isSVGSVGElement(element)) {
 		elementToAppend = context.svgDocument.createElementNS(svgNamespace, 'g')
 		elementToAppend.classList.add('svg-content', ...element.classList)
-		elementToAppend.dataset.viewBox = element.getAttribute('viewBox')!
-		elementToAppend.dataset.width = element.getAttribute('width')!
-		elementToAppend.dataset.height = element.getAttribute('height')!
+		elementToAppend.dataset.viewBox = element.getAttribute('viewBox') ?? ''
+		elementToAppend.dataset.width = element.getAttribute('width') ?? ''
+		elementToAppend.dataset.height = element.getAttribute('height') ?? ''
 
 		// Apply a transform that simulates the scaling defined by the viewBox, width, height and preserveAspectRatio
 		const transformMatrix = DOMMatrixReadOnly.fromMatrix(
