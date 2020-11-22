@@ -66,22 +66,19 @@ const graphicalPresentationAttributes = [
 	'color',
 	'color-interpolation',
 	'color-interpolation-filters',
-	'color-profile',
+	// 'color-profile',
 	'color-rendering',
 	'cursor',
 	'direction',
 	// 'display',
-	'enable-background',
+	// 'enable-background',
 	'fill',
 	'fill-opacity',
 	'fill-rule',
 	'filter',
 	'flood-color',
 	'flood-opacity',
-	'glyph-orientation-horizontal',
-	'glyph-orientation-vertical',
 	'image-rendering',
-	'kerning',
 	'lighting-color',
 	'marker-end',
 	'marker-mid',
@@ -91,8 +88,8 @@ const graphicalPresentationAttributes = [
 	// 'overflow',
 	'pointer-events',
 	'shape-rendering',
-	'solid-color',
-	'solid-opacity',
+	// 'solid-color',
+	// 'solid-opacity',
 	'stop-color',
 	'stop-opacity',
 	'stroke',
@@ -108,6 +105,47 @@ const graphicalPresentationAttributes = [
 	'visibility',
 ] as const
 
+const defaults: Record<typeof graphicalPresentationAttributes[number], string> = {
+	'alignment-baseline': 'auto',
+	'baseline-shift': '0px',
+	'clip-path': 'none',
+	'clip-rule': 'non-zero',
+	'color-interpolation-filters': 'linearrgb',
+	'color-interpolation': 'srgb',
+	'color-rendering': 'auto',
+	'fill-opacity': '1',
+	'fill-rule': 'non-zero',
+	'flood-color': 'rgb(0, 0, 0)',
+	'flood-opacity': '1',
+	'image-rendering': 'auto',
+	'lighting-color': 'rgb(255, 255, 255)',
+	'marker-end': 'none',
+	'marker-mid': 'none',
+	'marker-start': 'none',
+	'pointer-events': 'auto',
+	'shape-rendering': 'auto',
+	'stop-color': 'rgb(0, 0, 0)',
+	'stop-opacity': '1',
+	'stroke-dasharray': 'none',
+	'stroke-dashoffset': '0px',
+	'stroke-linecap': 'butt',
+	'stroke-linejoin': 'miter',
+	'stroke-miterlimit': '4',
+	'stroke-opacity': '1',
+	'stroke-width': '1px',
+	'vector-effect': 'none',
+	color: '',
+	cursor: 'default',
+	direction: 'ltr',
+	fill: '',
+	filter: 'none',
+	mask: 'none',
+	opacity: '1',
+	stroke: '',
+	transform: 'none',
+	visibility: 'visible',
+}
+
 function copyGraphicalPresentationAttributes(
 	styles: CSSStyleDeclaration,
 	target: SVGElement,
@@ -115,7 +153,7 @@ function copyGraphicalPresentationAttributes(
 ): void {
 	for (const attribute of graphicalPresentationAttributes) {
 		let value: string | number = styles.getPropertyValue(attribute)
-		if (value && value !== 'none') {
+		if (value && value !== defaults[attribute]) {
 			if (value.endsWith('%')) {
 				// E.g. https://svgwg.org/svg2-draft/painting.html#StrokeWidth
 				// Percentages:	refer to the normalized diagonal of the current SVG viewport (see Units)
