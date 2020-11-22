@@ -1,3 +1,4 @@
+import { isVisible } from './css'
 import { svgNamespace } from './dom'
 import { TraversalContext } from './traversal'
 import { doRectanglesIntersect } from './util'
@@ -9,6 +10,9 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 	const window = textNode.ownerDocument.defaultView
 	const parentElement = textNode.parentElement!
 	const styles = window.getComputedStyle(parentElement)
+	if (!isVisible(styles)) {
+		return
+	}
 	const { whiteSpace } = styles
 
 	const svgTextElement = context.svgDocument.createElementNS(svgNamespace, 'text')
