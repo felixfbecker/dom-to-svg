@@ -39,6 +39,8 @@ describe('documentToSVG()', () => {
 	before('Launch devserver', async () => {
 		const bundler = new ParcelBundler(path.resolve(root, 'src/test/injected-script.ts'), {
 			hmr: false,
+			sourceMaps: true,
+			minify: false,
 		})
 		server = await bundler.serve(8080)
 	})
