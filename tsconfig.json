@@ -14,9 +14,8 @@
 		"noUnusedLocals": true,
 		"skipLibCheck": true,
 		"skipDefaultLibCheck": true,
-		"baseUrl": "src",
 		"paths": {
-			"*": ["./types/*", "*"],
+			"*": ["./src/types/*", "./*"],
 		},
 	},
 	"include": ["src/**/*"],
