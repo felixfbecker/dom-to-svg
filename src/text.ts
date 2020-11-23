@@ -81,7 +81,8 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 			// Pure whitespace text nodes are collapsed and not rendered.
 			return
 		}
-		if (lineRectangles.length > 1) {
+		// For some reason, Chrome returns 2 identical DOMRects for text with text-overflow: ellipsis.
+		if (lineRectangles.length > 1 && lineRectangles[0].top !== lineRectangles[1].top) {
 			// Crossed a line break.
 			lineRange.setEnd(textNode, lineRange.endOffset - 1)
 			addTextSpanForLineRange()
