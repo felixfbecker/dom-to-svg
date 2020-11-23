@@ -143,14 +143,17 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 			addBackgroundAndBorders(styles, bounds, backgroundContainer, window, context)
 		}
 
-		// If element is overflow: hidden, create a clipping rectangle to hide any overflowing content of any descendants
-		let clipPath: SVGClipPathElement | undefined
+		// If element is overflow: hidden, create a masking rectangle to hide any overflowing content of any descendants.
+		// Use <mask> instead of <clipPath> as Figma supports <mask>, but not <clipPath>.
+		let mask: SVGMaskElement | undefined
 		if (styles.overflow !== 'visible') {
-			clipPath = context.svgDocument.createElementNS(svgNamespace, 'clipPath')
-			clipPath.id = context.getUniqueId('clipPath')
-			clipPath.append(createBox(bounds, context))
-			svgContainer.append(clipPath)
-			svgContainer.setAttribute('clip-path', `url(#${clipPath.id})`)
+			mask = context.svgDocument.createElementNS(svgNamespace, 'mask')
+			mask.id = context.getUniqueId('mask-for-' + id)
+			const visibleRectangle = createBox(bounds, context)
+			visibleRectangle.setAttribute('fill', '#ffffff')
+			mask.append(visibleRectangle)
+			svgContainer.append(mask)
+			svgContainer.setAttribute('mask', `url(#${mask.id})`)
 		}
 
 		if (rectanglesIntersect && isHTMLImageElement(element)) {
