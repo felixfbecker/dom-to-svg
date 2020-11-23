@@ -79,8 +79,9 @@ export function handleSvgElement(
 
 		if (isSVGGraphicsElement(element)) {
 			copyGraphicalPresentationAttributes(styles, elementToAppend, svgViewportElement.viewBox.animVal)
-		} else if (isSVGTextContentElement(element)) {
-			copyTextStyles(styles, elementToAppend)
+			if (isSVGTextContentElement(element)) {
+				copyTextStyles(styles, elementToAppend)
+			}
 		}
 	}
 
