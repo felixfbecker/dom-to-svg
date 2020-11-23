@@ -1,5 +1,6 @@
 import {
 	isElement,
+	isSVGAnchorElement,
 	isSVGElement,
 	isSVGGraphicsElement,
 	isSVGSVGElement,
@@ -15,7 +16,10 @@ import { copyTextStyles } from './text'
 /**
  * Recursively clone an `<svg>` element, inlining it into the output SVG document with the necessary transforms.
  */
-export function handleSvgNode(node: Node, context: Pick<TraversalContext, 'svgDocument' | 'currentSvgParent'>): void {
+export function handleSvgNode(
+	node: Node,
+	context: Pick<TraversalContext, 'svgDocument' | 'currentSvgParent' | 'options'>
+): void {
 	if (isElement(node)) {
 		if (!isSVGElement(node)) {
 			return
@@ -31,7 +35,7 @@ const ignoredElements = new Set(['script', 'style', 'foreignElement'])
 
 export function handleSvgElement(
 	element: SVGElement,
-	context: Pick<TraversalContext, 'svgDocument' | 'currentSvgParent'>
+	context: Pick<TraversalContext, 'svgDocument' | 'currentSvgParent' | 'options'>
 ): void {
 	if (ignoredElements.has(element.tagName)) {
 		return
@@ -54,7 +58,11 @@ export function handleSvgElement(
 		elementToAppend.setAttribute('transform', DOMMatrix.fromMatrix(transformMatrix).toString())
 	} else {
 		// Clone element
-		elementToAppend = element.cloneNode(false) as SVGElement
+		if (isSVGAnchorElement(element) && !context.options.keepLinks) {
+			elementToAppend = context.svgDocument.createElementNS(svgNamespace, 'g')
+		} else {
+			elementToAppend = element.cloneNode(false) as SVGElement
+		}
 
 		// Remove event handlers
 		for (const attribute of elementToAppend.attributes) {

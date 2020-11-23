@@ -35,7 +35,7 @@ export async function inlineResources(element: Element): Promise<void> {
 				await blob.text(),
 				'image/svg+xml'
 			) as XMLDocument
-			const svgRoot = embeddedSvgDocument.documentElement
+			const svgRoot = (embeddedSvgDocument.documentElement as Element) as SVGSVGElement
 			svgRoot.setAttribute('x', element.getAttribute('x')!)
 			svgRoot.setAttribute('y', element.getAttribute('y')!)
 			svgRoot.setAttribute('width', element.getAttribute('width')!)
@@ -46,7 +46,15 @@ export async function inlineResources(element: Element): Promise<void> {
 				// Let handleSvgNode inline the <svg> into a simple <g>
 				const svgDocument = element.ownerDocument
 				const mount = svgDocument.createElementNS(svgNamespace, 'g')
-				handleSvgNode(svgRoot, { currentSvgParent: mount, svgDocument })
+				handleSvgNode(svgRoot, {
+					currentSvgParent: mount,
+					svgDocument,
+					options: {
+						// SVGs embedded through <img> are never interactive.
+						keepLinks: false,
+						captureArea: svgRoot.viewBox.baseVal,
+					},
+				})
 
 				// Replace the <svg> element with the <g>
 				mount.dataset.tag = 'image'

@@ -16,6 +16,8 @@ export const isSVGGraphicsElement = (element: Element): element is SVGGraphicsEl
 	isSVGElement(element) && 'getCTM' in element && 'getScreenCTM' in element
 export const isSVGGroupElement = (element: Element): element is SVGGElement =>
 	isSVGElement(element) && element.tagName === 'g'
+export const isSVGAnchorElement = (element: Element): element is SVGAElement =>
+	isSVGElement(element) && element.tagName === 'a'
 export const isSVGTextContentElement = (element: Element): element is SVGTextContentElement =>
 	isSVGElement(element) && 'textLength' in element
 export const isSVGImageElement = (element: Element): element is SVGImageElement =>
