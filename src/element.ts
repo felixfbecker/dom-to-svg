@@ -30,7 +30,7 @@ import cssValueParser from 'postcss-value-parser'
 import { convertLinearGradient } from './gradients'
 import { handleSvgNode } from './svg'
 
-export function handleElement(element: Element, context: Readonly<TraversalContext>): void {
+export function handleHTMLElement(element: HTMLElement, context: Readonly<TraversalContext>): void {
 	const cleanupFunctions: (() => void)[] = []
 
 	try {
@@ -129,9 +129,11 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 			span.dataset.pseudoElement = pseudoSelector
 			copyCssStyles(pseudoElementStyles, span.style)
 			span.textContent = unescapeStringValue(content.value)
+			element.dataset.pseudoElementOwner = id
+			cleanupFunctions.push(() => element.removeAttribute('data-pseudo-element-owner'))
 			const style = element.ownerDocument.createElement('style')
 			// Hide the *actual* pseudo element temporarily while we have a real DOM equivalent in the DOM
-			style.innerHTML = `#${id}${pseudoSelector} { display: none; }`
+			style.innerHTML = `[data-pseudo-element-owner="${id}"]${pseudoSelector} { display: none !important; }`
 			element.before(style)
 			cleanupFunctions.push(() => style.remove())
 			element[position](span)

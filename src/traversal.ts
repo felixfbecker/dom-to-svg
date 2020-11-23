@@ -1,7 +1,8 @@
-import { isElement, isTextNode } from './dom'
-import { handleElement } from './element'
+import { isElement, isHTMLElement, isSVGElement, isTextNode } from './dom'
+import { handleHTMLElement } from './element'
 import { handleTextNode } from './text'
 import { StackingLayers } from './stacking'
+import { handleSvgElement } from './svg'
 
 export interface DomToSvgOptions {
 	/**
@@ -30,7 +31,11 @@ export interface TraversalContext {
 
 export function walkNode(node: Node, context: TraversalContext): void {
 	if (isElement(node)) {
-		handleElement(node, context)
+		if (isHTMLElement(node)) {
+			handleHTMLElement(node, context)
+		} else if (isSVGElement(node)) {
+			handleSvgElement(node, context)
+		}
 	} else if (isTextNode(node)) {
 		handleTextNode(node, context)
 	}
