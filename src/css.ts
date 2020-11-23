@@ -50,6 +50,6 @@ export const unescapeStringValue = (value: string): string =>
 
 export function copyCssStyles(from: CSSStyleDeclaration, to: CSSStyleDeclaration): void {
 	for (const property of from) {
-		to.setProperty(property, to.getPropertyValue(property), to.getPropertyPriority(property))
+		to.setProperty(property, from.getPropertyValue(property), from.getPropertyPriority(property))
 	}
 }

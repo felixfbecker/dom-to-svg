@@ -126,9 +126,11 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 			}
 			// Pseudo elements are inline by default (like a span)
 			const span = element.ownerDocument.createElement('span')
+			span.dataset.pseudoElement = pseudoSelector
 			copyCssStyles(pseudoElementStyles, span.style)
 			span.textContent = unescapeStringValue(content.value)
 			const style = element.ownerDocument.createElement('style')
+			// Hide the *actual* pseudo element temporarily while we have a real DOM equivalent in the DOM
 			style.innerHTML = `#${id}${pseudoSelector} { display: none; }`
 			element.before(style)
 			cleanupFunctions.push(() => style.remove())
