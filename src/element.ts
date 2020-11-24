@@ -30,7 +30,7 @@ import cssValueParser from 'postcss-value-parser'
 import { convertLinearGradient } from './gradients'
 import { handleSvgNode } from './svg'
 
-export function handleHTMLElement(element: HTMLElement, context: Readonly<TraversalContext>): void {
+export function handleElement(element: Element, context: Readonly<TraversalContext>): void {
 	const cleanupFunctions: (() => void)[] = []
 
 	try {
@@ -117,6 +117,9 @@ export function handleHTMLElement(element: HTMLElement, context: Readonly<Traver
 		}
 
 		const handlePseudoElement = (pseudoSelector: '::before' | '::after', position: 'prepend' | 'append'): void => {
+			if (!isHTMLElement(element)) {
+				return
+			}
 			const pseudoElementStyles = window.getComputedStyle(element, pseudoSelector)
 			const content = cssValueParser(pseudoElementStyles.content).nodes.find(
 				isTaggedUnionMember('type', 'string' as const)
