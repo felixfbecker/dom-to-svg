@@ -46,7 +46,7 @@ export function convertLinearGradient(
 	css: string,
 	{ svgDocument }: Pick<TraversalContext, 'svgDocument'>
 ): SVGLinearGradientElement {
-	const { orientation, colorStops } = gradientParser.parse(css)[0]
+	const { orientation, colorStops } = gradientParser.parse(css)[0]!
 	const { x1, x2, y1, y2 } = positionsForOrientation(orientation)
 
 	const getColorStops = (colorStop: gradientParser.ColorStop, index: number): SVGStopElement => {

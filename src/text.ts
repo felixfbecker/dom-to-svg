@@ -37,7 +37,7 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 			if (lineRange.collapsed) {
 				return
 			}
-			const lineRectangle = lineRange.getClientRects()[0]
+			const lineRectangle = lineRange.getClientRects()[0]!
 			if (!doRectanglesIntersect(lineRectangle, context.options.captureArea)) {
 				return
 			}
@@ -77,12 +77,14 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 		}
 		// getClientRects() returns one rectangle for each line of a text node.
 		const lineRectangles = lineRange.getClientRects()
-		if (lineRectangles.length === 0) {
+		// If no lines
+		if (!lineRectangles[0]) {
 			// Pure whitespace text nodes are collapsed and not rendered.
 			return
 		}
+		// If two (unique) lines
 		// For some reason, Chrome returns 2 identical DOMRects for text with text-overflow: ellipsis.
-		if (lineRectangles.length > 1 && lineRectangles[0].top !== lineRectangles[1].top) {
+		if (lineRectangles[1] && lineRectangles[0].top !== lineRectangles[1].top) {
 			// Crossed a line break.
 			// Go back one character to select exactly the previous line.
 			lineRange.setEnd(textNode, lineRange.endOffset - 1)

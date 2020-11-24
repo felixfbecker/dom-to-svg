@@ -14,6 +14,7 @@
 		"noUnusedLocals": true,
 		"skipLibCheck": true,
 		"skipDefaultLibCheck": true,
+		"noUncheckedIndexedAccess": true,
 		"paths": {
 			"*": ["./src/types/*", "./*"],
 		},

@@ -239,13 +239,13 @@ function addBackgroundAndBorders(
 					if (backgroundNode.type !== 'function') {
 						continue
 					}
-					const backgroundPositionX = parseCSSLength(xBackgroundPositions[index], bounds.width) ?? 0
-					const backgroundPositionY = parseCSSLength(yBackgroundPositions[index], bounds.height) ?? 0
+					const backgroundPositionX = parseCSSLength(xBackgroundPositions[index]!, bounds.width) ?? 0
+					const backgroundPositionY = parseCSSLength(yBackgroundPositions[index]!, bounds.height) ?? 0
 					const backgroundRepeat = backgroundRepeats[index]
 					if (backgroundNode.value === 'url' && backgroundNode.nodes[0]) {
 						const urlArgument = backgroundNode.nodes[0]
 						const image = context.svgDocument.createElementNS(svgNamespace, 'image')
-						const [cssWidth, cssHeight = 'auto'] = styles.backgroundSize.split(' ')
+						const [cssWidth, cssHeight = 'auto'] = styles.backgroundSize.split(' ') as [string, ...string[]]
 						const backgroundWidth = parseCSSLength(cssWidth, bounds.width) ?? bounds.width
 						const backgroundHeight = parseCSSLength(cssHeight, bounds.height) ?? bounds.height
 						image.setAttribute('width', backgroundWidth.toString())
