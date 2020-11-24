@@ -1,7 +1,7 @@
 import { isVisible } from './css'
 import { svgNamespace } from './dom'
 import { TraversalContext } from './traversal'
-import { doRectanglesIntersect } from './util'
+import { doRectanglesIntersect, assert } from './util'
 
 export function handleTextNode(textNode: Text, context: TraversalContext): void {
 	if (!textNode.ownerDocument.defaultView) {
@@ -13,7 +13,12 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 	if (!isVisible(styles)) {
 		return
 	}
-	const { whiteSpace } = styles
+
+	const selection = window.getSelection()
+	assert(
+		selection,
+		'Could not obtain selection from window. Selection is needed for detecting whitespace collapsing in text.'
+	)
 
 	const svgTextElement = context.svgDocument.createElementNS(svgNamespace, 'text')
 
@@ -39,28 +44,22 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 			const textSpan = context.svgDocument.createElementNS(svgNamespace, 'tspan')
 			textSpan.setAttribute('xml:space', 'preserve')
 
-			let text = lineRange.toString()
-
-			if (whiteSpace !== 'pre' && whiteSpace !== 'pre-wrap') {
-				// Collapse whitespace within the text node
-				text = text.replace(/\s+/, ' ')
-
-				// Check if previous siblings had trailing whitespace.
-				// If so, trim beginning of the text content to collapse whitespace across nodes.
-				if (lineRange.startOffset === 0) {
-					for (let node: Node | null = textNode.previousSibling; node; node = node.previousSibling) {
-						if (node.textContent && /\s+$/.test(node.textContent)) {
-							text = text.trimStart()
-							break
-						} else if (node.textContent?.trim()) {
-							break
-						}
-					}
-				}
+			// lineRange.toString() returns the text including whitespace.
+			// by adding the range to a Selection, then getting the text from that selection,
+			// we can let the DOM handle whitespace collapsing the same way as innerText (but for a Range).
+			// For this to work, the parent element must not forbid user selection.
+			const previousUserSelect = parentElement.style.userSelect
+			parentElement.style.userSelect = 'all'
+			try {
+				selection.removeAllRanges()
+				selection.addRange(lineRange)
+				textSpan.textContent = selection.toString()
+			} finally {
+				parentElement.style.userSelect = previousUserSelect
 			}
-			textSpan.textContent = text
+
 			textSpan.setAttribute('x', lineRectangle.x.toString())
-			textSpan.setAttribute('y', lineRectangle.bottom.toString())
+			textSpan.setAttribute('y', lineRectangle.bottom.toString()) // intentionally bottom because of dominant-baseline setting
 			textSpan.setAttribute('textLength', lineRectangle.width.toString())
 			textSpan.setAttribute('lengthAdjust', 'spacingAndGlyphs')
 			svgTextElement.append(textSpan)
@@ -84,8 +83,11 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 		// For some reason, Chrome returns 2 identical DOMRects for text with text-overflow: ellipsis.
 		if (lineRectangles.length > 1 && lineRectangles[0].top !== lineRectangles[1].top) {
 			// Crossed a line break.
+			// Go back one character to select exactly the previous line.
 			lineRange.setEnd(textNode, lineRange.endOffset - 1)
+			// Add <tspan> for exactly that line
 			addTextSpanForLineRange()
+			// Start on the next line.
 			lineRange.setStart(textNode, lineRange.endOffset)
 		}
 	}
