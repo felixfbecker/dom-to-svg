@@ -354,17 +354,21 @@ function createBackgroundAndBorderBox(
 
 	if (hasUniformBorder(styles)) {
 		// Uniform border, use stroke
-		background.setAttribute('stroke', styles.borderColor)
-		background.setAttribute('stroke-width', styles.borderWidth)
-		if (styles.borderStyle === 'dashed') {
+		// Cannot use borderColor/borderWidth directly as in Firefox those are empty strings.
+		// Need to get the border property from some specific side (they are all the same in this condition).
+		// https://stackoverflow.com/questions/41696063/getcomputedstyle-returns-empty-strings-on-ff-when-instead-crome-returns-a-comp
+		background.setAttribute('stroke', styles.borderTopColor)
+		background.setAttribute('stroke-width', styles.borderTopWidth)
+		if (styles.borderTopStyle === 'dashed') {
 			// > Displays a series of short square-ended dashes or line segments.
 			// > The exact size and length of the segments are not defined by the specification and are implementation-specific.
 			background.setAttribute('stroke-dasharray', '1')
 		}
 	}
 	if (hasUniformBorderRadius(styles)) {
-		background.setAttribute('rx', styles.borderRadius)
-		background.setAttribute('ry', styles.borderRadius)
+		// Cannot use borderRadius directly as in Firefox those are empty strings.
+		background.setAttribute('rx', styles.borderTopLeftRadius)
+		background.setAttribute('ry', styles.borderTopLeftRadius)
 	}
 
 	return background

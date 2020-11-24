@@ -48,14 +48,6 @@ export function handleSvgElement(
 		elementToAppend.dataset.viewBox = element.getAttribute('viewBox') ?? ''
 		elementToAppend.dataset.width = element.getAttribute('width') ?? ''
 		elementToAppend.dataset.height = element.getAttribute('height') ?? ''
-
-		// Apply a transform that simulates the scaling defined by the viewBox, width, height and preserveAspectRatio
-		const transformMatrix = DOMMatrixReadOnly.fromMatrix(
-			// Is the <svg> element inside another <svg> tag (as is the case when called from inlineResources())?
-			// Then transform relative to that, otherwise transform relative to the client viewport.
-			element.ownerSVGElement ? element.getCTM()! : element.getScreenCTM()!
-		)
-		elementToAppend.setAttribute('transform', DOMMatrix.fromMatrix(transformMatrix).toString())
 	} else {
 		// Clone element
 		if (isSVGAnchorElement(element) && !context.options.keepLinks) {
@@ -87,8 +79,25 @@ export function handleSvgElement(
 
 		if (isSVGGraphicsElement(element)) {
 			copyGraphicalPresentationAttributes(styles, elementToAppend, svgViewportElement.viewBox.animVal)
+
 			if (isSVGTextContentElement(element)) {
 				copyTextStyles(styles, elementToAppend)
+			}
+
+			// Apply a transform that simulates the scaling defined by the viewBox, width, height and
+			// preserveAspectRatio
+			//
+			// We have to do this on every direct child of <svg> and cannot do this on the <svg> directly, because
+			// Firefox returns an identity matrix for getCTM() on the <svg> element.
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=873106
+			//
+			// Do not do this for further nested descendants, as that would stack the transforms.
+			if (element.parentElement === element.ownerSVGElement) {
+				const graphicsElementToAppend = elementToAppend as SVGGraphicsElement
+				graphicsElementToAppend.transform.baseVal.clear()
+				graphicsElementToAppend.transform.baseVal.appendItem(
+					graphicsElementToAppend.transform.baseVal.createSVGTransformFromMatrix(element.getScreenCTM()!)
+				)
 			}
 		}
 	}

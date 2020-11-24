@@ -11,14 +11,23 @@ export const isInFlow = (styles: CSSStyleDeclaration): boolean =>
 export const isTransparent = (color: string): boolean => color === 'transparent' || color === 'rgba(0, 0, 0, 0)'
 
 export const hasUniformBorder = (styles: CSSStyleDeclaration): boolean =>
-	parseInt(styles.borderTopWidth, 10) !== 10 &&
+	parseFloat(styles.borderTopWidth) !== 0 &&
 	styles.borderTopStyle !== 'none' &&
 	styles.borderTopStyle !== 'inset' &&
 	styles.borderTopStyle !== 'outset' &&
 	!isTransparent(styles.borderTopColor) &&
-	styles.borderTop === styles.borderLeft &&
-	styles.borderTop === styles.borderRight &&
-	styles.borderTop === styles.borderBottom
+	// Cannot use border property directly as in Firefox those are empty strings.
+	// Need to get the specific border properties from the specific sides.
+	// https://stackoverflow.com/questions/41696063/getcomputedstyle-returns-empty-strings-on-ff-when-instead-crome-returns-a-comp
+	styles.borderTopWidth === styles.borderLeftWidth &&
+	styles.borderTopWidth === styles.borderRightWidth &&
+	styles.borderTopWidth === styles.borderBottomWidth &&
+	styles.borderTopColor === styles.borderLeftColor &&
+	styles.borderTopColor === styles.borderRightColor &&
+	styles.borderTopColor === styles.borderBottomColor &&
+	styles.borderTopStyle === styles.borderLeftStyle &&
+	styles.borderTopStyle === styles.borderRightStyle &&
+	styles.borderTopStyle === styles.borderBottomStyle
 
 export const hasUniformBorderRadius = (styles: CSSStyleDeclaration): boolean =>
 	styles.borderTopLeftRadius === styles.borderTopRightRadius &&
