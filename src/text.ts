@@ -56,6 +56,7 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 				textSpan.textContent = selection.toString()
 			} finally {
 				parentElement.style.userSelect = previousUserSelect
+				selection.removeAllRanges()
 			}
 
 			textSpan.setAttribute('x', lineRectangle.x.toString())
