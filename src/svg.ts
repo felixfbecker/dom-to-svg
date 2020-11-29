@@ -12,14 +12,12 @@ import { TraversalContext } from './traversal'
 import { assert, diagonale } from './util'
 import { parseCSSLength } from './css'
 import { copyTextStyles } from './text'
+import cssValueParser from 'postcss-value-parser'
 
 /**
  * Recursively clone an `<svg>` element, inlining it into the output SVG document with the necessary transforms.
  */
-export function handleSvgNode(
-	node: Node,
-	context: Pick<TraversalContext, 'svgDocument' | 'currentSvgParent' | 'options'>
-): void {
+export function handleSvgNode(node: Node, context: SvgTraversalContext): void {
 	if (isElement(node)) {
 		if (!isSVGElement(node)) {
 			return
@@ -33,10 +31,15 @@ export function handleSvgNode(
 
 const ignoredElements = new Set(['script', 'style', 'foreignElement'])
 
-export function handleSvgElement(
-	element: SVGElement,
-	context: Pick<TraversalContext, 'svgDocument' | 'currentSvgParent' | 'options'>
-): void {
+interface SvgTraversalContext extends Pick<TraversalContext, 'svgDocument' | 'currentSvgParent' | 'options'> {
+	/**
+	 * A prefix to use for all ID to make them unique inside the output SVG document.
+	 */
+	readonly idPrefix: string
+}
+
+const URL_ID_REFERENCE_REGEX = /\burl\(["']?#/
+export function handleSvgElement(element: SVGElement, context: SvgTraversalContext): void {
 	if (ignoredElements.has(element.tagName)) {
 		return
 	}
@@ -80,6 +83,11 @@ export function handleSvgElement(
 			)
 			break
 		}
+
+		// Make all IDs unique
+		for (const descendant of element.querySelectorAll('[id]')) {
+			descendant.id = context.idPrefix + descendant.id
+		}
 	} else {
 		// Clone element
 		if (isSVGAnchorElement(element) && !context.options.keepLinks) {
@@ -97,10 +105,6 @@ export function handleSvgElement(
 			}
 		}
 
-		if (element.id) {
-			elementToAppend.id = element.id
-		}
-
 		const window = element.ownerDocument.defaultView
 		assert(window, "Element's ownerDocument has no defaultView")
 
@@ -114,6 +118,27 @@ export function handleSvgElement(
 
 			if (isSVGTextContentElement(element)) {
 				copyTextStyles(styles, elementToAppend)
+			}
+		}
+
+		// Namespace ID references url(#...)
+		for (const attribute of elementToAppend.attributes) {
+			if (attribute.localName === 'href') {
+				if (attribute.value.startsWith('#')) {
+					attribute.value = attribute.value.replace('#', `#${context.idPrefix}`)
+				}
+			} else if (URL_ID_REFERENCE_REGEX.test(attribute.value)) {
+				attribute.value = rewriteUrlIdReferences(attribute.value, context)
+			}
+		}
+		for (const property of elementToAppend.style) {
+			const value = elementToAppend.style.getPropertyValue(property)
+			if (URL_ID_REFERENCE_REGEX.test(value)) {
+				elementToAppend.style.setProperty(
+					property,
+					rewriteUrlIdReferences(value, context),
+					elementToAppend.style.getPropertyPriority(property)
+				)
 			}
 		}
 	}
@@ -210,6 +235,24 @@ const defaults: Record<typeof graphicalPresentationAttributes[number], string> =
 	stroke: '',
 	transform: 'none',
 	visibility: 'visible',
+}
+
+/**
+ * Prefixes all ID references of the form `url(#id)` in the given string.
+ */
+function rewriteUrlIdReferences(value: string, { idPrefix }: Pick<SvgTraversalContext, 'idPrefix'>): string {
+	const parsedValue = cssValueParser(value)
+	parsedValue.walk(node => {
+		if (node.type !== 'function' || node.value !== 'url') {
+			return
+		}
+		const urlArgument = node.nodes[0]
+		if (!urlArgument) {
+			return
+		}
+		urlArgument.value = urlArgument.value.replace('#', `#${idPrefix}`)
+	})
+	return cssValueParser.stringify(parsedValue.nodes)
 }
 
 function copyGraphicalPresentationAttributes(

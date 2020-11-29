@@ -167,6 +167,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 
 		if (rectanglesIntersect && isHTMLImageElement(element)) {
 			const svgImage = context.svgDocument.createElementNS(svgNamespace, 'image')
+			svgImage.id = `${id}-image` // read by inlineResources()
 			svgImage.setAttribute('href', element.src)
 			const paddingLeft = parseCSSLength(styles.paddingLeft, bounds.width) ?? 0
 			const paddingRight = parseCSSLength(styles.paddingRight, bounds.width) ?? 0
@@ -199,7 +200,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 				childContext.stackingLayers.inFlowInlineLevelNonPositionedDescendants.append(svgTextElement)
 			}
 		} else if (rectanglesIntersect && isSVGSVGElement(element) && isVisible(styles)) {
-			handleSvgNode(element, childContext)
+			handleSvgNode(element, { ...childContext, idPrefix: `${id}-` })
 		} else {
 			// Walk children even if rectangles don't intersect,
 			// because children can overflow the parent's bounds as long as overflow: visible (default).

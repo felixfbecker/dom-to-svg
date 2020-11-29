@@ -46,9 +46,11 @@ export async function inlineResources(element: Element): Promise<void> {
 				// Let handleSvgNode inline the <svg> into a simple <g>
 				const svgDocument = element.ownerDocument
 				const mount = svgDocument.createElementNS(svgNamespace, 'g')
+				assert(element.id, '<image> element must have ID')
 				handleSvgNode(svgRoot, {
 					currentSvgParent: mount,
 					svgDocument,
+					idPrefix: `${element.id}-`,
 					options: {
 						// SVGs embedded through <img> are never interactive.
 						keepLinks: false,
@@ -57,7 +59,7 @@ export async function inlineResources(element: Element): Promise<void> {
 				})
 
 				// Replace the <svg> element with the <g>
-				mount.dataset.tag = 'image'
+				mount.dataset.tag = 'img'
 				mount.setAttribute('role', 'img')
 				svgRoot.replaceWith(mount)
 			} finally {
