@@ -165,7 +165,8 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 			svgContainer.setAttribute('mask', `url(#${mask.id})`)
 		}
 
-		if (rectanglesIntersect && isHTMLImageElement(element)) {
+		// Make sure the element has a src attribute (the relative URL). `element.src` is absolute and always defined.
+		if (rectanglesIntersect && isHTMLImageElement(element) && element.getAttribute('src')) {
 			const svgImage = context.svgDocument.createElementNS(svgNamespace, 'image')
 			svgImage.id = `${id}-image` // read by inlineResources()
 			svgImage.setAttribute('href', element.src)
@@ -234,21 +235,20 @@ function addBackgroundAndBorders(
 			const box = createBackgroundAndBorderBox(bounds, styles, context)
 			backgroundAndBordersContainer.append(box)
 			if (styles.backgroundImage !== 'none') {
-				const backgrounds = cssValueParser(styles.backgroundImage).nodes.reverse()
-				const xBackgroundPositions = styles.backgroundPositionX.split(' ')
-				const yBackgroundPositions = styles.backgroundPositionY.split(' ')
+				const backgrounds = cssValueParser(styles.backgroundImage)
+					.nodes.filter(isTaggedUnionMember('type', 'function' as const))
+					.reverse()
+				const xBackgroundPositions = styles.backgroundPositionX.split(/\s*,\s*/g)
+				const yBackgroundPositions = styles.backgroundPositionY.split(/\s*,\s*/g)
 				const backgroundRepeats = styles.backgroundRepeat.split(/\s*,\s*/g)
 				for (const [index, backgroundNode] of backgrounds.entries()) {
-					if (backgroundNode.type !== 'function') {
-						continue
-					}
 					const backgroundPositionX = parseCSSLength(xBackgroundPositions[index]!, bounds.width) ?? 0
 					const backgroundPositionY = parseCSSLength(yBackgroundPositions[index]!, bounds.height) ?? 0
 					const backgroundRepeat = backgroundRepeats[index]
 					if (backgroundNode.value === 'url' && backgroundNode.nodes[0]) {
 						const urlArgument = backgroundNode.nodes[0]
 						const image = context.svgDocument.createElementNS(svgNamespace, 'image')
-						const [cssWidth, cssHeight = 'auto'] = styles.backgroundSize.split(' ') as [string, ...string[]]
+						const [cssWidth = 'auto', cssHeight = 'auto'] = styles.backgroundSize.split(' ')
 						const backgroundWidth = parseCSSLength(cssWidth, bounds.width) ?? bounds.width
 						const backgroundHeight = parseCSSLength(cssHeight, bounds.height) ?? bounds.height
 						image.setAttribute('width', backgroundWidth.toString())
