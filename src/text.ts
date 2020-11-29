@@ -26,6 +26,8 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 	// https://css-tricks.com/svg-properties-and-css
 	copyTextStyles(styles, svgTextElement)
 
+	const tabSize = parseInt(styles.tabSize, 10)
+
 	// Make sure the y attribute is the bottom of the box, not the baseline
 	svgTextElement.setAttribute('dominant-baseline', 'text-after-edge')
 
@@ -53,7 +55,12 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 			try {
 				selection.removeAllRanges()
 				selection.addRange(lineRange)
-				textSpan.textContent = selection.toString()
+				textSpan.textContent = selection
+					.toString()
+					// SVG does not support tabs in text. Tabs get rendered as one space character. Convert the
+					// tabs to spaces according to tab-size instead.
+					// Ideally we would keep the tab and create offset tspans.
+					.replace(/\t/g, ' '.repeat(tabSize))
 			} finally {
 				parentElement.style.userSelect = previousUserSelect
 				selection.removeAllRanges()
