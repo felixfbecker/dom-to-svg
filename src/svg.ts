@@ -43,11 +43,43 @@ export function handleSvgElement(
 
 	let elementToAppend: SVGElement
 	if (isSVGSVGElement(element)) {
-		elementToAppend = context.svgDocument.createElementNS(svgNamespace, 'g')
-		elementToAppend.classList.add('svg-content', ...element.classList)
-		elementToAppend.dataset.viewBox = element.getAttribute('viewBox') ?? ''
-		elementToAppend.dataset.width = element.getAttribute('width') ?? ''
-		elementToAppend.dataset.height = element.getAttribute('height') ?? ''
+		const contentContainer = context.svgDocument.createElementNS(svgNamespace, 'g')
+		elementToAppend = contentContainer
+		contentContainer.classList.add('svg-content', ...element.classList)
+		contentContainer.dataset.viewBox = element.getAttribute('viewBox') ?? ''
+		contentContainer.dataset.width = element.getAttribute('width') ?? ''
+		contentContainer.dataset.height = element.getAttribute('height') ?? ''
+
+		// Since the SVG is getting inlined into the output SVG, we need to transform its contents according to its
+		// viewBox, width, height and preserveAspectRatio. We can use getScreenCTM() for this on one of its
+		// SVGGraphicsElement children (in Chrome calling it on the <svg> works too, but not in Firefox:
+		// https://bugzilla.mozilla.org/show_bug.cgi?id=873106).
+		for (const child of element.children) {
+			if (!isSVGGraphicsElement(child)) {
+				continue
+			}
+
+			// When this function is called on the original DOM, we want getScreenCTM() to map it to the DOM
+			// coordinate system. When this function is called from inlineResources() the <svg> is already embedded
+			// into the output <svg>. In that case the output SVG already has a viewBox, and the coordinate system
+			// of the SVG is not equal to the coordinate system of the screen, therefor we need to use getCTM() to
+			// map it into the output SVG's coordinate system.
+			let viewBoxTransformMatrix =
+				child.ownerDocument !== context.svgDocument ? child.getScreenCTM()! : child.getCTM()!
+
+			// Make sure to handle a child that already has a transform. That transform should only apply to the
+			// child, not to the entire SVG contents, so we need to calculate it out.
+			if (child.transform.baseVal.numberOfItems > 0) {
+				child.transform.baseVal.consolidate()
+				const existingTransform = child.transform.baseVal.getItem(0).matrix
+				viewBoxTransformMatrix = viewBoxTransformMatrix.multiply(existingTransform.inverse())
+			}
+
+			contentContainer.transform.baseVal.appendItem(
+				contentContainer.transform.baseVal.createSVGTransformFromMatrix(viewBoxTransformMatrix)
+			)
+			break
+		}
 	} else {
 		// Clone element
 		if (isSVGAnchorElement(element) && !context.options.keepLinks) {
@@ -82,22 +114,6 @@ export function handleSvgElement(
 
 			if (isSVGTextContentElement(element)) {
 				copyTextStyles(styles, elementToAppend)
-			}
-
-			// Apply a transform that simulates the scaling defined by the viewBox, width, height and
-			// preserveAspectRatio
-			//
-			// We have to do this on every direct child of <svg> and cannot do this on the <svg> directly, because
-			// Firefox returns an identity matrix for getCTM() on the <svg> element.
-			// https://bugzilla.mozilla.org/show_bug.cgi?id=873106
-			//
-			// Do not do this for further nested descendants, as that would stack the transforms.
-			if (element.parentElement === element.ownerSVGElement) {
-				const graphicsElementToAppend = elementToAppend as SVGGraphicsElement
-				graphicsElementToAppend.transform.baseVal.clear()
-				graphicsElementToAppend.transform.baseVal.appendItem(
-					graphicsElementToAppend.transform.baseVal.createSVGTransformFromMatrix(element.getScreenCTM()!)
-				)
 			}
 		}
 	}
