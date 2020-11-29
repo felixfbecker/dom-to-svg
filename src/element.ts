@@ -20,9 +20,11 @@ import {
 	isVisible,
 	isTransparent,
 	hasUniformBorder,
-	hasUniformBorderRadius,
 	parseCSSLength,
 	unescapeStringValue,
+	Side,
+	getBorderRadiiForSide,
+	calculateOverlappingCurvesFactor,
 } from './css'
 import { copyTextStyles } from './text'
 import { doRectanglesIntersect, isTaggedUnionMember } from './util'
@@ -365,10 +367,18 @@ function createBackgroundAndBorderBox(
 			background.setAttribute('stroke-dasharray', '1')
 		}
 	}
-	if (hasUniformBorderRadius(styles)) {
-		// Cannot use borderRadius directly as in Firefox those are empty strings.
-		background.setAttribute('rx', styles.borderTopLeftRadius)
-		background.setAttribute('ry', styles.borderTopLeftRadius)
+
+	// Set border radius
+	// Approximation, always assumes uniform border-radius by using the top-left horizontal radius and the top-left vertical radius for all corners.
+	// TODO support irregular border radii on all corners by drawing border as a <path>.
+	const overlappingCurvesFactor = calculateOverlappingCurvesFactor(styles, bounds)
+	const radiusX = getBorderRadiiForSide('top', styles, bounds)[0] * overlappingCurvesFactor
+	const radiusY = getBorderRadiiForSide('left', styles, bounds)[0] * overlappingCurvesFactor
+	if (radiusX !== 0) {
+		background.setAttribute('rx', radiusX.toString())
+	}
+	if (radiusY !== 0) {
+		background.setAttribute('ry', radiusY.toString())
 	}
 
 	return background
@@ -385,8 +395,6 @@ function* createBorders(
 		}
 	}
 }
-
-type Side = 'top' | 'bottom' | 'right' | 'left'
 
 function hasBorder(styles: CSSStyleDeclaration, side: Side): boolean {
 	return (

@@ -29,10 +29,76 @@ export const hasUniformBorder = (styles: CSSStyleDeclaration): boolean =>
 	styles.borderTopStyle === styles.borderRightStyle &&
 	styles.borderTopStyle === styles.borderBottomStyle
 
-export const hasUniformBorderRadius = (styles: CSSStyleDeclaration): boolean =>
-	styles.borderTopLeftRadius === styles.borderTopRightRadius &&
-	styles.borderTopLeftRadius === styles.borderBottomLeftRadius &&
-	styles.borderTopLeftRadius === styles.borderBottomRightRadius
+/** A side of a box. */
+export type Side = 'top' | 'bottom' | 'right' | 'left'
+
+/** The 4 sides of a box. */
+const SIDES: Side[] = ['top', 'bottom', 'right', 'left']
+
+/** Whether the given side is a horizontal side. */
+export const isHorizontal = (side: Side): boolean => side === 'bottom' || side === 'top'
+
+/**
+ * The two corners for each side, in order of lower coordinate to higher coordinate.
+ */
+const CORNERS: Record<Side, [Side, Side]> = {
+	top: ['left', 'right'],
+	bottom: ['left', 'right'],
+	left: ['top', 'bottom'],
+	right: ['top', 'bottom'],
+}
+
+/**
+ * Returns the (elliptic) border radii for a given side.
+ * For example, for the top side it will return the horizontal top-left and the horizontal top-right border radii.
+ */
+export function getBorderRadiiForSide(
+	side: Side,
+	styles: CSSStyleDeclaration,
+	bounds: DOMRectReadOnly
+): [number, number] {
+	const [horizontalStyle1, verticalStyle1] = styles
+		.getPropertyValue(
+			isHorizontal(side)
+				? `border-${side}-${CORNERS[side][0]}-radius`
+				: `border-${CORNERS[side][0]}-${side}-radius`
+		)
+		.split(' ')
+
+	const [horizontalStyle2, verticalStyle2] = styles
+		.getPropertyValue(
+			isHorizontal(side)
+				? `border-${side}-${CORNERS[side][1]}-radius`
+				: `border-${CORNERS[side][1]}-${side}-radius`
+		)
+		.split(' ')
+
+	if (isHorizontal(side)) {
+		return [
+			parseCSSLength(horizontalStyle1 || '0px', bounds.width) ?? 0,
+			parseCSSLength(horizontalStyle2 || '0px', bounds.width) ?? 0,
+		]
+	}
+	return [
+		parseCSSLength(verticalStyle1 || horizontalStyle1 || '0px', bounds.height) ?? 0,
+		parseCSSLength(verticalStyle2 || horizontalStyle2 || '0px', bounds.height) ?? 0,
+	]
+}
+
+/**
+ * Returns the factor by which all border radii have to be scaled to fit correctly.
+ *
+ * @see https://drafts.csswg.org/css-backgrounds-3/#corner-overlap
+ */
+export const calculateOverlappingCurvesFactor = (styles: CSSStyleDeclaration, bounds: DOMRectReadOnly): number =>
+	Math.min(
+		...SIDES.map(side => {
+			const length = isHorizontal(side) ? bounds.width : bounds.height
+			const radiiSum = getBorderRadiiForSide(side, styles, bounds).reduce((sum, radius) => sum + radius, 0)
+			return length / radiiSum
+		}),
+		1
+	)
 
 export const isVisible = (styles: CSSStyleDeclaration): boolean =>
 	styles.displayOutside !== 'none' &&
