@@ -138,7 +138,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 			cleanupFunctions.push(() => element.removeAttribute('data-pseudo-element-owner'))
 			const style = element.ownerDocument.createElement('style')
 			// Hide the *actual* pseudo element temporarily while we have a real DOM equivalent in the DOM
-			style.innerHTML = `[data-pseudo-element-owner="${id}"]${pseudoSelector} { display: none !important; }`
+			style.textContent = `[data-pseudo-element-owner="${id}"]${pseudoSelector} { display: none !important; }`
 			element.before(style)
 			cleanupFunctions.push(() => style.remove())
 			element[position](span)
