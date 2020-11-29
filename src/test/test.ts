@@ -3,7 +3,7 @@ import * as path from 'path'
 import { writeFile } from 'fs/promises'
 import { Server } from 'net'
 import { pathToFileURL } from 'url'
-import { Polly } from '@pollyjs/core'
+import { MODE, Polly } from '@pollyjs/core'
 import { PuppeteerAdapter } from './PuppeteerAdapter'
 import { createDeferred, readFileOrUndefined } from './util'
 import FSPersister from '@pollyjs/persister-fs'
@@ -14,6 +14,7 @@ import ParcelBundler from 'parcel-bundler'
 import * as util from 'util'
 import delay from 'delay'
 import formatXML from 'xml-formatter'
+import css from 'tagged-template-noop'
 
 // Reduce log verbosity
 util.inspect.defaultOptions.depth = 0
@@ -30,6 +31,9 @@ const defaultViewport: puppeteer.Viewport = {
 	width: 1200,
 	height: 800,
 }
+
+const mode = (process.env.POLLY_MODE || 'replay') as MODE
+console.log('Using Polly mode', mode)
 
 const root = path.resolve(__dirname, '..', '..')
 
@@ -67,8 +71,12 @@ describe('documentToSVG()', () => {
 	const snapshotDirectory = path.resolve(root, 'src/test/snapshots')
 	const sites = [
 		new URL('https://sourcegraph.com/search'),
+		new URL('https://sourcegraph.com/extensions'),
 		new URL('https://www.google.com?hl=en'),
 		new URL('https://news.ycombinator.com'),
+		new URL(
+			'https://github.com/felixfbecker/dom-to-svg/blob/fee7e1e7b63c888bc1c5205126b05c63073ebdd3/.vscode/settings.json'
+		),
 	]
 	for (const url of sites) {
 		const encodedName = encodeURIComponent(url.href)
@@ -103,7 +111,7 @@ describe('documentToSVG()', () => {
 					'other',
 				]
 				polly = new Polly(url.href, {
-					mode: 'replay',
+					mode,
 					recordIfMissing: false,
 					recordFailedRequests: true,
 					flushRequestsOnStop: false,
@@ -124,7 +132,7 @@ describe('documentToSVG()', () => {
 							password: false,
 							hostname: true,
 							pathname: true,
-							query: false,
+							query: url.hostname !== 'www.google.com',
 							hash: false,
 						},
 						order: false,
@@ -139,24 +147,33 @@ describe('documentToSVG()', () => {
 				})
 				polly.server.get('http://localhost:8080/*').passthrough()
 				polly.server.get('data:*').passthrough()
-				polly.server.any('https://sentry.io/*').intercept((request, response) => {
+				polly.server.any('https://sentry.io/*rest').intercept((request, response) => {
 					response.sendStatus(204)
 				})
 				polly.server.any('https://www.googletagmanager.com/*').intercept((request, response) => {
 					response.sendStatus(204)
 				})
-				polly.server.any('https://sourcegraph.com/.api/graphql?logEvent').intercept((request, response) => {
-					response.status(200).type('application/json').send('{}')
+				polly.server.any('https://api.github.com/_private/*rest').intercept((request, response) => {
+					response.sendStatus(204)
+				})
+				polly.server.any('https://collector.githubapp.com/*rest').intercept((request, response) => {
+					response.sendStatus(204)
+				})
+				polly.server.any('https://www.google.com/gen_204').intercept((request, response) => {
+					response.sendStatus(204)
 				})
 			})
 
 			before('Go to page', async () => {
-				await page.goto(url.href)
-				await page.waitForTimeout(1000)
+				await page.goto(url.href, {
+					waitUntil: url.host === 'github.com' ? 'domcontentloaded' : 'networkidle2',
+					timeout: 60000,
+				})
+				await page.waitForTimeout(2000)
 				await page.mouse.click(0, 0)
 				// Override system font to Arial to make screenshots deterministic cross-platform
 				await page.addStyleTag({
-					content: `
+					content: css`
 						@font-face {
 							font-family: system-ui;
 							font-style: normal;
@@ -177,6 +194,7 @@ describe('documentToSVG()', () => {
 						}
 					`,
 				})
+				// await new Promise<never>(() => {})
 			})
 
 			after('Stop Polly', () => polly?.stop())
@@ -193,13 +211,14 @@ describe('documentToSVG()', () => {
 					svgDeferred.promise.catch(({ message, ...error }) =>
 						Promise.reject(Object.assign(new Error(message), error))
 					),
-					delay(60000).then(() => Promise.reject(new Error('Timeout generating SVG'))),
+					delay(120000).then(() => Promise.reject(new Error('Timeout generating SVG'))),
 				])
 				console.log('Formatting SVG')
 				const generatedSVGMarkupFormatted = formatXML(generatedSVGMarkup)
 				await writeFile(svgFilePath, generatedSVGMarkupFormatted)
 				svgPage = await browser.newPage()
 				await svgPage.goto(pathToFileURL(svgFilePath).href)
+				// await new Promise<never>(() => {})
 			})
 			after('Close SVG page', () => svgPage?.close())
 
@@ -207,10 +226,10 @@ describe('documentToSVG()', () => {
 				console.log('Bringing page to front')
 				await page.bringToFront()
 				console.log('Snapshotting the original page')
-				const expectedScreenshot = await page.screenshot({ encoding: 'binary', type: 'png', fullPage: true })
+				const expectedScreenshot = await page.screenshot({ encoding: 'binary', type: 'png', fullPage: false })
 				await writeFile(path.resolve(snapshotDirectory, `${encodedName}.expected.png`), expectedScreenshot)
 				console.log('Snapshotting the SVG')
-				const actualScreenshot = await svgPage.screenshot({ encoding: 'binary', type: 'png', fullPage: true })
+				const actualScreenshot = await svgPage.screenshot({ encoding: 'binary', type: 'png', fullPage: false })
 				await writeFile(path.resolve(snapshotDirectory, `${encodedName}.actual.png`), actualScreenshot)
 				console.log('Snapshotted, comparing PNGs')
 
@@ -233,9 +252,11 @@ describe('documentToSVG()', () => {
 					console.log(`\u001B]1337;File=name=${nameBase64};inline=1;width=1080px:${diffBase64}\u0007`)
 				}
 
-				console.log('Difference', (differenceRatio * 100).toFixed(2) + '%')
+				const differencePercentage = differenceRatio * 100
 
-				assert.isBelow(differenceRatio, 0.002) // 0.2%
+				console.log('Difference', differencePercentage.toFixed(2) + '%')
+
+				assert.isBelow(differencePercentage, 0.5) // %
 			})
 
 			it('produces SVG with the expected accessibility tree', async function () {

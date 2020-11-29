@@ -156,6 +156,26 @@
       "name": "How Search works"
     },
     {
+      "role": "text",
+      "name": "Google uses cookies to deliver its services, to personalise ads and to analyse traffic. You can adjust your privacy controls at any time in your"
+    },
+    {
+      "role": "text",
+      "name": "."
+    },
+    {
+      "role": "link",
+      "name": "Google settings"
+    },
+    {
+      "role": "link",
+      "name": "Learn more"
+    },
+    {
+      "role": "button",
+      "name": "Got it"
+    },
+    {
       "role": "textbox",
       "name": ""
     }

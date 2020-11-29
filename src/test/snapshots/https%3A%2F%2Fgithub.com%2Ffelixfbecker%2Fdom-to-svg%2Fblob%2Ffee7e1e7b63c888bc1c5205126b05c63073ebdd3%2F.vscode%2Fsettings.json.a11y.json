@@ -1,0 +1,782 @@
+{
+  "role": "WebArea",
+  "name": "",
+  "children": [
+    {
+      "role": "link",
+      "name": "Skip to content"
+    },
+    {
+      "role": "link",
+      "name": "Homepage"
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "button",
+      "name": "Toggle navigation"
+    },
+    {
+      "role": "button",
+      "name": "Toggle navigation"
+    },
+    {
+      "role": "button",
+      "name": "Why GitHub?"
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": "Team"
+    },
+    {
+      "role": "link",
+      "name": "Enterprise"
+    },
+    {
+      "role": "button",
+      "name": "Explore"
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": "Marketplace"
+    },
+    {
+      "role": "button",
+      "name": "Pricing"
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "combobox",
+      "name": "Search or jump to",
+      "haspopup": "listbox",
+      "children": [
+        {
+          "role": "listbox",
+          "name": "",
+          "children": [
+            {
+              "role": "option",
+              "name": "Repository Project Search Team in this repository in all of GitHub",
+              "children": [
+                {
+                  "role": "link",
+                  "name": "Repository Project Search Team in this repository in all of GitHub"
+                }
+              ]
+            },
+            {
+              "role": "option",
+              "name": "Repository Project Search Team in this repository in all of GitHub",
+              "children": [
+                {
+                  "role": "link",
+                  "name": "Repository Project Search Team in this repository in all of GitHub"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "option",
+          "name": "Repository Project Search Team in this repository in all of GitHub",
+          "children": [
+            {
+              "role": "link",
+              "name": "Repository Project Search Team in this repository in all of GitHub"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "link",
+      "name": "Sign in"
+    },
+    {
+      "role": "link",
+      "name": "Sign up"
+    },
+    {
+      "role": "link",
+      "name": "felixfbecker"
+    },
+    {
+      "role": "text",
+      "name": "/"
+    },
+    {
+      "role": "link",
+      "name": "dom-to-svg"
+    },
+    {
+      "role": "link",
+      "name": "You must be signed in to watch a repository"
+    },
+    {
+      "role": "link",
+      "name": "1 user is watching this repository"
+    },
+    {
+      "role": "link",
+      "name": "You must be signed in to star a repository"
+    },
+    {
+      "role": "link",
+      "name": "23 users starred this repository"
+    },
+    {
+      "role": "link",
+      "name": "You must be signed in to fork a repository"
+    },
+    {
+      "role": "link",
+      "name": "1 user forked this repository"
+    },
+    {
+      "role": "link",
+      "name": "Code Not available"
+    },
+    {
+      "role": "link",
+      "name": "Issues 5"
+    },
+    {
+      "role": "link",
+      "name": "Pull requests 2"
+    },
+    {
+      "role": "link",
+      "name": "Actions Not available"
+    },
+    {
+      "role": "link",
+      "name": "Security"
+    },
+    {
+      "role": "link",
+      "name": "Insights Not available"
+    },
+    {
+      "role": "button",
+      "name": ""
+    },
+    {
+      "role": "menu",
+      "name": "",
+      "children": [
+        {
+          "role": "menuitem",
+          "name": ""
+        },
+        {
+          "role": "menuitem",
+          "name": ""
+        },
+        {
+          "role": "menuitem",
+          "name": ""
+        },
+        {
+          "role": "menuitem",
+          "name": ""
+        },
+        {
+          "role": "menuitem",
+          "name": ""
+        },
+        {
+          "role": "menuitem",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "button",
+      "name": "Dismiss"
+    },
+    {
+      "role": "heading",
+      "name": "Join GitHub today",
+      "level": 3
+    },
+    {
+      "role": "text",
+      "name": "GitHub is home to over 50 million developers working together to host and review code,"
+    },
+    {
+      "role": "text",
+      "name": "manage projects, and build software together."
+    },
+    {
+      "role": "link",
+      "name": "Sign up"
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "button",
+      "name": ""
+    },
+    {
+      "role": "combobox",
+      "name": "Switch branches or tags",
+      "haspopup": "menu"
+    },
+    {
+      "role": "menu",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": "dom-to-svg"
+    },
+    {
+      "role": "text",
+      "name": "/"
+    },
+    {
+      "role": "link",
+      "name": ".vscode"
+    },
+    {
+      "role": "text",
+      "name": "/"
+    },
+    {
+      "role": "text",
+      "name": "settings.json"
+    },
+    {
+      "role": "link",
+      "name": "Go to file"
+    },
+    {
+      "role": "button",
+      "name": "More options"
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "button",
+      "name": ""
+    },
+    {
+      "role": "button",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": "@felixfbecker"
+    },
+    {
+      "role": "link",
+      "name": "felixfbecker"
+    },
+    {
+      "role": "link",
+      "name": "Add GitHub Actions (#4)"
+    },
+    {
+      "role": "link",
+      "name": "#4"
+    },
+    {
+      "role": "link",
+      "name": "Add GitHub Actions (#4)"
+    },
+    {
+      "role": "button",
+      "name": "1 / 1 checks OK"
+    },
+    {
+      "role": "text",
+      "name": "Latest commit"
+    },
+    {
+      "role": "link",
+      "name": "6a4dfcd"
+    },
+    {
+      "role": "text",
+      "name": "21 days ago"
+    },
+    {
+      "role": "link",
+      "name": "History"
+    },
+    {
+      "role": "button",
+      "name": "contributor 1"
+    },
+    {
+      "role": "button",
+      "name": "Close dialog"
+    },
+    {
+      "role": "text",
+      "name": "9 lines (9 sloc)"
+    },
+    {
+      "role": "text",
+      "name": "167 Bytes"
+    },
+    {
+      "role": "button",
+      "name": "Raw"
+    },
+    {
+      "role": "button",
+      "name": "Blame"
+    },
+    {
+      "role": "link",
+      "name": "You must be signed in to make or propose changes"
+    },
+    {
+      "role": "link",
+      "name": "You must be signed in to make or propose changes"
+    },
+    {
+      "role": "text",
+      "name": "1"
+    },
+    {
+      "role": "text",
+      "name": "{"
+    },
+    {
+      "role": "text",
+      "name": "2"
+    },
+    {
+      "role": "text",
+      "name": ":"
+    },
+    {
+      "role": "text",
+      "name": ","
+    },
+    {
+      "role": "text",
+      "name": "typescript.tsdk"
+    },
+    {
+      "role": "text",
+      "name": "\""
+    },
+    {
+      "role": "text",
+      "name": "\""
+    },
+    {
+      "role": "text",
+      "name": "node_modules/typescript/lib"
+    },
+    {
+      "role": "text",
+      "name": "\""
+    },
+    {
+      "role": "text",
+      "name": "\""
+    },
+    {
+      "role": "text",
+      "name": "3"
+    },
+    {
+      "role": "text",
+      "name": ": {"
+    },
+    {
+      "role": "text",
+      "name": "search.exclude"
+    },
+    {
+      "role": "text",
+      "name": "\""
+    },
+    {
+      "role": "text",
+      "name": "\""
+    },
+    {
+      "role": "text",
+      "name": "4"
+    },
+    {
+      "role": "text",
+      "name": ":"
+    },
+    {
+      "role": "text",
+      "name": ","
+    },
+    {
+      "role": "text",
+      "name": "lib"
+    },
+    {
+      "role": "text",
+      "name": "\""
+    },
+    {
+      "role": "text",
+      "name": "\""
+    },
+    {
+      "role": "text",
+      "name": "true"
+    },
+    {
+      "role": "text",
+      "name": "5"
+    },
+    {
+      "role": "text",
+      "name": ":"
+    },
+    {
+      "role": "text",
+      "name": ","
+    },
+    {
+      "role": "text",
+      "name": "*.har"
+    },
+    {
+      "role": "text",
+      "name": "\""
+    },
+    {
+      "role": "text",
+      "name": "\""
+    },
+    {
+      "role": "text",
+      "name": "true"
+    },
+    {
+      "role": "text",
+      "name": "6"
+    },
+    {
+      "role": "text",
+      "name": ":"
+    },
+    {
+      "role": "text",
+      "name": ","
+    },
+    {
+      "role": "text",
+      "name": "**/snapshots/**"
+    },
+    {
+      "role": "text",
+      "name": "\""
+    },
+    {
+      "role": "text",
+      "name": "\""
+    },
+    {
+      "role": "text",
+      "name": "true"
+    },
+    {
+      "role": "text",
+      "name": "7"
+    },
+    {
+      "role": "text",
+      "name": ":"
+    },
+    {
+      "role": "text",
+      "name": ","
+    },
+    {
+      "role": "text",
+      "name": "**/recordings/**"
+    },
+    {
+      "role": "text",
+      "name": "\""
+    },
+    {
+      "role": "text",
+      "name": "\""
+    },
+    {
+      "role": "text",
+      "name": "true"
+    },
+    {
+      "role": "text",
+      "name": "8"
+    },
+    {
+      "role": "text",
+      "name": "},"
+    },
+    {
+      "role": "text",
+      "name": "9"
+    },
+    {
+      "role": "text",
+      "name": "}"
+    },
+    {
+      "role": "button",
+      "name": "Jump to line"
+    },
+    {
+      "role": "button",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": "Homepage"
+    },
+    {
+      "role": "text",
+      "name": "© 2020 GitHub, Inc."
+    },
+    {
+      "role": "link",
+      "name": "Terms"
+    },
+    {
+      "role": "link",
+      "name": "Privacy"
+    },
+    {
+      "role": "button",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": "Security"
+    },
+    {
+      "role": "link",
+      "name": "Status"
+    },
+    {
+      "role": "link",
+      "name": "Help"
+    },
+    {
+      "role": "link",
+      "name": "Contact GitHub"
+    },
+    {
+      "role": "link",
+      "name": "Pricing"
+    },
+    {
+      "role": "link",
+      "name": "API"
+    },
+    {
+      "role": "link",
+      "name": "Training"
+    },
+    {
+      "role": "link",
+      "name": "Blog"
+    },
+    {
+      "role": "link",
+      "name": "About"
+    },
+    {
+      "role": "button",
+      "name": "Dismiss error"
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "generic",
+      "name": ""
+    },
+    {
+      "role": "text",
+      "name": "We use"
+    },
+    {
+      "role": "text",
+      "name": "third-party analytics cookies to understand how you use GitHub.com so we can build better products."
+    },
+    {
+      "role": "text",
+      "name": "."
+    },
+    {
+      "role": "text",
+      "name": "optional"
+    },
+    {
+      "role": "text",
+      "name": "Learn more"
+    },
+    {
+      "role": "button",
+      "name": "Accept"
+    },
+    {
+      "role": "button",
+      "name": "Reject"
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "button",
+      "name": ""
+    },
+    {
+      "role": "button",
+      "name": ""
+    },
+    {
+      "role": "button",
+      "name": "",
+      "disabled": true
+    }
+  ]
+}

@@ -34,7 +34,7 @@
 		"semantic-release": "semantic-release"
 	},
 	"mocha": {
-		"timeout": 120000,
+		"timeout": 150000,
 		"exit": true,
 		"enableSourceMaps": true,
 		"watchFiles": [
@@ -99,6 +99,7 @@
 		"rxjs": "^6.6.3",
 		"semantic-release": "^17.2.4",
 		"source-map-support": "^0.5.19",
+		"tagged-template-noop": "^2.1.1",
 		"ts-node": "^9.0.0",
 		"typescript": "^4.1.2",
 		"xml-formatter": "^2.4.0"

@@ -1,0 +1,927 @@
+{
+  "role": "WebArea",
+  "name": "",
+  "children": [
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "textbox",
+      "name": "Editor content;Press Alt+F1 for Accessibility Options.",
+      "multiline": true,
+      "autocomplete": "both"
+    },
+    {
+      "role": "checkbox",
+      "name": "Case sensitivity toggle",
+      "checked": false
+    },
+    {
+      "role": "checkbox",
+      "name": "Regular expression toggle",
+      "checked": false
+    },
+    {
+      "role": "checkbox",
+      "name": "Structural search toggle",
+      "checked": false
+    },
+    {
+      "role": "button",
+      "name": "Search"
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": "Extensions"
+    },
+    {
+      "role": "link",
+      "name": "Campaigns"
+    },
+    {
+      "role": "link",
+      "name": "Sign in"
+    },
+    {
+      "role": "link",
+      "name": "Docs"
+    },
+    {
+      "role": "link",
+      "name": "About"
+    },
+    {
+      "role": "button",
+      "name": ""
+    },
+    {
+      "role": "heading",
+      "name": "Extensions",
+      "level": 1
+    },
+    {
+      "role": "link",
+      "name": "Create new extension"
+    },
+    {
+      "role": "text",
+      "name": "Improve your workflow with code intelligence, test coverage, and other useful information."
+    },
+    {
+      "role": "button",
+      "name": "Reports and stats"
+    },
+    {
+      "role": "button",
+      "name": "External services"
+    },
+    {
+      "role": "button",
+      "name": "Linters"
+    },
+    {
+      "role": "button",
+      "name": "Code editors"
+    },
+    {
+      "role": "button",
+      "name": "Code analysis"
+    },
+    {
+      "role": "button",
+      "name": "Programming languages"
+    },
+    {
+      "role": "button",
+      "name": "Other"
+    },
+    {
+      "role": "combobox",
+      "name": "Show all",
+      "haspopup": "menu"
+    },
+    {
+      "role": "text",
+      "name": "An account is required to create, enable and disable extensions."
+    },
+    {
+      "role": "link",
+      "name": "Register now!"
+    },
+    {
+      "role": "heading",
+      "name": "Reports and stats",
+      "level": 3
+    },
+    {
+      "role": "link",
+      "name": "code-ownership"
+    },
+    {
+      "role": "text",
+      "name": "by"
+    },
+    {
+      "role": "text",
+      "name": "sourcegraph"
+    },
+    {
+      "role": "text",
+      "name": "See code owners of the current file"
+    },
+    {
+      "role": "text",
+      "name": "Disabled"
+    },
+    {
+      "role": "link",
+      "name": "search-export"
+    },
+    {
+      "role": "text",
+      "name": "by"
+    },
+    {
+      "role": "text",
+      "name": "sourcegraph"
+    },
+    {
+      "role": "text",
+      "name": "Export search results as CSV"
+    },
+    {
+      "role": "text",
+      "name": "Disabled"
+    },
+    {
+      "role": "link",
+      "name": "sourcegraph-test-leaderboard"
+    },
+    {
+      "role": "text",
+      "name": "by"
+    },
+    {
+      "role": "text",
+      "name": "sourcegraph"
+    },
+    {
+      "role": "text",
+      "name": "WIP"
+    },
+    {
+      "role": "text",
+      "name": "Who writes the most tests? (In each repository and subdirectory.)"
+    },
+    {
+      "role": "text",
+      "name": "Disabled"
+    },
+    {
+      "role": "link",
+      "name": "search-insights"
+    },
+    {
+      "role": "text",
+      "name": "by"
+    },
+    {
+      "role": "text",
+      "name": "sourcegraph"
+    },
+    {
+      "role": "text",
+      "name": "WIP"
+    },
+    {
+      "role": "text",
+      "name": "Provides code insights from code searches"
+    },
+    {
+      "role": "text",
+      "name": "Disabled"
+    },
+    {
+      "role": "heading",
+      "name": "External services",
+      "level": 3
+    },
+    {
+      "role": "link",
+      "name": "codecov"
+    },
+    {
+      "role": "text",
+      "name": "by"
+    },
+    {
+      "role": "text",
+      "name": "sourcegraph"
+    },
+    {
+      "role": "text",
+      "name": "Shows code coverage from Codecov"
+    },
+    {
+      "role": "text",
+      "name": "Disabled"
+    },
+    {
+      "role": "link",
+      "name": "datadog-metrics"
+    },
+    {
+      "role": "text",
+      "name": "by"
+    },
+    {
+      "role": "text",
+      "name": "sourcegraph"
+    },
+    {
+      "role": "text",
+      "name": "Jump to Datadog metrics from statsd calls in code"
+    },
+    {
+      "role": "text",
+      "name": "Disabled"
+    },
+    {
+      "role": "link",
+      "name": "lightstep"
+    },
+    {
+      "role": "text",
+      "name": "by"
+    },
+    {
+      "role": "text",
+      "name": "sourcegraph"
+    },
+    {
+      "role": "text",
+      "name": "View live traces on LightStep for OpenTracing spans in your code"
+    },
+    {
+      "role": "text",
+      "name": "Disabled"
+    },
+    {
+      "role": "link",
+      "name": "sentry"
+    },
+    {
+      "role": "text",
+      "name": "by"
+    },
+    {
+      "role": "text",
+      "name": "sourcegraph"
+    },
+    {
+      "role": "text",
+      "name": "Sourcegraph Sentry extension renders \"View logs on Sentry\" links next to error handling code."
+    },
+    {
+      "role": "text",
+      "name": "Disabled"
+    },
+    {
+      "role": "link",
+      "name": "sonarqube"
+    },
+    {
+      "role": "text",
+      "name": "by"
+    },
+    {
+      "role": "text",
+      "name": "sourcegraph"
+    },
+    {
+      "role": "text",
+      "name": "Show Sonarqube issues when browsing files on Sourcegraph"
+    },
+    {
+      "role": "text",
+      "name": "Disabled"
+    },
+    {
+      "role": "link",
+      "name": "hubspot"
+    },
+    {
+      "role": "text",
+      "name": "by"
+    },
+    {
+      "role": "text",
+      "name": "sourcegraph"
+    },
+    {
+      "role": "text",
+      "name": "WIP"
+    },
+    {
+      "role": "text",
+      "name": "HubSpot link previews and customer autocompletion (by name) on GitHub"
+    },
+    {
+      "role": "text",
+      "name": "Disabled"
+    },
+    {
+      "role": "link",
+      "name": "jira"
+    },
+    {
+      "role": "text",
+      "name": "by"
+    },
+    {
+      "role": "text",
+      "name": "sourcegraph"
+    },
+    {
+      "role": "text",
+      "name": "WIP"
+    },
+    {
+      "role": "text",
+      "name": "Jira issue link previews and issue autocompletion on GitHub"
+    },
+    {
+      "role": "text",
+      "name": "Disabled"
+    },
+    {
+      "role": "link",
+      "name": "snyk"
+    },
+    {
+      "role": "text",
+      "name": "by"
+    },
+    {
+      "role": "text",
+      "name": "sourcegraph"
+    },
+    {
+      "role": "text",
+      "name": "WIP"
+    },
+    {
+      "role": "text",
+      "name": "Provides code insights from Snyk reports"
+    },
+    {
+      "role": "text",
+      "name": "Disabled"
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "button",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    }
+  ]
+}

@@ -57,24 +57,225 @@
     },
     {
       "role": "heading",
-      "name": "Explore and Extend",
-      "level": 4
+      "name": "Search in repository groups",
+      "level": 3
+    },
+    {
+      "role": "text",
+      "name": "repogroup:"
+    },
+    {
+      "role": "text",
+      "name": "name"
     },
     {
       "role": "link",
-      "name": "Browser extensions"
+      "name": "Cloud Native Computing Foundation (CNCF)"
+    },
+    {
+      "role": "text",
+      "name": "Search CNCF projects."
     },
     {
       "role": "link",
-      "name": "Sourcegraph extensions"
+      "name": "Refactor Python 2 to 3"
+    },
+    {
+      "role": "text",
+      "name": "Searches and suggestions to help migrate"
+    },
+    {
+      "role": "text",
+      "name": "your code to Python 3."
     },
     {
       "role": "link",
-      "name": "Editor plugins"
+      "name": "Android"
+    },
+    {
+      "role": "text",
+      "name": "Explore popular Android repositories."
     },
     {
       "role": "link",
-      "name": "Code host integrations"
+      "name": "Kubernetes"
+    },
+    {
+      "role": "text",
+      "name": "Search within the Kubernetes community."
+    },
+    {
+      "role": "link",
+      "name": "Go"
+    },
+    {
+      "role": "text",
+      "name": "Find code examples in top Go repositories."
+    },
+    {
+      "role": "link",
+      "name": "React Hooks"
+    },
+    {
+      "role": "text",
+      "name": "Learn how to use React Hooks with search"
+    },
+    {
+      "role": "text",
+      "name": "examples."
+    },
+    {
+      "role": "link",
+      "name": "Stanford University"
+    },
+    {
+      "role": "text",
+      "name": "Explore Stanford open-source code."
+    },
+    {
+      "role": "heading",
+      "name": "Example searches",
+      "level": 3
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "heading",
+      "name": "Search a language lang:name",
+      "level": 3
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "heading",
+      "name": "Search syntax",
+      "level": 3
+    },
+    {
+      "role": "heading",
+      "name": "COMMON SEARCH",
+      "level": 5
+    },
+    {
+      "role": "heading",
+      "name": "FINDING MATCHES",
+      "level": 5
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
+    },
+    {
+      "role": "link",
+      "name": ""
     }
   ]
 }

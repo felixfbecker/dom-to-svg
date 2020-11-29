@@ -22,4 +22,8 @@ async function main(): Promise<void> {
 	resolveSVG(svgString)
 }
 
-main().catch(({ message, name, stack }) => rejectSVG({ message, name, stack }))
+main().catch(error => {
+	console.error(error)
+	const { message, name, stack } = error
+	rejectSVG({ message, name, stack })
+})
