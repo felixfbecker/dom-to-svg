@@ -14,6 +14,7 @@ import {
 	determineStackingLayer,
 	StackingLayers,
 	sortStackingLayerChildren,
+	cleanupStackingLayerChildren,
 } from './stacking'
 import {
 	copyCssStyles,
@@ -210,6 +211,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 			}
 			if (ownStackingLayers) {
 				sortStackingLayerChildren(ownStackingLayers)
+				cleanupStackingLayerChildren(ownStackingLayers)
 			}
 		}
 	} finally {

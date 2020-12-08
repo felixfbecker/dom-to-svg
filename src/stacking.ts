@@ -87,6 +87,16 @@ export interface StackingLayers {
 	readonly childStackingContextsWithPositiveStackLevels: SVGGElement
 }
 
+const STACKING_LAYER_NAMES: readonly (keyof StackingLayers)[] = [
+	'rootBackgroundAndBorders',
+	'childStackingContextsWithNegativeStackLevels',
+	'inFlowNonInlineNonPositionedDescendants',
+	'nonPositionedFloats',
+	'inFlowInlineLevelNonPositionedDescendants',
+	'childStackingContextsWithStackLevelZeroAndPositionedDescendantsWithStackLevelZero',
+	'childStackingContextsWithPositiveStackLevels',
+]
+
 function createStackingLayer(parent: SVGElement, layerName: keyof StackingLayers): SVGGElement {
 	const layer = parent.ownerDocument.createElementNS(svgNamespace, 'g')
 	layer.dataset.stackingLayer = layerName
@@ -170,4 +180,16 @@ export function sortChildrenByZIndex(parent: SVGElement): void {
 export function sortStackingLayerChildren(stackingLayers: StackingLayers): void {
 	sortChildrenByZIndex(stackingLayers.childStackingContextsWithNegativeStackLevels)
 	sortChildrenByZIndex(stackingLayers.childStackingContextsWithPositiveStackLevels)
+}
+
+/**
+ * Removes all stacking layers that are empty.
+ */
+export function cleanupStackingLayerChildren(stackingLayers: StackingLayers): void {
+	for (const name of STACKING_LAYER_NAMES) {
+		const layer = stackingLayers[name]
+		if (!layer.hasChildNodes()) {
+			layer.remove()
+		}
+	}
 }

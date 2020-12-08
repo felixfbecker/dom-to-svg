@@ -4,6 +4,10 @@
   "children": [
     {
       "role": "link",
+      "name": "Sourcegraph Search"
+    },
+    {
+      "role": "link",
       "name": "Extensions"
     },
     {
@@ -29,6 +33,10 @@
     {
       "role": "text",
       "name": "Search public code"
+    },
+    {
+      "role": "generic",
+      "name": "Show Fixes"
     },
     {
       "role": "textbox",

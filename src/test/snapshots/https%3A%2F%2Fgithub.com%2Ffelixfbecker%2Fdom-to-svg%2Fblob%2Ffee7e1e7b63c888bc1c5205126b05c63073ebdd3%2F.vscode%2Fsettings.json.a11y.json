@@ -4,6 +4,18 @@
   "children": [
     {
       "role": "link",
+      "name": "GitHub"
+    },
+    {
+      "role": "link",
+      "name": "GitHub"
+    },
+    {
+      "role": "link",
+      "name": "Recent Commits to dom-to-svg:fee7e1e7b63c888bc1c5205126b05c63073ebdd3"
+    },
+    {
+      "role": "link",
       "name": "Skip to content"
     },
     {
@@ -647,6 +659,10 @@
     },
     {
       "role": "button",
+      "name": "Jump to line"
+    },
+    {
+      "role": "generic",
       "name": "Jump to line"
     },
     {
