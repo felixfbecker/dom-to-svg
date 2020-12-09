@@ -94,7 +94,7 @@
 		"parcel-bundler": "^1.12.4",
 		"pixelmatch": "^5.2.1",
 		"pngjs": "^6.0.0",
-		"prettier": "^2.1.2",
+		"prettier": "^2.2.1",
 		"puppeteer": "^5.5.0",
 		"rxjs": "^6.6.3",
 		"semantic-release": "^17.2.4",
