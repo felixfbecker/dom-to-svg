@@ -78,7 +78,7 @@
 		"@types/pollyjs__adapter-puppeteer": "^4.0.1",
 		"@types/pollyjs__core": "^4.3.1",
 		"@types/pollyjs__persister-fs": "^2.0.1",
-		"@types/prettier": "^2.1.5",
+		"@types/prettier": "^2.1.6",
 		"@types/puppeteer": "^5.4.2",
 		"@types/type-is": "^1.6.3",
 		"chai": "^4.2.0",
