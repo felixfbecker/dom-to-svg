@@ -66,6 +66,7 @@ export function elementToSVG(element: Element, options?: DomToSvgOptions): XMLDo
 		options: {
 			captureArea: options?.captureArea ?? element.getBoundingClientRect(),
 			keepLinks: options?.keepLinks !== false,
+			avoidTextSelection: options ? !!options.avoidTextSelection : false
 		},
 	})
 

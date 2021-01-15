@@ -16,6 +16,14 @@ export interface DomToSvgOptions {
 	 * @default true
 	 */
 	keepLinks?: boolean
+
+	/**
+	 * Whether to use text selection to fill tspans or use textContent (different whitespace handling).
+	 * textContent works in mobile iOS browsers
+	 *
+	 * @default false
+	 */
+	avoidTextSelection?: boolean
 }
 
 export interface TraversalContext {
