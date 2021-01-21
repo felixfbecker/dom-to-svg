@@ -114,6 +114,29 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 			svgContainer.setAttribute('opacity', styles.opacity)
 		}
 
+		if (styles.transform && styles.transform !== 'none') {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const anyelement: any = element
+			const left: number = context.options.captureArea.left ? context.options.captureArea.left : 0
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+			const offsetLeft: number = anyelement.offsetLeft as number
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+			const offsetWidth: number = anyelement.offsetWidth as number
+			const centerx = left + offsetLeft + offsetWidth / 2
+
+			const top: number = context.options.captureArea.top ? context.options.captureArea.top : 0
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+			const offsetTop: number = anyelement.offsetTop as number
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+			const offsetHeight: number = anyelement.offsetHeight as number
+			const centery = top + offsetTop + offsetHeight / 2
+
+			const strtransform = `translate(${centerx} ${centery}) ${
+				styles.transform
+			} translate(${-centerx} ${-centery})`
+			svgContainer.setAttribute('transform', strtransform)
+		}
+
 		// Accessibility
 		for (const [name, value] of getAccessibilityAttributes(element, context)) {
 			svgContainer.setAttribute(name, value)

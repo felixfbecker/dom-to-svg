@@ -55,8 +55,10 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 			try {
 				selection.removeAllRanges()
 				selection.addRange(lineRange)
-				if(context.options.avoidTextSelection) {
+				if (context.options.avoidTextSelection) {
 					textSpan.textContent = textNode.textContent
+						? textNode.textContent.slice(lineRange.startOffset, lineRange.endOffset)
+						: textNode.textContent
 				} else {
 					textSpan.textContent = selection
 						.toString()
