@@ -114,21 +114,17 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 			svgContainer.setAttribute('opacity', styles.opacity)
 		}
 
+		// CSS Transforms to SVG transforms
 		if (styles.transform && styles.transform !== 'none') {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const anyelement: any = element
+			const htmlelement: HTMLElement = element as HTMLElement
 			const left: number = context.options.captureArea.left ? context.options.captureArea.left : 0
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			const offsetLeft: number = anyelement.offsetLeft as number
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			const offsetWidth: number = anyelement.offsetWidth as number
+			const offsetLeft: number = htmlelement.offsetLeft
+			const offsetWidth: number = htmlelement.offsetWidth
 			const centerx = left + offsetLeft + offsetWidth / 2
 
 			const top: number = context.options.captureArea.top ? context.options.captureArea.top : 0
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			const offsetTop: number = anyelement.offsetTop as number
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			const offsetHeight: number = anyelement.offsetHeight as number
+			const offsetTop: number = htmlelement.offsetTop
+			const offsetHeight: number = htmlelement.offsetHeight
 			const centery = top + offsetTop + offsetHeight / 2
 
 			const strtransform = `translate(${centerx} ${centery}) ${
