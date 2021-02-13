@@ -155,21 +155,44 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 
 		// If element is overflow: hidden, create a masking rectangle to hide any overflowing content of any descendants.
 		// Use <mask> instead of <clipPath> as Figma supports <mask>, but not <clipPath>.
-		let mask: SVGMaskElement | undefined
 		if (styles.overflow !== 'visible') {
-			mask = context.svgDocument.createElementNS(svgNamespace, 'mask')
+			const mask = context.svgDocument.createElementNS(svgNamespace, 'mask')
 			mask.id = context.getUniqueId('mask-for-' + id)
 			const visibleRectangle = createBox(bounds, context)
 			visibleRectangle.setAttribute('fill', '#ffffff')
 			mask.append(visibleRectangle)
 			svgContainer.append(mask)
 			svgContainer.setAttribute('mask', `url(#${mask.id})`)
+			childContext = {
+				...childContext,
+				ancestorMasks: [{ mask, forElement: element }, ...childContext.ancestorMasks],
+			}
 		}
 
-		// Make sure the element has a src/srcset attribute (the relative URL). `element.src` is absolute and always defined.
+		if (
+			isHTMLElement(element) &&
+			(styles.position === 'absolute' || styles.position === 'fixed') &&
+			context.ancestorMasks.length > 0 &&
+			element.offsetParent
+		) {
+			// Absolute and fixed elements are out of the flow and will bleed out of an `overflow: hidden` ancestor
+			// as long as their offsetParent is higher up than the mask element.
+			for (const { mask, forElement } of context.ancestorMasks) {
+				if (element.offsetParent.contains(forElement) || element.offsetParent === forElement) {
+					// Add a cutout to the ancestor mask
+					const visibleRectangle = createBox(bounds, context)
+					visibleRectangle.setAttribute('fill', '#ffffff')
+					mask.append(visibleRectangle)
+				} else {
+					break
+				}
+			}
+		}
+
 		if (
 			rectanglesIntersect &&
 			isHTMLImageElement(element) &&
+			// Make sure the element has a src/srcset attribute (the relative URL). `element.src` is absolute and always defined.
 			(element.getAttribute('src') || element.getAttribute('srcset'))
 		) {
 			const svgImage = context.svgDocument.createElementNS(svgNamespace, 'image')
