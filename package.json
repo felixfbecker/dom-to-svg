@@ -76,7 +76,7 @@
 		"@types/pixelmatch": "^5.2.2",
 		"@types/pngjs": "^3.4.2",
 		"@types/pollyjs__adapter-puppeteer": "^4.0.1",
-		"@types/pollyjs__core": "^4.3.1",
+		"@types/pollyjs__core": "^4.3.2",
 		"@types/pollyjs__persister-fs": "^2.0.1",
 		"@types/prettier": "^2.1.6",
 		"@types/puppeteer": "^5.4.2",
