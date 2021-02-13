@@ -122,7 +122,9 @@ export async function inlineResources(element: Element): Promise<void> {
 					console.error('Error inlining stylesheet', element.sheet, error)
 				}
 			}
-		})(),
+		})().catch(error => {
+			console.error('Error inlining resource for element', element, error)
+		}),
 	])
 }
 
