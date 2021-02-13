@@ -24,11 +24,6 @@ export async function inlineResources(element: Element): Promise<void> {
 				const blob = await withTimeout(10000, `Timeout fetching ${element.href.baseVal}`, () =>
 					fetchResource(element.href.baseVal)
 				)
-				if (!blob.type.startsWith('image/')) {
-					throw new Error(
-						`Invalid response type inlining <image href="${element.href.baseVal}">: Expected image/* response, got ${blob.type}`
-					)
-				}
 				if (blob.type === 'image/svg+xml') {
 					// If the image is an SVG, inline it into the output SVG.
 					// Some tools (e.g. Figma) do not support nested SVG.
