@@ -166,11 +166,15 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 			svgContainer.setAttribute('mask', `url(#${mask.id})`)
 		}
 
-		// Make sure the element has a src attribute (the relative URL). `element.src` is absolute and always defined.
-		if (rectanglesIntersect && isHTMLImageElement(element) && element.getAttribute('src')) {
+		// Make sure the element has a src/srcset attribute (the relative URL). `element.src` is absolute and always defined.
+		if (
+			rectanglesIntersect &&
+			isHTMLImageElement(element) &&
+			(element.getAttribute('src') || element.getAttribute('srcset'))
+		) {
 			const svgImage = context.svgDocument.createElementNS(svgNamespace, 'image')
 			svgImage.id = `${id}-image` // read by inlineResources()
-			svgImage.setAttribute('href', element.src)
+			svgImage.setAttribute('href', element.currentSrc || element.src)
 			const paddingLeft = parseCSSLength(styles.paddingLeft, bounds.width) ?? 0
 			const paddingRight = parseCSSLength(styles.paddingRight, bounds.width) ?? 0
 			const paddingTop = parseCSSLength(styles.paddingTop, bounds.height) ?? 0
