@@ -250,6 +250,7 @@ function addBackgroundAndBorders(
 					if (backgroundNode.value === 'url' && backgroundNode.nodes[0]) {
 						const urlArgument = backgroundNode.nodes[0]
 						const image = context.svgDocument.createElementNS(svgNamespace, 'image')
+						image.id = context.getUniqueId('background-image') // read by inlineResources()
 						const [cssWidth = 'auto', cssHeight = 'auto'] = styles.backgroundSize.split(' ')
 						const backgroundWidth = parseCSSLength(cssWidth, bounds.width) ?? bounds.width
 						const backgroundHeight = parseCSSLength(cssHeight, bounds.height) ?? bounds.height
