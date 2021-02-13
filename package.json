@@ -95,7 +95,7 @@
 		"pixelmatch": "^5.2.1",
 		"pngjs": "^6.0.0",
 		"prettier": "^2.2.1",
-		"puppeteer": "^5.5.0",
+		"puppeteer": "^7.1.0",
 		"rxjs": "^6.6.3",
 		"semantic-release": "^17.2.4",
 		"source-map-support": "^0.5.19",
