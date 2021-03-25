@@ -64,7 +64,7 @@
 		"@pollyjs/adapter-puppeteer": "^5.0.0",
 		"@pollyjs/core": "^5.0.0",
 		"@pollyjs/persister-fs": "^5.0.0",
-		"@sourcegraph/eslint-config": "^0.22.0",
+		"@sourcegraph/eslint-config": "^0.23.0",
 		"@sourcegraph/prettierrc": "^3.0.3",
 		"@types/chai": "^4.2.15",
 		"@types/content-type": "^1.1.3",
