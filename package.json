@@ -91,7 +91,7 @@
 		"lodash": "^4.17.20",
 		"mime-types": "^2.1.27",
 		"mocha": "^8.2.1",
-		"parcel-bundler": "^1.12.4",
+		"parcel-bundler": "^1.12.5",
 		"pixelmatch": "^5.2.1",
 		"pngjs": "^6.0.0",
 		"prettier": "^2.2.1",
