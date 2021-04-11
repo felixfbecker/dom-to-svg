@@ -89,7 +89,7 @@
 		"husky": "^4.3.0",
 		"iconv-lite": "^0.6.2",
 		"lodash": "^4.17.20",
-		"mime-types": "^2.1.27",
+		"mime-types": "^2.1.30",
 		"mocha": "^8.2.1",
 		"parcel-bundler": "^1.12.4",
 		"pixelmatch": "^5.2.1",
