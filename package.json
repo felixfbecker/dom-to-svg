@@ -61,7 +61,7 @@
 	"devDependencies": {
 		"@commitlint/cli": "^11.0.0",
 		"@commitlint/config-conventional": "^11.0.0",
-		"@pollyjs/adapter-puppeteer": "^5.0.0",
+		"@pollyjs/adapter-puppeteer": "^5.1.0",
 		"@pollyjs/core": "^5.0.0",
 		"@pollyjs/persister-fs": "^5.0.0",
 		"@sourcegraph/eslint-config": "^0.23.0",
