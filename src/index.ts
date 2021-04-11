@@ -13,7 +13,7 @@ export function documentToSVG(document: Document, options?: DomToSvgOptions): XM
 }
 
 export function elementToSVG(element: Element, options?: DomToSvgOptions): XMLDocument {
-	const svgDocument = element.ownerDocument.implementation.createDocument(svgNamespace, 'svg', null) as XMLDocument
+	const svgDocument = element.ownerDocument.implementation.createDocument(svgNamespace, 'svg', null)
 
 	const svgElement = (svgDocument.documentElement as unknown) as SVGSVGElement
 	svgElement.setAttribute('xmlns', svgNamespace)
