@@ -70,7 +70,7 @@ export async function inlineResources(element: Element): Promise<void> {
 					// Inline binary images as base64 data: URL
 					const dataUrl = await blobToDataURL(blob)
 					element.dataset.src = element.href.baseVal
-					element.setAttribute('href', dataUrl.href)
+					element.setAttribute('xlink:href', dataUrl.href)
 				}
 			} else if (isSVGStyleElement(element)) {
 				try {
