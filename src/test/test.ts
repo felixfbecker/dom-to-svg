@@ -43,7 +43,7 @@ describe('documentToSVG()', () => {
 	before('Launch devserver', async () => {
 		const bundler = new ParcelBundler(path.resolve(root, 'src/test/injected-script.ts'), {
 			hmr: false,
-			sourceMaps: true,
+			sourceMaps: false, // Workaround for "Unterminated regular expression" Parcel bug
 			minify: false,
 		})
 		server = await bundler.serve(8080)
