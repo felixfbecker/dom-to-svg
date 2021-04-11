@@ -106,6 +106,7 @@
 	},
 	"dependencies": {
 		"gradient-parser": "^1.0.0",
+		"postcss": "^8.2.9",
 		"postcss-value-parser": "^4.1.0"
 	}
 }

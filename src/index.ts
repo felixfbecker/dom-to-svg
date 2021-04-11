@@ -4,6 +4,7 @@ import { createStackingLayers } from './stacking'
 import { createIdGenerator } from './util'
 import { isCSSFontFaceRule, unescapeStringValue } from './css'
 import cssValueParser from 'postcss-value-parser'
+import * as postcss from 'postcss'
 
 export { DomToSvgOptions }
 
@@ -27,34 +28,37 @@ export function elementToSVG(element: Element, options?: DomToSvgOptions): XMLDo
 	// Copy @font-face rules
 	const styleElement = svgDocument.createElementNS(svgNamespace, 'style')
 	for (const styleSheet of element.ownerDocument.styleSheets) {
-		let rules: CSSRuleList | undefined
 		try {
-			rules = styleSheet.rules
-		} catch (error) {
-			console.error('Could not access rules of styleSheet', styleSheet, error)
-		}
-		// Make font URLs absolute (need to be resolved relative to the stylesheet)
-		for (const rule of rules ?? []) {
-			if (!isCSSFontFaceRule(rule)) {
-				continue
-			}
-			const styleSheetHref = rule.parentStyleSheet?.href
-			if (styleSheetHref) {
-				const parsedSourceValue = cssValueParser(rule.style.src)
-				parsedSourceValue.walk(node => {
-					if (node.type === 'function' && node.value === 'url' && node.nodes[0]) {
-						const urlArgumentNode = node.nodes[0]
-						if (urlArgumentNode.type === 'string' || urlArgumentNode.type === 'word') {
-							urlArgumentNode.value = new URL(
-								unescapeStringValue(urlArgumentNode.value),
-								styleSheetHref
-							).href
+			// Make font URLs absolute (need to be resolved relative to the stylesheet)
+			for (const rule of styleSheet.rules ?? []) {
+				if (!isCSSFontFaceRule(rule)) {
+					continue
+				}
+				const styleSheetHref = rule.parentStyleSheet?.href
+				if (styleSheetHref) {
+					// Note: Firefox does not implement rule.style.src, need to use rule.style.getPropertyValue()
+					const parsedSourceValue = cssValueParser(rule.style.getPropertyValue('src'))
+					parsedSourceValue.walk(node => {
+						if (node.type === 'function' && node.value === 'url' && node.nodes[0]) {
+							const urlArgumentNode = node.nodes[0]
+							if (urlArgumentNode.type === 'string' || urlArgumentNode.type === 'word') {
+								urlArgumentNode.value = new URL(
+									unescapeStringValue(urlArgumentNode.value),
+									styleSheetHref
+								).href
+							}
 						}
-					}
-				})
-				rule.style.src = cssValueParser.stringify(parsedSourceValue.nodes)
+					})
+					// Firefox does not support changing `src` on CSSFontFaceRule declarations, need to use PostCSS.
+					const updatedFontFaceRule = postcss.parse(rule.cssText)
+					updatedFontFaceRule.walkDecls('src', declaration => {
+						declaration.value = cssValueParser.stringify(parsedSourceValue.nodes)
+					})
+					styleElement.append(updatedFontFaceRule.toString() + '\n')
+				}
 			}
-			styleElement.append(rule.cssText, '\n')
+		} catch (error) {
+			console.error('Error resolving @font-face src URLs for styleSheet, skipping', styleSheet, error)
 		}
 	}
 	svgElement.append(styleElement)

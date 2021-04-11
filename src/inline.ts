@@ -1,8 +1,9 @@
-import { isCSSFontFaceRule, unescapeStringValue } from './css'
+import { unescapeStringValue } from './css'
 import { isSVGImageElement, isSVGStyleElement, svgNamespace } from './dom'
 import { withTimeout, assert } from './util'
-import cssValueParser from 'postcss-value-parser'
 import { handleSvgNode } from './svg'
+import cssValueParser from 'postcss-value-parser'
+import * as postcss from 'postcss'
 
 declare global {
 	interface SVGStyleElement extends LinkStyle {}
@@ -71,48 +72,28 @@ export async function inlineResources(element: Element): Promise<void> {
 					element.dataset.src = element.href.baseVal
 					element.setAttribute('href', dataUrl.href)
 				}
-			} else if (isSVGStyleElement(element) && element.sheet) {
+			} else if (isSVGStyleElement(element)) {
 				try {
-					const rules = element.sheet.cssRules
-					for (const rule of rules) {
-						if (isCSSFontFaceRule(rule)) {
-							const parsedSourceValue = cssValueParser(rule.style.src)
-							const promises: Promise<void>[] = []
+					const promises: Promise<void>[] = []
+					// Walk the stylesheet and replace @font-face src URLs with data URIs
+					const parsedSheet = postcss.parse(element.textContent ?? '')
+					parsedSheet.walkAtRules('font-face', fontFaceRule => {
+						fontFaceRule.walkDecls('src', sourceDeclaration => {
+							const parsedSourceValue = cssValueParser(sourceDeclaration.value)
 							parsedSourceValue.walk(node => {
 								if (node.type === 'function' && node.value === 'url' && node.nodes[0]) {
 									const urlArgumentNode = node.nodes[0]
 									if (urlArgumentNode.type === 'string' || urlArgumentNode.type === 'word') {
-										const url = new URL(unescapeStringValue(urlArgumentNode.value))
-										promises.push(
-											(async () => {
-												try {
-													const blob = await withTimeout(
-														10000,
-														`Timeout fetching ${url.href}`,
-														() => fetchResource(url.href)
-													)
-													if (
-														!blob.type.startsWith('font/') &&
-														blob.type !== 'application/font-woff'
-													) {
-														throw new Error(
-															`Invalid response type inlining font at ${url.href}: Expected font/* response, got ${blob.type}`
-														)
-													}
-													const dataUrl = await blobToDataURL(blob)
-													urlArgumentNode.value = dataUrl.href
-												} catch (error) {
-													console.error(`Error inlining ${url.href}`, error)
-												}
-											})()
-										)
+										promises.push(inlineCssFontUrlArgumentNode(urlArgumentNode))
 									}
 								}
 							})
-							await Promise.all(promises)
-							rule.style.src = cssValueParser.stringify(parsedSourceValue.nodes)
-						}
-					}
+							sourceDeclaration.value = cssValueParser.stringify(parsedSourceValue.nodes)
+						})
+					})
+					await Promise.all(promises)
+					// Update <style> element with updated CSS
+					element.textContent = parsedSheet.toString()
 				} catch (error) {
 					console.error('Error inlining stylesheet', element.sheet, error)
 				}
@@ -121,6 +102,32 @@ export async function inlineResources(element: Element): Promise<void> {
 			console.error('Error inlining resource for element', element, error)
 		}),
 	])
+}
+
+/**
+ * Fetches the font from a `url()` CSS node and replaces it with a `data:` URI of the content.
+ */
+async function inlineCssFontUrlArgumentNode(
+	urlArgumentNode: cssValueParser.StringNode | cssValueParser.WordNode
+): Promise<void> {
+	try {
+		const url = new URL(unescapeStringValue(urlArgumentNode.value))
+		const blob = await withTimeout(10000, `Timeout fetching ${url.href}`, () => fetchResource(url.href))
+		if (
+			!blob.type.startsWith('font/') &&
+			!blob.type.startsWith('application/font-') &&
+			!blob.type.startsWith('application/x-font-') &&
+			blob.type !== 'application/vnd.ms-fontobject'
+		) {
+			throw new Error(
+				`Invalid response MIME type inlining font at ${url.href}: Expected font MIME type, got ${blob.type}`
+			)
+		}
+		const dataUrl = await blobToDataURL(blob)
+		urlArgumentNode.value = dataUrl.href
+	} catch (error) {
+		console.error(`Error inlining ${urlArgumentNode.value}`, error)
+	}
 }
 
 async function fetchResource(url: string): Promise<Blob> {
