@@ -95,11 +95,6 @@ export function handleSvgElement(element: SVGElement, context: SvgTraversalConte
 			)
 			break
 		}
-
-		// Make all IDs unique
-		for (const descendant of element.querySelectorAll('[id]')) {
-			descendant.id = context.idPrefix + descendant.id
-		}
 	} else {
 		// Clone element
 		if (isSVGAnchorElement(element) && !context.options.keepLinks) {
@@ -153,6 +148,11 @@ export function handleSvgElement(element: SVGElement, context: SvgTraversalConte
 				)
 			}
 		}
+	}
+
+	// Make sure all IDs are unique
+	if (elementToAppend.id) {
+		elementToAppend.id = context.idPrefix + elementToAppend.id
 	}
 
 	context.currentSvgParent.append(elementToAppend)
