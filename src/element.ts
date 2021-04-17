@@ -119,35 +119,39 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 			svgContainer.setAttribute(name, value)
 		}
 
-		const handlePseudoElement = (pseudoSelector: '::before' | '::after', position: 'prepend' | 'append'): void => {
-			if (!isHTMLElement(element)) {
-				return
+		// Handle ::before and ::after by creating temporary child elements in the DOM.
+		// Avoid infinite loop, in case `element` already is already a synthetic element created by us for a pseudo element.
+		if (isHTMLElement(element) && !element.dataset.pseudoElement) {
+			const handlePseudoElement = (
+				pseudoSelector: '::before' | '::after',
+				position: 'prepend' | 'append'
+			): void => {
+				const pseudoElementStyles = window.getComputedStyle(element, pseudoSelector)
+				const content = cssValueParser(pseudoElementStyles.content).nodes.find(
+					isTaggedUnionMember('type', 'string' as const)
+				)
+				if (!content) {
+					return
+				}
+				// Pseudo elements are inline by default (like a span)
+				const span = element.ownerDocument.createElement('span')
+				span.dataset.pseudoElement = pseudoSelector
+				copyCssStyles(pseudoElementStyles, span.style)
+				span.textContent = unescapeStringValue(content.value)
+				element.dataset.pseudoElementOwner = id
+				cleanupFunctions.push(() => element.removeAttribute('data-pseudo-element-owner'))
+				const style = element.ownerDocument.createElement('style')
+				// Hide the *actual* pseudo element temporarily while we have a real DOM equivalent in the DOM
+				style.textContent = `[data-pseudo-element-owner="${id}"]${pseudoSelector} { display: none !important; }`
+				element.before(style)
+				cleanupFunctions.push(() => style.remove())
+				element[position](span)
+				cleanupFunctions.push(() => span.remove())
 			}
-			const pseudoElementStyles = window.getComputedStyle(element, pseudoSelector)
-			const content = cssValueParser(pseudoElementStyles.content).nodes.find(
-				isTaggedUnionMember('type', 'string' as const)
-			)
-			if (!content) {
-				return
-			}
-			// Pseudo elements are inline by default (like a span)
-			const span = element.ownerDocument.createElement('span')
-			span.dataset.pseudoElement = pseudoSelector
-			copyCssStyles(pseudoElementStyles, span.style)
-			span.textContent = unescapeStringValue(content.value)
-			element.dataset.pseudoElementOwner = id
-			cleanupFunctions.push(() => element.removeAttribute('data-pseudo-element-owner'))
-			const style = element.ownerDocument.createElement('style')
-			// Hide the *actual* pseudo element temporarily while we have a real DOM equivalent in the DOM
-			style.textContent = `[data-pseudo-element-owner="${id}"]${pseudoSelector} { display: none !important; }`
-			element.before(style)
-			cleanupFunctions.push(() => style.remove())
-			element[position](span)
-			cleanupFunctions.push(() => span.remove())
+			handlePseudoElement('::before', 'prepend')
+			handlePseudoElement('::after', 'append')
+			// TODO handle ::marker etc
 		}
-		handlePseudoElement('::before', 'prepend')
-		handlePseudoElement('::after', 'append')
-		// TODO handle ::marker etc
 
 		if (rectanglesIntersect) {
 			addBackgroundAndBorders(styles, bounds, backgroundContainer, window, context)
