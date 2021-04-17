@@ -1,10 +1,11 @@
-import { svgNamespace, xlinkNamespace } from './dom'
-import { DomToSvgOptions, walkNode } from './traversal'
-import { createStackingLayers } from './stacking'
-import { createIdGenerator } from './util'
-import { isCSSFontFaceRule, unescapeStringValue } from './css'
-import cssValueParser from 'postcss-value-parser'
 import * as postcss from 'postcss'
+import cssValueParser from 'postcss-value-parser'
+
+import { isCSSFontFaceRule, unescapeStringValue } from './css'
+import { svgNamespace, xlinkNamespace } from './dom'
+import { createStackingLayers } from './stacking'
+import { DomToSvgOptions, walkNode } from './traversal'
+import { createIdGenerator } from './util'
 
 export { DomToSvgOptions }
 

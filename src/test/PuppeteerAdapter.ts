@@ -1,12 +1,12 @@
-import { Polly, Request as PollyRequest } from '@pollyjs/core'
-import type * as Puppeteer from 'puppeteer'
 import PollyAdapter from '@pollyjs/adapter'
+import { Polly, Request as PollyRequest } from '@pollyjs/core'
 import * as chardet from 'chardet'
-import { Subscription, fromEvent } from 'rxjs'
 import contentType from 'content-type'
 import { decode, encodingExists } from 'iconv-lite'
 import { mapValues } from 'lodash'
 import mime from 'mime-types'
+import type * as Puppeteer from 'puppeteer'
+import { Subscription, fromEvent } from 'rxjs'
 
 const GOOGLE_LOGO_URL = 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png'
 const GOOGLE_LOGO_BODY = Buffer.from(

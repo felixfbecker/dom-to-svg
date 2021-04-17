@@ -1,20 +1,22 @@
-import puppeteer, { ResourceType } from 'puppeteer'
-import * as path from 'path'
 import { writeFile } from 'fs/promises'
 import { Server } from 'net'
+import * as path from 'path'
 import { pathToFileURL } from 'url'
+import * as util from 'util'
+
 import { MODE, Polly } from '@pollyjs/core'
-import { PuppeteerAdapter } from './PuppeteerAdapter'
-import { createDeferred, readFileOrUndefined } from './util'
 import FSPersister from '@pollyjs/persister-fs'
 import { assert } from 'chai'
-import { PNG } from 'pngjs'
-import pixelmatch from 'pixelmatch'
-import ParcelBundler from 'parcel-bundler'
-import * as util from 'util'
 import delay from 'delay'
-import formatXML from 'xml-formatter'
+import ParcelBundler from 'parcel-bundler'
+import pixelmatch from 'pixelmatch'
+import { PNG } from 'pngjs'
+import puppeteer, { ResourceType } from 'puppeteer'
 import css from 'tagged-template-noop'
+import formatXML from 'xml-formatter'
+
+import { PuppeteerAdapter } from './PuppeteerAdapter'
+import { createDeferred, readFileOrUndefined } from './util'
 
 // Reduce log verbosity
 util.inspect.defaultOptions.depth = 0
