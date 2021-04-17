@@ -62,13 +62,25 @@ export function handleSvgElement(element: SVGElement, context: SvgTraversalConte
 				continue
 			}
 
-			// When this function is called on the original DOM, we want getScreenCTM() to map it to the DOM
-			// coordinate system. When this function is called from inlineResources() the <svg> is already embedded
-			// into the output <svg>. In that case the output SVG already has a viewBox, and the coordinate system
-			// of the SVG is not equal to the coordinate system of the screen, therefor we need to use getCTM() to
-			// map it into the output SVG's coordinate system.
 			let viewBoxTransformMatrix =
-				child.ownerDocument !== context.svgDocument ? child.getScreenCTM()! : child.getCTM()!
+				// When this function is called on an inline <svg> element in the original DOM, we want
+				// getScreenCTM() to map it to the DOM coordinate system. When this function is called from
+				// inlineResources() the <svg> is already embedded into the output <svg>. In that case the output
+				// SVG already has a viewBox, and the coordinate system of the SVG is not equal to the coordinate
+				// system of the screen, therefor we need to use getCTM() to map it into the output SVG's
+				// coordinate system.
+				child.ownerDocument !== context.svgDocument &&
+				// When we inline an SVG, we put a transform on it for the getScreenCTM(). When that SVG also
+				// contains another SVG, the inner SVG should just get transformed relative to the outer SVG, not
+				// relative to the screen, because the transforms will stack in the output SVG.
+				!element.parentElement?.closest('svg')
+					? child.getScreenCTM()
+					: child.getCTM()
+
+			// This should only be null if the <svg> is `display: none`
+			if (!viewBoxTransformMatrix) {
+				break
+			}
 
 			// Make sure to handle a child that already has a transform. That transform should only apply to the
 			// child, not to the entire SVG contents, so we need to calculate it out.
