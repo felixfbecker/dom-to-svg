@@ -1,9 +1,10 @@
+import * as postcss from 'postcss'
+import cssValueParser from 'postcss-value-parser'
+
 import { unescapeStringValue } from './css'
 import { isSVGImageElement, isSVGStyleElement, svgNamespace } from './dom'
-import { withTimeout, assert } from './util'
 import { handleSvgNode } from './svg'
-import cssValueParser from 'postcss-value-parser'
-import * as postcss from 'postcss'
+import { withTimeout, assert } from './util'
 
 declare global {
 	interface SVGStyleElement extends LinkStyle {}

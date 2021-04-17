@@ -1,5 +1,6 @@
-import { Page } from 'puppeteer'
 import { readFile } from 'fs/promises'
+
+import { Page } from 'puppeteer'
 
 export const createDeferred = <T>(): {
 	promise: Promise<T>

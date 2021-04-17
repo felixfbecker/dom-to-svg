@@ -1,21 +1,6 @@
-import {
-	svgNamespace,
-	isHTMLAnchorElement,
-	isHTMLImageElement,
-	isHTMLInputElement,
-	isHTMLElement,
-	isSVGSVGElement,
-} from './dom'
+import cssValueParser from 'postcss-value-parser'
+
 import { getAccessibilityAttributes } from './accessibility'
-import { TraversalContext, walkNode } from './traversal'
-import {
-	createStackingLayers,
-	establishesStackingContext,
-	determineStackingLayer,
-	StackingLayers,
-	sortStackingLayerChildren,
-	cleanupStackingLayerChildren,
-} from './stacking'
 import {
 	copyCssStyles,
 	isVisible,
@@ -27,11 +12,27 @@ import {
 	getBorderRadiiForSide,
 	calculateOverlappingCurvesFactor,
 } from './css'
-import { copyTextStyles } from './text'
-import { doRectanglesIntersect, isTaggedUnionMember } from './util'
-import cssValueParser from 'postcss-value-parser'
+import {
+	svgNamespace,
+	isHTMLAnchorElement,
+	isHTMLImageElement,
+	isHTMLInputElement,
+	isHTMLElement,
+	isSVGSVGElement,
+} from './dom'
 import { convertLinearGradient } from './gradients'
+import {
+	createStackingLayers,
+	establishesStackingContext,
+	determineStackingLayer,
+	StackingLayers,
+	sortStackingLayerChildren,
+	cleanupStackingLayerChildren,
+} from './stacking'
 import { handleSvgNode } from './svg'
+import { copyTextStyles } from './text'
+import { TraversalContext, walkNode } from './traversal'
+import { doRectanglesIntersect, isTaggedUnionMember } from './util'
 
 export function handleElement(element: Element, context: Readonly<TraversalContext>): void {
 	const cleanupFunctions: (() => void)[] = []

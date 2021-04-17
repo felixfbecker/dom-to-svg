@@ -1,3 +1,6 @@
+import cssValueParser from 'postcss-value-parser'
+
+import { parseCSSLength } from './css'
 import {
 	isElement,
 	isSVGAnchorElement,
@@ -8,11 +11,9 @@ import {
 	isTextNode,
 	svgNamespace,
 } from './dom'
+import { copyTextStyles } from './text'
 import { TraversalContext } from './traversal'
 import { assert, diagonale } from './util'
-import { parseCSSLength } from './css'
-import { copyTextStyles } from './text'
-import cssValueParser from 'postcss-value-parser'
 
 /**
  * Recursively clone an `<svg>` element, inlining it into the output SVG document with the necessary transforms.
