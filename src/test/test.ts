@@ -45,6 +45,7 @@ describe('documentToSVG()', () => {
 			hmr: false,
 			sourceMaps: false, // Workaround for "Unterminated regular expression" Parcel bug
 			minify: false,
+			autoInstall: false,
 		})
 		server = await bundler.serve(8080)
 	})
