@@ -87,7 +87,7 @@
 		"eslint": "^7.24.0",
 		"husky": "^4.3.0",
 		"iconv-lite": "^0.6.2",
-		"lodash": "^4.17.20",
+		"lodash": "^4.17.21",
 		"mime-types": "^2.1.30",
 		"mocha": "^8.3.2",
 		"parcel-bundler": "^1.12.5",
