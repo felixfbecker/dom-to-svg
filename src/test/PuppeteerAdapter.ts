@@ -2,7 +2,6 @@ import PollyAdapter from '@pollyjs/adapter'
 import { Polly, Request as PollyRequest } from '@pollyjs/core'
 import * as chardet from 'chardet'
 import contentType from 'content-type'
-import iconvLite from 'iconv-lite'
 import { mapValues } from 'lodash-es'
 import mime from 'mime-types'
 import type * as Puppeteer from 'puppeteer'
@@ -20,8 +19,9 @@ function getBodyData(response: Puppeteer.Response, buffer: Buffer): { body: stri
 	if (encoding) {
 		encoding = encoding.toLowerCase()
 	}
-	if (encoding && iconvLite.encodingExists(encoding)) {
-		const body = iconvLite.decode(buffer, encoding)
+	if (encoding) {
+		const decoder = new TextDecoder(encoding)
+		const body = decoder.decode(buffer)
 		return { body, isBinary: false }
 	}
 	return { body: buffer.toString('hex'), isBinary: true }
