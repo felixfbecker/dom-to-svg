@@ -1,7 +1,7 @@
-import { isElement, isTextNode } from './dom'
-import { handleElement } from './element'
-import { StackingLayers } from './stacking'
-import { handleTextNode } from './text'
+import { isElement, isTextNode } from './dom.js'
+import { handleElement } from './element.js'
+import { StackingLayers } from './stacking.js'
+import { handleTextNode } from './text.js'
 
 export interface DomToSvgOptions {
 	/**

@@ -1,7 +1,7 @@
 import { writeFile } from 'fs/promises'
 import { Server } from 'net'
 import * as path from 'path'
-import { pathToFileURL } from 'url'
+import { fileURLToPath, pathToFileURL } from 'url'
 import * as util from 'util'
 
 import { MODE, Polly } from '@pollyjs/core'
@@ -15,8 +15,8 @@ import puppeteer, { ResourceType } from 'puppeteer'
 import css from 'tagged-template-noop'
 import formatXML from 'xml-formatter'
 
-import { PuppeteerAdapter } from './PuppeteerAdapter'
-import { createDeferred, readFileOrUndefined } from './util'
+import { PuppeteerAdapter } from './PuppeteerAdapter.js'
+import { createDeferred, readFileOrUndefined } from './util.js'
 
 // Reduce log verbosity
 util.inspect.defaultOptions.depth = 0
@@ -37,13 +37,13 @@ const defaultViewport: puppeteer.Viewport = {
 const mode = (process.env.POLLY_MODE || 'replay') as MODE
 console.log('Using Polly mode', mode)
 
-const root = path.resolve(__dirname, '..', '..')
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 
 describe('documentToSVG()', () => {
 	let browser: puppeteer.Browser
 	let server: Server
 	before('Launch devserver', async () => {
-		const bundler = new ParcelBundler(path.resolve(root, 'src/test/injected-script.ts'), {
+		const bundler = new ParcelBundler(path.resolve(root, 'lib/test/injected-script.js'), {
 			hmr: false,
 			sourceMaps: false, // Workaround for "Unterminated regular expression" Parcel bug
 			minify: false,
