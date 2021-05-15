@@ -1,6 +1,6 @@
 import cssValueParser from 'postcss-value-parser'
 
-import { getAccessibilityAttributes } from './accessibility'
+import { getAccessibilityAttributes } from './accessibility.js'
 import {
 	copyCssStyles,
 	isVisible,
@@ -11,7 +11,7 @@ import {
 	Side,
 	getBorderRadiiForSide,
 	calculateOverlappingCurvesFactor,
-} from './css'
+} from './css.js'
 import {
 	svgNamespace,
 	isHTMLAnchorElement,
@@ -19,8 +19,8 @@ import {
 	isHTMLInputElement,
 	isHTMLElement,
 	isSVGSVGElement,
-} from './dom'
-import { convertLinearGradient } from './gradients'
+} from './dom.js'
+import { convertLinearGradient } from './gradients.js'
 import {
 	createStackingLayers,
 	establishesStackingContext,
@@ -28,11 +28,11 @@ import {
 	StackingLayers,
 	sortStackingLayerChildren,
 	cleanupStackingLayerChildren,
-} from './stacking'
-import { handleSvgNode } from './svg'
-import { copyTextStyles } from './text'
-import { TraversalContext, walkNode } from './traversal'
-import { doRectanglesIntersect, isTaggedUnionMember } from './util'
+} from './stacking.js'
+import { handleSvgNode } from './svg.js'
+import { copyTextStyles } from './text.js'
+import { TraversalContext, walkNode } from './traversal.js'
+import { doRectanglesIntersect, isTaggedUnionMember } from './util.js'
 
 export function handleElement(element: Element, context: Readonly<TraversalContext>): void {
 	const cleanupFunctions: (() => void)[] = []

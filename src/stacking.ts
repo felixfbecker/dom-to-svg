@@ -1,5 +1,5 @@
-import { isInFlow, isInline, isPositioned } from './css'
-import { svgNamespace } from './dom'
+import { isInFlow, isInline, isPositioned } from './css.js'
+import { svgNamespace } from './dom.js'
 
 declare global {
 	interface CSSStyleDeclaration {

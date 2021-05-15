@@ -1,8 +1,8 @@
 /* eslint-disable id-length */
 import * as gradientParser from 'gradient-parser'
 
-import { svgNamespace } from './dom'
-import { TraversalContext } from './traversal'
+import { svgNamespace } from './dom.js'
+import { TraversalContext } from './traversal.js'
 
 const positionsForOrientation = (
 	orientation: gradientParser.Gradient['orientation']
