@@ -1,11 +1,11 @@
 import * as postcss from 'postcss'
 import cssValueParser from 'postcss-value-parser'
 
-import { isCSSFontFaceRule, unescapeStringValue } from './css'
-import { svgNamespace, xlinkNamespace } from './dom'
-import { createStackingLayers } from './stacking'
-import { DomToSvgOptions, walkNode } from './traversal'
-import { createIdGenerator } from './util'
+import { isCSSFontFaceRule, unescapeStringValue } from './css.js'
+import { svgNamespace, xlinkNamespace } from './dom.js'
+import { createStackingLayers } from './stacking.js'
+import { DomToSvgOptions, walkNode } from './traversal.js'
+import { createIdGenerator } from './util.js'
 
 export { DomToSvgOptions }
 
