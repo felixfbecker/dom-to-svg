@@ -65,7 +65,7 @@
 		"@commitlint/config-conventional": "^11.0.0",
 		"@pollyjs/adapter": "^5.0.0",
 		"@pollyjs/core": "^5.0.0",
-		"@pollyjs/persister-fs": "^5.0.0",
+		"@pollyjs/persister-fs": "^5.1.1",
 		"@sourcegraph/eslint-config": "^0.24.0",
 		"@sourcegraph/prettierrc": "^3.0.3",
 		"@types/chai": "^4.2.18",
