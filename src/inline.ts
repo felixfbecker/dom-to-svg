@@ -118,7 +118,8 @@ async function inlineCssFontUrlArgumentNode(
 			!blob.type.startsWith('font/') &&
 			!blob.type.startsWith('application/font-') &&
 			!blob.type.startsWith('application/x-font-') &&
-			blob.type !== 'application/vnd.ms-fontobject'
+			!blob.type.startsWith('image/svg+xml') &&
+			!blob.type.startsWith('application/vnd.ms-fontobject')
 		) {
 			throw new Error(
 				`Invalid response MIME type inlining font at ${url.href}: Expected font MIME type, got ${blob.type}`
