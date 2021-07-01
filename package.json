@@ -68,7 +68,7 @@
 		"@pollyjs/persister-fs": "^5.0.0",
 		"@sourcegraph/eslint-config": "^0.24.0",
 		"@sourcegraph/prettierrc": "^3.0.3",
-		"@types/chai": "^4.2.18",
+		"@types/chai": "^4.2.19",
 		"@types/content-type": "^1.1.3",
 		"@types/lodash-es": "^4.17.4",
 		"@types/mime-types": "^2.1.0",
