@@ -55,12 +55,18 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 			try {
 				selection.removeAllRanges()
 				selection.addRange(lineRange)
-				textSpan.textContent = selection
-					.toString()
-					// SVG does not support tabs in text. Tabs get rendered as one space character. Convert the
-					// tabs to spaces according to tab-size instead.
-					// Ideally we would keep the tab and create offset tspans.
-					.replace(/\t/g, ' '.repeat(tabSize))
+				if (context.options.avoidTextSelection) {
+					textSpan.textContent = textNode.textContent
+						? textNode.textContent.slice(lineRange.startOffset, lineRange.endOffset)
+						: textNode.textContent
+				} else {
+					textSpan.textContent = selection
+						.toString()
+						// SVG does not support tabs in text. Tabs get rendered as one space character. Convert the
+						// tabs to spaces according to tab-size instead.
+						// Ideally we would keep the tab and create offset tspans.
+						.replace(/\t/g, ' '.repeat(tabSize))
+				}
 			} finally {
 				parentElement.style.userSelect = previousUserSelect
 				selection.removeAllRanges()

@@ -115,6 +115,25 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 			svgContainer.setAttribute('opacity', styles.opacity)
 		}
 
+		// CSS Transforms to SVG transforms
+		if (styles.transform && styles.transform !== 'none') {
+			const htmlelement: HTMLElement = element as HTMLElement
+			const left: number = context.options.captureArea.left ? context.options.captureArea.left : 0
+			const offsetLeft: number = htmlelement.offsetLeft
+			const offsetWidth: number = htmlelement.offsetWidth
+			const centerx = left + offsetLeft + offsetWidth / 2
+
+			const top: number = context.options.captureArea.top ? context.options.captureArea.top : 0
+			const offsetTop: number = htmlelement.offsetTop
+			const offsetHeight: number = htmlelement.offsetHeight
+			const centery = top + offsetTop + offsetHeight / 2
+
+			const strtransform = `translate(${centerx} ${centery}) ${
+				styles.transform
+			} translate(${-centerx} ${-centery})`
+			svgContainer.setAttribute('transform', strtransform)
+		}
+
 		// Accessibility
 		for (const [name, value] of getAccessibilityAttributes(element, context)) {
 			svgContainer.setAttribute(name, value)
