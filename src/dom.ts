@@ -35,13 +35,36 @@ export const isHTMLImageElement = (element: Element): element is HTMLImageElemen
 	element.tagName === 'IMG' && isHTMLElement(element)
 export const isHTMLInputElement = (element: Element): element is HTMLInputElement =>
 	element.tagName === 'INPUT' && isHTMLElement(element)
+export const isHTMLSlotElement = (element: Element): element is HTMLSlotElement =>
+	element.tagName === 'SLOT' && isHTMLElement(element)
 export const hasLabels = (element: HTMLElement): element is HTMLElement & Pick<HTMLInputElement, 'labels'> =>
 	'labels' in element
+export const hasOpenShadowRoot = (
+	element: Element
+): element is Omit<Element, 'shadowRoot'> & { shadowRoot: NonNullable<Element['shadowRoot']> } =>
+	element.shadowRoot !== null && element.shadowRoot.mode === 'open'
 
-export function* traverseDOM(node: Node, shouldEnter: (node: Node) => boolean = () => true): Iterable<Node> {
+export const getChildNodes = (node: Node, useShadowRoot = true): NodeListOf<ChildNode> | Node[] => {
+	if (useShadowRoot && isElement(node)) {
+		if (isHTMLSlotElement(node)) {
+			return node.assignedNodes()
+		}
+
+		if (hasOpenShadowRoot(node)) {
+			return node.shadowRoot.childNodes
+		}
+	}
+	return node.childNodes
+}
+
+export function* traverseDOM(
+	node: Node,
+	shouldEnter: (node: Node) => boolean = () => true,
+	useShadowRoot = false
+): Iterable<Node> {
 	yield node
 	if (shouldEnter(node)) {
-		for (const childNode of node.childNodes) {
+		for (const childNode of getChildNodes(node, useShadowRoot)) {
 			yield* traverseDOM(childNode)
 		}
 	}

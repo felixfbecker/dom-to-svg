@@ -1,5 +1,5 @@
 import { isVisible } from './css.js'
-import { svgNamespace } from './dom.js'
+import { isElement, isHTMLElement, svgNamespace } from './dom.js'
 import { TraversalContext } from './traversal.js'
 import { doRectanglesIntersect, assert } from './util.js'
 
@@ -8,7 +8,11 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 		throw new Error("Element's ownerDocument has no defaultView")
 	}
 	const window = textNode.ownerDocument.defaultView
-	const parentElement = textNode.parentElement!
+	const parentElement = getTextParent(textNode)
+	if (parentElement === null) {
+		throw new Error('No parent found!')
+	}
+
 	const styles = window.getComputedStyle(parentElement)
 	if (!isVisible(styles)) {
 		return
@@ -135,4 +139,19 @@ export function copyTextStyles(styles: CSSStyleDeclaration, svgElement: SVGEleme
 	}
 	// tspan uses fill, CSS uses color
 	svgElement.setAttribute('fill', styles.color)
+}
+
+function getTextParent(text: Text): HTMLElement | null {
+	if (text.parentElement !== null) {
+		return text.parentElement
+	}
+
+	const parentNode = text.parentNode
+	if (parentNode instanceof ShadowRoot) {
+		if (isElement(parentNode.host) && isHTMLElement(parentNode.host)) {
+			return parentNode.host
+		}
+	}
+
+	return null
 }
