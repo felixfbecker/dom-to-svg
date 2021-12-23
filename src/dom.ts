@@ -44,7 +44,7 @@ export const hasOpenShadowRoot = (
 ): element is Omit<Element, 'shadowRoot'> & { shadowRoot: NonNullable<Element['shadowRoot']> } =>
 	element.shadowRoot !== null && element.shadowRoot.mode === 'open'
 
-export const getChildNodes = (node: Node, useShadowRoot = true): NodeListOf<ChildNode> | Node[] => {
+export const getRelativeChildNodes = (node: Node, useShadowRoot = true): NodeListOf<ChildNode> | Node[] => {
 	if (useShadowRoot && isElement(node)) {
 		if (isHTMLSlotElement(node)) {
 			return node.assignedNodes()
@@ -57,6 +57,21 @@ export const getChildNodes = (node: Node, useShadowRoot = true): NodeListOf<Chil
 	return node.childNodes
 }
 
+export const getRelativeParent = (node: Node): HTMLElement | null => {
+	if (node.parentElement !== null) {
+		return node.parentElement
+	}
+
+	const parentNode = node.parentNode
+	if (parentNode instanceof ShadowRoot) {
+		if (isElement(parentNode.host) && isHTMLElement(parentNode.host)) {
+			return parentNode.host
+		}
+	}
+
+	return null
+}
+
 export function* traverseDOM(
 	node: Node,
 	shouldEnter: (node: Node) => boolean = () => true,
@@ -64,7 +79,7 @@ export function* traverseDOM(
 ): Iterable<Node> {
 	yield node
 	if (shouldEnter(node)) {
-		for (const childNode of getChildNodes(node, useShadowRoot)) {
+		for (const childNode of getRelativeChildNodes(node, useShadowRoot)) {
 			yield* traverseDOM(childNode)
 		}
 	}

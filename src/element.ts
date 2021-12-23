@@ -19,7 +19,8 @@ import {
 	isHTMLInputElement,
 	isHTMLElement,
 	isSVGSVGElement,
-	getChildNodes,
+	getRelativeChildNodes,
+	getRelativeParent,
 } from './dom.js'
 import { convertLinearGradient } from './gradients.js'
 import {
@@ -48,7 +49,8 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 		const rectanglesIntersect = doRectanglesIntersect(bounds, context.options.captureArea)
 
 		const styles = window.getComputedStyle(element)
-		const parentStyles = element.parentElement && window.getComputedStyle(element.parentElement)
+		const parent = getRelativeParent(element)
+		const parentStyles = parent && window.getComputedStyle(parent)
 
 		const svgContainer =
 			isHTMLAnchorElement(element) && context.options.keepLinks
@@ -239,7 +241,7 @@ export function handleElement(element: Element, context: Readonly<TraversalConte
 		} else {
 			// Walk children even if rectangles don't intersect,
 			// because children can overflow the parent's bounds as long as overflow: visible (default).
-			const childNodes = getChildNodes(element, context.options.useShadowRoot)
+			const childNodes = getRelativeChildNodes(element, context.options.useShadowRoot)
 			for (const child of childNodes) {
 				walkNode(child, childContext)
 			}
