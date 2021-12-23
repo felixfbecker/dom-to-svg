@@ -1,5 +1,5 @@
 import { isVisible } from './css.js'
-import { svgNamespace } from './dom.js'
+import { getRelativeParent, svgNamespace } from './dom.js'
 import { TraversalContext } from './traversal.js'
 import { doRectanglesIntersect, assert } from './util.js'
 
@@ -8,7 +8,11 @@ export function handleTextNode(textNode: Text, context: TraversalContext): void 
 		throw new Error("Element's ownerDocument has no defaultView")
 	}
 	const window = textNode.ownerDocument.defaultView
-	const parentElement = textNode.parentElement!
+	const parentElement = getRelativeParent(textNode)
+	if (parentElement === null) {
+		throw new Error('No parent found!')
+	}
+
 	const styles = window.getComputedStyle(parentElement)
 	if (!isVisible(styles)) {
 		return

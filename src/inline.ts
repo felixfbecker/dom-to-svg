@@ -57,6 +57,7 @@ export async function inlineResources(element: Element): Promise<void> {
 								// SVGs embedded through <img> are never interactive.
 								keepLinks: false,
 								captureArea: svgRoot.viewBox.baseVal,
+								useShadowRoot: false,
 							},
 						})
 

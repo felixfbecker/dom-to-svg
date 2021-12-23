@@ -16,6 +16,13 @@ export interface DomToSvgOptions {
 	 * @default true
 	 */
 	keepLinks?: boolean
+
+	/**
+	 * Whether to include shadow root elements
+	 *
+	 * @default true
+	 */
+	useShadowRoot?: boolean
 }
 
 export interface TraversalContext {
