@@ -23,8 +23,11 @@ export async function inlineResources(element: Element): Promise<void> {
 		...[...element.children].map(inlineResources),
 		(async () => {
 			if (isSVGImageElement(element)) {
-				const blob = await withTimeout(10000, `Timeout fetching ${element.href.baseVal}`, () =>
-					fetchResource(element.href.baseVal)
+				const elementHref = element.getAttribute('href') || element.getAttribute('xlink:href');
+				assert(elementHref, "Expected <image> element to have an href or xlink:href attribute");
+
+				const blob = await withTimeout(10000, `Timeout fetching ${elementHref}`, () =>
+					fetchResource(elementHref)
 				)
 				if (blob.type === 'image/svg+xml') {
 					// If the image is an SVG, inline it into the output SVG.
