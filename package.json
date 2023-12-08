@@ -100,7 +100,7 @@
 		"semantic-release": "^17.2.4",
 		"source-map-support": "^0.5.19",
 		"tagged-template-noop": "^2.1.1",
-		"ts-node": "^9.1.1",
+		"ts-node": "^10.9.2",
 		"typescript": "^4.3.5",
 		"xml-formatter": "^2.4.0"
 	},
