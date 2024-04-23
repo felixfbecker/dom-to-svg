@@ -51,7 +51,7 @@ export function convertLinearGradient(
 	const { x1, x2, y1, y2 } = positionsForOrientation(orientation)
 
 	const getColorStops = (colorStop: gradientParser.ColorStop, index: number): SVGStopElement => {
-		const offset = `${(index / (colorStops.length - 1)) * 100}%`
+	        const offset = `${colorStop.length.value}${colorStop.length.type}`;
 		let stopColor = 'rgb(0,0,0)'
 		let stopOpacity = 1
 
